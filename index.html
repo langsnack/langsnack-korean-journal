@@ -516,6 +516,195 @@
       margin-top: 20px;
     }
 
+
+    .timezone-select { max-width: 185px; }
+
+    .streak-heading-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .month-progress {
+      min-width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      position: relative;
+      background: conic-gradient(var(--accent) var(--progress, 0%), rgba(139,103,81,.13) 0);
+      flex: 0 0 auto;
+    }
+
+    .month-progress::after {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      background: #f8f3ec;
+    }
+
+    .month-progress strong {
+      position: relative;
+      z-index: 1;
+      font-size: 12px;
+      line-height: 1.1;
+      text-align: center;
+    }
+
+    .month-progress strong span {
+      display: block;
+      font-size: 9px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .calendar-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 13px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .calendar-grid .calendar-day {
+      border: 1px solid rgba(139,103,81,.22);
+      background: rgba(255,255,255,.32);
+      transition: transform .15s ease, background .15s ease;
+    }
+
+    .calendar-grid .calendar-day:not(.future):hover { transform: scale(1.08); }
+
+    .calendar-grid .written {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: white;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.12);
+    }
+
+    .calendar-grid .today {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      font-weight: 700;
+    }
+
+    .calendar-grid .future {
+      opacity: .28;
+      border-style: dashed;
+    }
+
+    .achievement-progress {
+      height: 4px;
+      margin-top: 6px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(139,103,81,.12);
+    }
+
+    .achievement-progress span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--accent);
+    }
+
+    .achievement-count {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 11px;
+      text-align: right;
+    }
+
+    @media (max-width: 650px) {
+      body { padding-bottom: env(safe-area-inset-bottom); }
+      .shell { width: 100%; padding: 10px 10px 110px; }
+      .topbar { padding: 2px 4px; margin-bottom: 12px; }
+      .brand-mark { width: 39px; height: 39px; border-radius: 12px; }
+      .brand h1 { font-size: 19px; }
+      .brand p { font-size: 11px; }
+      .journal-card { border-radius: 22px; }
+      .journal-head { padding: 18px 15px 14px; }
+      .date-korean { font-size: 27px; }
+
+      .controls {
+        width: 100%;
+        display: grid;
+        grid-template-columns: .8fr 1.2fr;
+      }
+
+      .select-wrap {
+        min-height: 46px;
+        border-radius: 14px;
+        padding: 4px 9px 4px 11px;
+        overflow: hidden;
+      }
+
+      .select-wrap select {
+        width: 100%;
+        min-width: 0;
+        font-size: 13px;
+      }
+
+      .timezone-select { max-width: none; }
+      .inspiration { padding: 14px 15px 5px; }
+
+      .inspiration-row {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 7px;
+      }
+
+      .soft-button {
+        min-height: 48px;
+        padding: 9px 6px;
+        border-radius: 13px;
+        font-size: 12px;
+        line-height: 1.2;
+      }
+
+      .generator-output { align-items: flex-start; }
+      .generator-text { font-size: 18px; }
+
+      .paper {
+        margin: 12px 15px 0;
+        min-height: 52vh;
+        border-radius: 15px;
+      }
+
+      textarea {
+        min-height: 52vh;
+        padding: 17px 16px;
+        font-size: 18px;
+        line-height: 38px;
+      }
+
+      .editor-footer { padding: 12px 15px 18px; }
+
+      .action-group {
+        position: fixed;
+        z-index: 40;
+        left: 10px;
+        right: 10px;
+        bottom: max(10px, env(safe-area-inset-bottom));
+        width: auto;
+        padding: 8px;
+        border: 1px solid rgba(139,103,81,.2);
+        border-radius: 18px;
+        background: rgba(248,243,236,.94);
+        box-shadow: 0 12px 35px rgba(47,42,37,.18);
+        backdrop-filter: blur(18px);
+      }
+
+      .action-group .button { min-height: 49px; border-radius: 13px; }
+      .side { gap: 12px; }
+      .side-card { padding: 16px; border-radius: 19px; }
+      .calendar-grid { gap: 8px; }
+      .calendar-grid span { font-size: 11px; }
+      .achievement { min-height: 64px; }
+      dialog { margin-bottom: max(12px, env(safe-area-inset-bottom)); }
+    }
+
     @media (max-width: 900px) {
       .layout { grid-template-columns: 1fr; }
       .side { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -570,6 +759,25 @@
                 <option value="advanced">Advanced</option>
               </select>
             </label>
+            <label class="select-wrap timezone-select">
+              <span>Time zone</span>
+              <select id="timezoneSelect" aria-label="Choose your time zone">
+                <option value="Asia/Seoul">Seoul</option>
+                <option value="Asia/Kuala_Lumpur">Kuala Lumpur</option>
+                <option value="Asia/Singapore">Singapore</option>
+                <option value="Asia/Hong_Kong">Hong Kong</option>
+                <option value="Asia/Tokyo">Tokyo</option>
+                <option value="Australia/Sydney">Sydney</option>
+                <option value="Europe/London">London</option>
+                <option value="Europe/Paris">Paris</option>
+                <option value="America/New_York">New York</option>
+                <option value="America/Chicago">Chicago</option>
+                <option value="America/Denver">Denver</option>
+                <option value="America/Los_Angeles">Los Angeles</option>
+                <option value="America/Toronto">Toronto</option>
+                <option value="Pacific/Auckland">Auckland</option>
+              </select>
+            </label>
           </div>
         </div>
 
@@ -608,10 +816,21 @@
 
       <aside class="side">
         <section class="side-card">
-          <h2>Writing streak</h2>
-          <p class="streak-number"><span id="streakCount">0</span> days</p>
+          <div class="streak-heading-row">
+            <div>
+              <h2>Writing streak</h2>
+              <p class="streak-number"><span id="streakCount">0</span> days</p>
+            </div>
+            <div class="month-progress" id="monthProgress" style="--progress:0%">
+              <strong><span id="monthProgressText">0/0</span><span>days</span></strong>
+            </div>
+          </div>
           <p class="muted" id="streakMessage">Start with one entry today.</p>
           <div class="calendar-grid" id="calendarGrid"></div>
+          <div class="calendar-meta">
+            <span id="calendarMonthLabel"></span>
+            <span id="monthCompletionLabel">0% complete</span>
+          </div>
         </section>
 
         <section class="side-card">
@@ -625,6 +844,7 @@
         <section class="side-card">
           <h2>Achievements</h2>
           <div class="achievement-list" id="achievementList"></div>
+          <div class="achievement-count" id="achievementCount"></div>
         </section>
 
         <section class="side-card">
@@ -661,7 +881,7 @@
 
   <script>
     const CONFIG = {
-      teacherEmail: "langsnack.nicole+journal@gmail.com",
+      teacherEmail: "YOUR_EMAIL@example.com",
       packageEndDate: "2026-12-31",
       formspreeEndpoint: ""
     };
@@ -726,17 +946,29 @@
     };
 
     const achievements = [
-      { id: "first", icon: "✦", title: "첫 기록", desc: "Write your first entry.", test: s => s.totalEntries >= 1 },
-      { id: "three", icon: "◌", title: "작은 습관", desc: "Write on three different days.", test: s => s.uniqueDays >= 3 },
-      { id: "seven", icon: "7", title: "일주일 기록", desc: "Reach a 7-day streak.", test: s => s.streak >= 7 },
-      { id: "ten", icon: "十", title: "꾸준한 작가", desc: "Save ten entries.", test: s => s.totalEntries >= 10 },
-      { id: "thousand", icon: "千", title: "천 자의 기록", desc: "Write 1,000 Korean characters.", test: s => s.totalChars >= 1000 },
-      { id: "return", icon: "↺", title: "다시 시작", desc: "Return after a break.", test: s => s.returnedAfterBreak }
+      { id: "first", icon: "✦", title: "첫 기록", desc: "Write your first entry.", goal: 1, value: s => s.totalEntries },
+      { id: "threeDays", icon: "3", title: "작은 습관", desc: "Write on three different days.", goal: 3, value: s => s.uniqueDays },
+      { id: "weekWriter", icon: "7", title: "일주일 작가", desc: "Write on seven different days.", goal: 7, value: s => s.uniqueDays },
+      { id: "streak3", icon: "↗", title: "좋은 시작", desc: "Reach a 3-day streak.", goal: 3, value: s => s.streak },
+      { id: "streak7", icon: "○", title: "일주일 연속", desc: "Reach a 7-day streak.", goal: 7, value: s => s.streak },
+      { id: "streak14", icon: "◉", title: "두 주의 기록", desc: "Reach a 14-day streak.", goal: 14, value: s => s.streak },
+      { id: "streak30", icon: "月", title: "한 달의 기록", desc: "Reach a 30-day streak.", goal: 30, value: s => s.streak },
+      { id: "tenEntries", icon: "十", title: "꾸준한 작가", desc: "Save ten entries.", goal: 10, value: s => s.totalEntries },
+      { id: "fiftyEntries", icon: "冊", title: "나만의 책", desc: "Save fifty entries.", goal: 50, value: s => s.totalEntries },
+      { id: "hundredChars", icon: "百", title: "백 자 도전", desc: "Write 100 Korean characters in total.", goal: 100, value: s => s.totalChars },
+      { id: "thousandChars", icon: "千", title: "천 자의 기록", desc: "Write 1,000 Korean characters in total.", goal: 1000, value: s => s.totalChars },
+      { id: "tenThousandChars", icon: "萬", title: "만 자 작가", desc: "Write 10,000 Korean characters in total.", goal: 10000, value: s => s.totalChars },
+      { id: "longEntry", icon: "長", title: "긴 이야기", desc: "Write 300 characters in one entry.", goal: 300, value: s => s.longestEntry },
+      { id: "review1", icon: "✓", title: "첫 피드백", desc: "Submit your first journal for review.", goal: 1, value: s => s.submittedEntries },
+      { id: "review10", icon: "印", title: "피드백 수집가", desc: "Submit ten journals for review.", goal: 10, value: s => s.submittedEntries },
+      { id: "fullMonth", icon: "●", title: "빈틈없는 한 달", desc: "Fill every day in one month.", goal: 1, value: s => s.monthIsComplete ? 1 : 0 },
+      { id: "return", icon: "↺", title: "다시 시작", desc: "Return after a break.", goal: 1, value: s => s.returnedAfterBreak ? 1 : 0 }
     ];
 
     const $ = selector => document.querySelector(selector);
     const journalText = $("#journalText");
     const levelSelect = $("#levelSelect");
+    const timezoneSelect = $("#timezoneSelect");
     const generatorOutput = $("#generatorOutput");
     const generatorLabel = $("#generatorLabel");
     const generatorText = $("#generatorText");
@@ -747,22 +979,42 @@
     state.entries = state.entries || [];
     state.lastDraft = state.lastDraft || "";
     state.level = state.level || "starter";
+    state.timezone = state.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Seoul";
     state.profile = state.profile || { name: "", email: "" };
 
     function saveState() {
       localStorage.setItem("langsnackJournalState", JSON.stringify(state));
     }
 
-    function dateKey(date = new Date()) {
-      return date.toISOString().slice(0, 10);
+    function getDateParts(date = new Date(), timezone = state.timezone) {
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: timezone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).formatToParts(date);
+      const map = Object.fromEntries(parts.map(p => [p.type, p.value]));
+      return { year: Number(map.year), month: Number(map.month), day: Number(map.day) };
+    }
+
+    function dateKey(date = new Date(), timezone = state.timezone) {
+      const p = getDateParts(date, timezone);
+      return `${p.year}-${String(p.month).padStart(2, "0")}-${String(p.day).padStart(2, "0")}`;
+    }
+
+    function zonedCalendarDate(date = new Date(), timezone = state.timezone) {
+      const p = getDateParts(date, timezone);
+      return new Date(p.year, p.month - 1, p.day, 12, 0, 0);
     }
 
     function setDates() {
       const today = new Date();
       $("#koreanDate").textContent = new Intl.DateTimeFormat("ko-KR", {
+        timeZone: state.timezone,
         month: "long", day: "numeric", weekday: "long"
       }).format(today);
       $("#englishDate").textContent = new Intl.DateTimeFormat("en-GB", {
+        timeZone: state.timezone,
         day: "numeric", month: "long", year: "numeric"
       }).format(today);
     }
@@ -833,9 +1085,11 @@
       const uniqueDaysArray = [...new Set(writtenEntries.map(e => e.date))].sort();
       const uniqueDays = uniqueDaysArray.length;
       const totalChars = writtenEntries.reduce((sum, e) => sum + e.text.replace(/\s/g, "").length, 0);
+      const submittedEntries = writtenEntries.filter(e => e.status === "submitted").length;
+      const longestEntry = writtenEntries.reduce((max, e) => Math.max(max, e.text.replace(/\s/g, "").length), 0);
 
       let streak = 0;
-      let cursor = new Date();
+      let cursor = zonedCalendarDate();
       const dates = new Set(uniqueDaysArray);
       if (!dates.has(dateKey(cursor))) cursor.setDate(cursor.getDate() - 1);
 
@@ -846,18 +1100,31 @@
 
       let returnedAfterBreak = false;
       for (let i = 1; i < uniqueDaysArray.length; i++) {
-        const a = new Date(uniqueDaysArray[i - 1]);
-        const b = new Date(uniqueDaysArray[i]);
+        const a = new Date(uniqueDaysArray[i - 1] + "T12:00:00");
+        const b = new Date(uniqueDaysArray[i] + "T12:00:00");
         const diff = Math.round((b - a) / 86400000);
         if (diff >= 3) returnedAfterBreak = true;
       }
+
+      const current = getDateParts();
+      const daysInMonth = new Date(current.year, current.month, 0).getDate();
+      const monthPrefix = `${current.year}-${String(current.month).padStart(2, "0")}-`;
+      const monthWrittenDays = new Set(
+        writtenEntries.filter(e => e.date.startsWith(monthPrefix)).map(e => e.date)
+      ).size;
+      const monthIsComplete = monthWrittenDays === daysInMonth;
 
       return {
         totalEntries: writtenEntries.length,
         uniqueDays,
         totalChars,
+        submittedEntries,
+        longestEntry,
         streak,
-        returnedAfterBreak
+        returnedAfterBreak,
+        daysInMonth,
+        monthWrittenDays,
+        monthIsComplete
       };
     }
 
@@ -871,12 +1138,13 @@
         grid.appendChild(span);
       });
 
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = today.getMonth();
-      const firstDay = new Date(year, month, 1);
+      const current = getDateParts();
+      const year = current.year;
+      const monthIndex = current.month - 1;
+      const todayDay = current.day;
+      const firstDay = new Date(year, monthIndex, 1);
       const offset = (firstDay.getDay() + 6) % 7;
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
       const written = new Set(state.entries.map(e => e.date));
 
       for (let i = 0; i < offset; i++) {
@@ -885,23 +1153,39 @@
       }
 
       for (let day = 1; day <= daysInMonth; day++) {
-        const d = new Date(year, month, day);
         const span = document.createElement("span");
+        span.className = "calendar-day";
         span.textContent = day;
-        const key = dateKey(d);
+        const key = `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
         if (written.has(key)) span.classList.add("written");
-        if (key === dateKey(today)) span.classList.add("today");
+        if (day === todayDay) span.classList.add("today");
+        if (day > todayDay) span.classList.add("future");
+        span.title = written.has(key) ? "Entry completed" : day > todayDay ? "Future day" : "No entry";
         grid.appendChild(span);
       }
+
+      const stats = calculateStats();
+      const completion = Math.round((stats.monthWrittenDays / stats.daysInMonth) * 100);
+      $("#monthProgress").style.setProperty("--progress", `${completion}%`);
+      $("#monthProgressText").textContent = `${stats.monthWrittenDays}/${stats.daysInMonth}`;
+      $("#monthCompletionLabel").textContent = `${completion}% complete`;
+      $("#calendarMonthLabel").textContent = new Intl.DateTimeFormat("en-GB", {
+        timeZone: state.timezone, month: "long", year: "numeric"
+      }).format(new Date());
     }
 
     function renderAchievements() {
       const stats = calculateStats();
       const list = $("#achievementList");
       list.innerHTML = "";
+      let unlockedCount = 0;
 
       achievements.forEach(a => {
-        const unlocked = a.test(stats);
+        const currentValue = Math.max(0, a.value(stats));
+        const unlocked = currentValue >= a.goal;
+        if (unlocked) unlockedCount++;
+        const progress = Math.min(100, Math.round((currentValue / a.goal) * 100));
+
         const item = document.createElement("div");
         item.className = `achievement ${unlocked ? "" : "locked"}`;
         item.innerHTML = `
@@ -909,10 +1193,13 @@
           <div>
             <div class="achievement-title">${a.title}</div>
             <div class="achievement-desc">${a.desc}</div>
+            <div class="achievement-progress"><span style="width:${progress}%"></span></div>
           </div>
         `;
         list.appendChild(item);
       });
+
+      $("#achievementCount").textContent = `${unlockedCount} of ${achievements.length} unlocked`;
     }
 
     function renderEntries() {
@@ -1037,6 +1324,14 @@ ${entry.text}`
       generatorOutput.classList.remove("show");
     });
 
+    timezoneSelect.addEventListener("change", () => {
+      state.timezone = timezoneSelect.value;
+      saveState();
+      setDates();
+      renderAll();
+      showToast("Time zone updated.");
+    });
+
     $("#saveDraftBtn").addEventListener("click", () => {
       const entry = saveEntry("draft");
       if (entry) showToast("Draft saved.");
@@ -1055,6 +1350,13 @@ ${entry.text}`
     $("#cancelSubmit").addEventListener("click", () => submitDialog.close());
     $("#confirmSubmit").addEventListener("click", submitJournal);
 
+    if (![...timezoneSelect.options].some(option => option.value === state.timezone)) {
+      const customOption = document.createElement("option");
+      customOption.value = state.timezone;
+      customOption.textContent = state.timezone.replaceAll("_", " ");
+      timezoneSelect.appendChild(customOption);
+    }
+    timezoneSelect.value = state.timezone;
     setDates();
     journalText.value = state.lastDraft;
     levelSelect.value = state.level;

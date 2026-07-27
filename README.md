@@ -56,3 +56,15 @@ This prototype stores entries in the student's browser using `localStorage`. For
 - Proper payment and access control
 
 The current package end date is only a front-end demonstration and can be edited by anyone with browser developer tools.
+
+
+## Version 2 additions
+
+- Mobile-first sticky Save and Submit controls
+- Larger touch targets and improved phone layout
+- Student-selectable time zone
+- Time-zone-aware dates, streaks and entry dates
+- Fillable circular monthly streak calendar
+- Circular month completion indicator
+- 17 achievements with progress bars
+- Achievement progress and unlock count
