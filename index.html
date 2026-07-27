@@ -821,6 +821,21 @@
       .paper, textarea { min-height: 64vh; }
     }
 
+
+    .mission-percent{min-width:54px;padding:7px 10px;border-radius:999px;background:var(--soft);color:var(--accent);font:700 14px "DM Sans",sans-serif;text-align:center}
+    .mission-progress-track{height:7px;margin:14px 0 16px;overflow:hidden;border-radius:999px;background:rgba(139,103,81,.11)}
+    .mission-progress-fill{width:0;height:100%;border-radius:inherit;background:var(--accent);transition:width .3s ease}
+    .mission-checklist{display:grid;gap:9px}.mission-check{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;padding:10px 11px;border:1px solid rgba(139,103,81,.12);border-radius:13px;background:rgba(255,255,255,.42);cursor:pointer}
+    .mission-check input{position:absolute;opacity:0}.mission-box{display:grid;place-items:center;width:20px;height:20px;border:1.5px solid rgba(139,103,81,.38);border-radius:7px;background:#fff}.mission-box:after{content:"✓";color:#fff;font:700 12px "DM Sans",sans-serif;opacity:0}.mission-check input:checked+.mission-box{background:var(--accent);border-color:var(--accent)}.mission-check input:checked+.mission-box:after{opacity:1}
+    .mission-copy{display:grid;gap:2px}.mission-copy strong{font:600 13px "DM Sans",sans-serif}.mission-copy small,.mission-note{color:var(--muted);font-size:11px;line-height:1.45}.mission-note{margin:12px 2px 0}
+
+
+    .member-area{display:flex;align-items:center;gap:10px;margin-left:auto}.member-copy{display:grid;gap:1px;text-align:right;max-width:240px}.member-copy strong{font-size:12px}.member-copy span{font-size:10px;color:var(--muted);line-height:1.25}.member-button{border:0;border-radius:999px;background:var(--ink);color:#fff;padding:9px 13px;font-weight:700;font-size:11px;white-space:nowrap}.member-button-secondary{background:rgba(255,255,255,.62);color:var(--ink);border:1px solid rgba(139,103,81,.2)}
+    .mission-category{display:inline-flex;width:max-content;padding:3px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.mission-check.manual-mission{grid-template-columns:22px minmax(0,1fr)}
+    .cloud-banner{display:none;margin:0 0 12px;padding:10px 12px;border-radius:12px;background:rgba(139,103,81,.09);font-size:11px;color:var(--muted)}.cloud-banner.show{display:block}
+    @media(max-width:800px){.topbar{flex-wrap:wrap}.member-area{order:3;width:100%;justify-content:space-between;margin-left:0}.member-copy{text-align:left;max-width:none;flex:1}}
+    @media(max-width:480px){.member-copy span{display:none}.member-button{padding:8px 10px}.member-area{gap:6px}}
+
 </style>
 </head>
 
@@ -830,13 +845,19 @@
       <div class="brand">
         <div class="brand-mark">한</div>
         <div>
-          <h1>Langsnack Korean Journal</h1>
-          <p>A quiet place to write in Korean.</p>
+          <h1 data-i18n="appTitle">Langsnack Korean Journal</h1>
+          <p data-i18n="appTagline">A quiet place to write in Korean.</p>
         </div>
       </div>
-      <div class="profile-pill">Student access</div>
-    
-        <div class="topbar-actions">
+      <div class="member-area" id="memberArea">
+        <div class="member-copy">
+          <strong id="memberName" data-i18n="guestName">Guest writer</strong>
+          <span id="memberStatus" data-i18n="guestStatus">Sign in to keep your entries on every device.</span>
+        </div>
+        <button class="member-button" id="loginBtn" data-i18n="loginSignup">Log in / Sign up</button>
+        <button class="member-button member-button-secondary" id="logoutBtn" data-i18n="logout" hidden>Log out</button>
+      </div>
+<div class="topbar-actions">
           <label class="header-language">
             <span data-i18n="languageLabel">Language</span>
             <select id="languageSelect" aria-label="Choose interface language">
@@ -846,6 +867,8 @@
           </label>
         </div>
 </header>
+
+    <div class="cloud-banner" id="cloudBanner" data-i18n="guestStorageNotice">You are writing as a guest. This draft is stored only in this browser until you log in.</div>
 
     <div class="layout">
       <section class="journal-card">
@@ -859,10 +882,10 @@
             <label class="select-wrap">
               <span data-i18n="levelLabel">Level</span>
               <select id="levelSelect" aria-label="Choose Korean level">
-                <option value="starter">Starter</option>
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
+                <option value="starter" data-i18n="levelStarter">Starter</option>
+                <option value="beginner" data-i18n="levelBeginner">Beginner</option>
+                <option value="intermediate" data-i18n="levelIntermediate">Intermediate</option>
+                <option value="advanced" data-i18n="levelAdvanced">Advanced</option>
               </select>
             </label>
 <label class="select-wrap timezone-select">
@@ -889,9 +912,9 @@
 
         <div class="inspiration">
           <div class="inspiration-row">
-            <button class="soft-button" data-generator="topic">Give me a topic</button>
-            <button class="soft-button" data-generator="prompt">Give me a prompt</button>
-            <button class="soft-button" data-generator="grammar">Give me grammar</button>
+            <button class="soft-button" data-generator="topic" data-i18n="giveTopic">Give me a topic</button>
+            <button class="soft-button" data-generator="prompt" data-i18n="givePrompt">Give me a prompt</button>
+            <button class="soft-button" data-generator="grammar" data-i18n="giveGrammar">Give me grammar</button>
           </div>
 
           <div class="generator-output" id="generatorOutput">
@@ -909,13 +932,13 @@
 
         <div class="editor-footer">
           <div class="word-count">
-            <span id="charCount">0</span> characters ·
-            <span id="wordCount">0</span> words
+            <span id="charCount">0</span> <span data-i18n="charactersLabel">characters</span> ·
+            <span id="wordCount">0</span> <span data-i18n="wordsLabel">words</span>
           </div>
 
           <div class="action-group">
-            <button class="button button-secondary" id="saveDraftBtn">Save draft</button>
-            <button class="button button-primary" id="submitBtn">Submit for review</button>
+            <button class="button button-secondary" id="saveDraftBtn" data-i18n="saveDraft">Save draft</button>
+            <button class="button button-primary" id="submitBtn" data-i18n="submitReview">Submit for review</button>
           </div>
         </div>
       </section>
@@ -925,10 +948,10 @@
           <div class="streak-heading-row">
             <div>
               <h2 data-i18n="writingStreak">Writing streak</h2>
-              <p class="streak-number"><span id="streakCount">0</span> days</p>
+              <p class="streak-number"><span id="streakCount">0</span> <span data-i18n="daysLabel">days</span></p>
             </div>
             <div class="month-progress" id="monthProgress" style="--progress:0%">
-              <strong><span id="monthProgressText">0/0</span><span>days</span></strong>
+              <strong><span id="monthProgressText">0/0</span><span data-i18n="daysLabel">days</span></strong>
             </div>
           </div>
           <p class="muted" id="streakMessage">Start with one entry today.</p>
@@ -940,21 +963,31 @@
         </section>
 
         <section class="side-card">
-          <h2>Writing review access</h2>
+          <h2 data-i18n="reviewAccessTitle">Writing review access</h2>
           <div class="package-box">
             <strong id="packageStatus">Active package</strong>
             <span class="muted" id="packageExpiry">Available until your package ends.</span>
           </div>
         </section>
 
-        <section class="side-card">
+        
+        <section class="side-card mission-progress-card">
+          <div class="side-card-head">
+            <div><p class="eyebrow" data-i18n="missionProgressEyebrow">Today</p><h2 data-i18n="missionProgressTitle">Mission progress</h2></div>
+            <div class="mission-percent" id="missionPercent">0%</div>
+          </div>
+          <div class="mission-progress-track"><div class="mission-progress-fill" id="missionProgressFill"></div></div>
+          <div class="mission-checklist" id="missionChecklist"></div>
+          <p class="mission-note" id="missionNote" data-i18n="missionNoteStart">Complete today’s small steps at your own pace.</p>
+        </section>
+<section class="side-card">
           <h2 data-i18n="achievementsTitle">Achievements</h2>
           <div class="achievement-list" id="achievementList"></div>
           <div class="achievement-count" id="achievementCount"></div>
         </section>
 
         <section class="side-card">
-          <h2>My entries</h2>
+          <h2 data-i18n="myEntriesTitle">My entries</h2>
           <div class="entries" id="entriesList"></div>
         </section>
       </aside>
@@ -963,22 +996,22 @@
 
   <dialog id="submitDialog">
     <div class="modal-content">
-      <h2>Submit this journal?</h2>
-      <p>Your original writing will be sent to Nicole for personal review. No automated corrections will be made.</p>
+      <h2 data-i18n="submitDialogTitle">Submit this journal?</h2>
+      <p data-i18n="submitDialogDesc">Your original writing will be sent to Nicole for personal review. No automated corrections will be made.</p>
 
       <div class="field">
-        <label for="studentName">Your name</label>
+        <label for="studentName" data-i18n="yourName">Your name</label>
         <input id="studentName" type="text" placeholder="Your name">
       </div>
 
       <div class="field">
-        <label for="studentEmail">Your email</label>
+        <label for="studentEmail" data-i18n="yourEmail">Your email</label>
         <input id="studentEmail" type="email" placeholder="you@example.com">
       </div>
 
       <div class="modal-actions">
-        <button class="button button-secondary" id="cancelSubmit">Cancel</button>
-        <button class="button button-primary" id="confirmSubmit">Send journal</button>
+        <button class="button button-secondary" id="cancelSubmit" data-i18n="cancel">Cancel</button>
+        <button class="button button-primary" id="confirmSubmit" data-i18n="sendJournal">Send journal</button>
       </div>
     </div>
   </dialog>
@@ -1054,6 +1087,14 @@
 
     const translations = {
       en: {
+        appTitle:"Langsnack Korean Journal", appTagline:"A quiet place to write in Korean.",
+        guestName:"Guest writer", memberNameFallback:"Member", guestStatus:"Sign in to keep your entries on every device.", loginSignup:"Log in / Sign up", logout:"Log out", memberStatus:"Your entries are saved to your Langsnack account.", guestStorageNotice:"You are writing as a guest. This draft is stored only in this browser until you log in.", cloudSynced:"Your entries are synced.", loginRequired:"Log in to save entries permanently and submit them for review.",
+        levelStarter:"Starter", levelBeginner:"Beginner", levelIntermediate:"Intermediate", levelAdvanced:"Advanced",
+        giveTopic:"Give me a topic", givePrompt:"Give me a prompt", giveGrammar:"Give me grammar", charactersLabel:"characters", wordsLabel:"words", daysLabel:"days", saveDraft:"Save draft", submitReview:"Submit for review", reviewAccessTitle:"Writing review access", myEntriesTitle:"My entries",
+        submitDialogTitle:"Submit this journal?", submitDialogDesc:"Your original writing will be sent to Nicole for personal review. No automated corrections will be made.", yourName:"Your name", yourEmail:"Your email", cancel:"Cancel", sendJournal:"Send journal",
+        topicLabel:"Today’s topic", promptLabel:"Today’s prompt", grammarLabel:"Grammar inspiration", noEntries:"No saved entries yet.", untitled:t("untitled"), draftStatus:"Draft", submittedStatus:"Submitted", activePackage:"Active package", endedPackage:"Package ended", packageAvailable:"Reviews available until {date}.", packageRenew:"Renew a package to submit new journals for review.", writeBeforeSave:"Write something before saving.", writeBeforeSubmit:"Write something before submitting.", enterNameEmail:"Please enter your name and email.", journalSent:"Journal sent for review.", sendFailed:"Could not send. Opening your email app instead.", keepRhythm:"Keep your writing rhythm going.",
+        missionNoteStart:"Complete the three writing challenges.", missionNoteDone:"Today’s mission set is complete.", missionGrammarCat:"Grammar", missionContentCat:"Content", missionStyleCat:"Style",
+
         languageLabel:"Language", levelLabel:"Level", timezoneLabel:"Time zone",
         writingStreak:"Writing streak", achievementsTitle:"Achievements",
         savedEntriesTitle:"Saved entries", writingReviewsTitle:"Writing reviews",
@@ -1062,7 +1103,7 @@
         entryCompleted:"Entry completed", unlocked:"unlocked",
         draftSaved:"Draft saved.", timezoneUpdated:"Time zone updated.",
         languageUpdated:"Interface language updated.",
-        entryPlaceholder:"Write your Korean journal here...",
+        entryPlaceholder:"Write your Korean journal here...", missionProgressEyebrow:"Today", missionProgressTitle:"Mission progress",
         first:["✦","First entry","Write your first entry."],
         threeDays:["3","A small habit","Write on three different days."],
         weekWriter:["7","Seven writing days","Write on seven different days."],
@@ -1082,6 +1123,14 @@
         return:["↺","Starting again","Return after a break."]
       },
       ko: {
+        appTitle:"Langsnack 한국어 일기", appTagline:"한국어로 차분히 글을 쓰는 공간이에요.",
+        guestName:"게스트 작가", memberNameFallback:"회원", guestStatus:"로그인하면 어느 기기에서든 내 글을 볼 수 있어요.", loginSignup:"로그인 / 회원가입", logout:"로그아웃", memberStatus:"내 글이 Langsnack 계정에 저장되고 있어요.", guestStorageNotice:"현재 게스트로 작성 중이에요. 로그인하기 전까지 이 초안은 이 브라우저에만 저장돼요.", cloudSynced:"내 글을 계정과 동기화했어요.", loginRequired:"글을 안전하게 저장하고 첨삭을 요청하려면 로그인해 주세요.",
+        levelStarter:"입문", levelBeginner:"초급", levelIntermediate:"중급", levelAdvanced:"고급",
+        giveTopic:"주제 추천", givePrompt:"질문 추천", giveGrammar:"문법 추천", charactersLabel:"자", wordsLabel:"어절", daysLabel:"일", saveDraft:"임시 저장", submitReview:"첨삭 요청", reviewAccessTitle:"첨삭 이용 정보", myEntriesTitle:"내 글", 
+        submitDialogTitle:"이 글을 첨삭 요청할까요?", submitDialogDesc:"작성한 원문은 니콜쌤에게 전달돼요. AI 자동 첨삭은 하지 않아요.", yourName:"이름", yourEmail:"이메일", cancel:"취소", sendJournal:"글 보내기",
+        topicLabel:"오늘의 주제", promptLabel:"오늘의 질문", grammarLabel:"문법 힌트", noEntries:"아직 저장한 글이 없어요.", untitled:"제목 없는 글", draftStatus:"임시 저장", submittedStatus:"첨삭 요청 완료", activePackage:"이용권 사용 중", endedPackage:"이용권 종료", packageAvailable:"{date}까지 첨삭을 요청할 수 있어요.", packageRenew:"새 글의 첨삭을 요청하려면 이용권을 갱신해 주세요.", writeBeforeSave:"저장할 글을 먼저 써 주세요.", writeBeforeSubmit:"첨삭을 요청할 글을 먼저 써 주세요.", enterNameEmail:"이름과 이메일을 입력해 주세요.", journalSent:"첨삭 요청을 보냈어요.", sendFailed:"전송하지 못했어요. 이메일 앱을 열게요.", keepRhythm:"지금의 글쓰기 흐름을 이어 가 보세요.",
+        missionNoteStart:"오늘의 글쓰기 미션 세 가지를 완료해 보세요.", missionNoteDone:"오늘의 미션을 모두 완료했어요.", missionGrammarCat:"문법", missionContentCat:"내용", missionStyleCat:"표현 방식",
+
         languageLabel:"언어", levelLabel:"레벨", timezoneLabel:"시간대",
         writingStreak:"연속 쓰기", achievementsTitle:"기록 배지",
         savedEntriesTitle:"저장한 글", writingReviewsTitle:"글 첨삭",
@@ -1090,7 +1139,7 @@
         entryCompleted:"작성 완료", unlocked:"개 달성",
         draftSaved:"임시 저장했어요.", timezoneUpdated:"시간대를 변경했어요.",
         languageUpdated:"화면 언어를 변경했어요.",
-        entryPlaceholder:"여기에 한국어로 글을 써 보세요...",
+        entryPlaceholder:"여기에 한국어로 글을 써 보세요...", missionProgressEyebrow:"오늘", missionProgressTitle:"미션 달성률",
         first:["✦","첫 기록","첫 번째 글을 저장해 보세요."],
         threeDays:["3","작은 습관","서로 다른 날에 세 번 써 보세요."],
         weekWriter:["7","일주일 작가","서로 다른 날에 일곱 번 써 보세요."],
@@ -1119,9 +1168,18 @@
 
     function applyLanguage() {
       document.documentElement.lang = state.language === "ko" ? "ko" : "en";
+      document.title = t("appTitle");
       document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t(el.dataset.i18n));
+      document.querySelectorAll("[data-i18n-placeholder]").forEach(el => el.placeholder = t(el.dataset.i18nPlaceholder));
       journalText.placeholder = t("entryPlaceholder");
+      studentName.placeholder = t("yourName");
+      studentEmail.placeholder = state.language === "ko" ? "name@example.com" : "you@example.com";
+      languageSelect.setAttribute("aria-label", state.language === "ko" ? "화면 언어 선택" : "Choose interface language");
+      levelSelect.setAttribute("aria-label", state.language === "ko" ? "한국어 레벨 선택" : "Choose Korean level");
+      timezoneSelect.setAttribute("aria-label", state.language === "ko" ? "시간대 선택" : "Choose your time zone");
+      setDates();
       renderAll();
+      renderMemberUI();
     }
 
     const bilingualWritingData = {
@@ -1153,6 +1211,74 @@
       return item?.[state.language] || item?.en || "";
     }
 
+
+    const missionPools = {
+      starter: {
+        grammar:[
+          {en:"Use 그리고 twice.",ko:"‘그리고’를 두 번 사용해 보세요.",test:t=>((t.match(/그리고/g)||[]).length>=2)},
+          {en:"Use one past-tense sentence.",ko:"과거형 문장을 한 개 써 보세요.",test:t=>/(았어요|었어요|했어요)/.test(t)},
+          {en:"Use one negative sentence.",ko:"부정문을 한 개 써 보세요.",test:t=>/(안 |지 않)/.test(t)}],
+        content:[
+          {en:"Mention one person and one place.",ko:"사람 한 명과 장소 한 곳을 함께 써 보세요.",manual:true},
+          {en:"Describe one thing you ate or drank.",ko:"먹거나 마신 것 한 가지를 묘사해 보세요.",manual:true},
+          {en:"Include one feeling.",ko:"느낌이나 기분을 한 가지 써 보세요.",manual:true}],
+        style:[
+          {en:"Write exactly four sentences.",ko:"정확히 네 문장으로 써 보세요.",test:t=>sentenceCount(t)===4},
+          {en:"End with a question.",ko:"마지막을 질문으로 끝내 보세요.",test:t=>/[?？]$/.test(t.trim())},
+          {en:"Use three different adjectives.",ko:"서로 다른 형용사를 세 개 사용해 보세요.",manual:true}]
+      },
+      beginner: {
+        grammar:[
+          {en:"Use -(으)려고 해요 naturally.",ko:"‘-(으)려고 해요’를 자연스럽게 사용해 보세요.",test:t=>/려고 해요|으려고 해요/.test(t)},
+          {en:"Use -아/어서 to give a reason.",ko:"‘-아/어서’를 사용해 이유를 설명해 보세요.",manual:true},
+          {en:"Use -(으)니까 once.",ko:"‘-(으)니까’를 한 번 사용해 보세요.",test:t=>/(으니까|니까)/.test(t)}],
+        content:[
+          {en:"Compare yesterday and today.",ko:"어제와 오늘을 비교해 보세요.",manual:true},
+          {en:"Recommend something and explain why.",ko:"무언가를 추천하고 그 이유를 설명해 보세요.",manual:true},
+          {en:"Describe a small problem and its solution.",ko:"작은 문제와 해결 방법을 함께 써 보세요.",manual:true}],
+        style:[
+          {en:"Write without using 그리고.",ko:"‘그리고’를 사용하지 않고 써 보세요.",test:t=>!t.includes("그리고")},
+          {en:"Include one direct question.",ko:"직접 질문하는 문장을 한 개 넣어 보세요.",test:t=>/[?？]/.test(t)},
+          {en:"Use at least two connecting expressions.",ko:"연결 표현을 두 가지 이상 사용해 보세요.",manual:true}]
+      },
+      intermediate: {
+        grammar:[
+          {en:"Use -는 김에 naturally.",ko:"‘-는 김에’를 자연스럽게 사용해 보세요.",test:t=>/는 김에/.test(t)},
+          {en:"Use -다 보니(까).",ko:"‘-다 보니(까)’를 사용해 보세요.",test:t=>/다 보니|다 보니까/.test(t)},
+          {en:"Use -는 반면에 to contrast two ideas.",ko:"‘-는 반면에’로 두 내용을 대조해 보세요.",test:t=>/는 반면에/.test(t)}],
+        content:[
+          {en:"Explain a decision and what influenced it.",ko:"결정 하나와 그 결정에 영향을 준 요인을 설명해 보세요.",manual:true},
+          {en:"Describe something you regret without being too dramatic.",ko:"과장하지 않고 아쉬웠던 일을 설명해 보세요.",manual:true},
+          {en:"Present two different reasons for your opinion.",ko:"내 의견을 뒷받침하는 이유를 두 가지 제시해 보세요.",manual:true}],
+        style:[
+          {en:"Begin with the result, then explain what happened.",ko:"결과를 먼저 말한 뒤 무슨 일이 있었는지 설명해 보세요.",manual:true},
+          {en:"Include a short quotation.",ko:"짧은 인용 표현을 하나 넣어 보세요.",manual:true},
+          {en:"End with what you would do differently next time.",ko:"다음에는 어떻게 다르게 할지 쓰며 마무리해 보세요.",manual:true}]
+      },
+      advanced: {
+        grammar:[
+          {en:"Use -다고 해서 to limit a generalisation.",ko:"‘-다고 해서’를 사용해 일반화를 제한해 보세요.",test:t=>/다고 해서/.test(t)},
+          {en:"Use -(으)ㄹ 뿐만 아니라.",ko:"‘-(으)ㄹ 뿐만 아니라’를 자연스럽게 사용해 보세요.",test:t=>/뿐만 아니라/.test(t)},
+          {en:"Use -는 데다가 to add supporting information.",ko:"‘-는 데다가’를 사용해 근거를 덧붙여 보세요.",test:t=>/는 데다가/.test(t)}],
+        content:[
+          {en:"Defend an opinion that others may disagree with.",ko:"다른 사람이 반대할 수도 있는 의견을 논리적으로 설명해 보세요.",manual:true},
+          {en:"Discuss both benefits and hidden costs.",ko:"장점과 눈에 잘 보이지 않는 대가를 함께 다뤄 보세요.",manual:true},
+          {en:"Describe how your view changed over time.",ko:"시간이 지나며 생각이 어떻게 달라졌는지 설명해 보세요.",manual:true}],
+        style:[
+          {en:"Acknowledge the opposing view before your conclusion.",ko:"결론 전에 반대 관점을 먼저 인정해 보세요.",manual:true},
+          {en:"Avoid 좋다, 나쁘다, and 중요하다.",ko:"‘좋다’, ‘나쁘다’, ‘중요하다’를 사용하지 않고 써 보세요.",test:t=>!["좋다","나쁘다","중요하다"].some(w=>t.includes(w))},
+          {en:"Use one rhetorical question.",ko:"수사적인 질문을 하나 사용해 보세요.",manual:true}]
+      }
+    };
+
+    function sentenceCount(text){ return (text.trim().match(/[^.!?。！？]+[.!?。！？]?/g)||[]).filter(s=>s.trim()).length; }
+    function seededIndex(extra, length){ const seed=[...(dateKey()+state.level+extra)].reduce((a,c)=>a+c.charCodeAt(0),0); return seed%length; }
+    function getDailyMissions(){
+      const pools=missionPools[state.level]||missionPools.starter;
+      return ["grammar","content","style"].map(cat=>({category:cat,...pools[cat][seededIndex(cat,pools[cat].length)]}));
+    }
+    function missionStorageKey(){ return `missions:${dateKey()}:${state.level}`; }
+
     const achievements = [
       { id: "first", icon: "✦", title: "첫 기록", desc: "Write your first entry.", goal: 1, value: s => s.totalEntries },
       { id: "threeDays", icon: "3", title: "작은 습관", desc: "Write on three different days.", goal: 3, value: s => s.uniqueDays },
@@ -1178,11 +1304,42 @@
     const levelSelect = $("#levelSelect");
     const timezoneSelect = $("#timezoneSelect");
     const languageSelect = $("#languageSelect");
+    const missionPercent=$("#missionPercent"), missionProgressFill=$("#missionProgressFill"), missionNote=$("#missionNote");
     const generatorOutput = $("#generatorOutput");
     const generatorLabel = $("#generatorLabel");
     const generatorText = $("#generatorText");
     const toast = $("#toast");
     const submitDialog = $("#submitDialog");
+
+    const loginBtn=$("#loginBtn"), logoutBtn=$("#logoutBtn"), memberName=$("#memberName"), memberStatus=$("#memberStatus"), cloudBanner=$("#cloudBanner");
+    let wixMember={loggedIn:false,id:null,name:null,email:null};
+    let bridgeReady=false;
+    function sendToWix(type,payload={}){ if(window.parent!==window) window.parent.postMessage({source:"langsnack-journal",type,payload},"*"); }
+    function renderMemberUI(){
+      loginBtn.hidden=wixMember.loggedIn; logoutBtn.hidden=!wixMember.loggedIn;
+      memberName.textContent=wixMember.loggedIn?(wixMember.name||wixMember.email||t("memberNameFallback")):t("guestName");
+      memberStatus.textContent=wixMember.loggedIn?t("memberStatus"):t("guestStatus");
+      cloudBanner.classList.toggle("show",!wixMember.loggedIn);
+    }
+    window.addEventListener("message",event=>{
+      const msg=event.data||{}; if(msg.source!=="langsnack-wix") return;
+      bridgeReady=true;
+      if(msg.type==="memberState"){
+        wixMember={loggedIn:!!msg.payload?.loggedIn,...msg.payload};
+        if(wixMember.loggedIn){ state.profile.name=wixMember.name||state.profile.name; state.profile.email=wixMember.email||state.profile.email; saveState(); sendToWix("loadEntries"); }
+        renderMemberUI();
+      }
+      if(msg.type==="entriesLoaded" && Array.isArray(msg.payload?.entries)){
+        state.entries=msg.payload.entries; saveState(); renderAll(); showToast(t("cloudSynced"));
+      }
+      if(msg.type==="entrySaved" && msg.payload?.entry){
+        const entry=msg.payload.entry; const i=state.entries.findIndex(e=>e.id===entry.id); if(i>=0)state.entries[i]=entry; else state.entries.unshift(entry); saveState(); renderAll();
+      }
+      if(msg.type==="authCancelled") renderMemberUI();
+    });
+    loginBtn.addEventListener("click",()=>sendToWix("login"));
+    logoutBtn.addEventListener("click",()=>sendToWix("logout"));
+
 
     let state = JSON.parse(localStorage.getItem("langsnackJournalState") || "{}");
     state.entries = state.entries || [];
@@ -1223,7 +1380,7 @@
         timeZone: state.timezone,
         month: "long", day: "numeric", weekday: "long"
       }).format(today);
-      $("#englishDate").textContent = new Intl.DateTimeFormat("en-GB", {
+      $("#englishDate").textContent = new Intl.DateTimeFormat(state.language==="ko"?"ko-KR":"en-GB", {
         timeZone: state.timezone,
         day: "numeric", month: "long", year: "numeric"
       }).format(today);
@@ -1235,12 +1392,8 @@
 
     function showGenerator(type) {
       const level = levelSelect.value;
-      const labels = {
-        topic: "Today's topic",
-        prompt: "Today's prompt",
-        grammar: "Grammar inspiration"
-      };
-      generatorLabel.textContent = labels[type];
+      const labels = {topic:"topicLabel",prompt:"promptLabel",grammar:"grammarLabel"};
+      generatorLabel.textContent = t(labels[type]);
       generatorText.textContent = randomItem(content[level][type]);
       generatorOutput.classList.add("show");
     }
@@ -1265,7 +1418,7 @@
     function saveEntry(status = "draft") {
       const text = journalText.value.trim();
       if (!text) {
-        showToast("Write something before saving.");
+        showToast(t("writeBeforeSave"));
         return null;
       }
 
@@ -1287,6 +1440,7 @@
       state.level = levelSelect.value;
       saveState();
       renderAll();
+      if(wixMember.loggedIn) sendToWix("saveEntry",{entry});
       return entry;
     }
 
@@ -1425,10 +1579,10 @@
       state.entries.slice(0, 12).forEach(entry => {
         const button = document.createElement("button");
         button.className = "entry-item";
-        const title = entry.text.replace(/\s+/g, " ").slice(0, 34) || "Untitled entry";
+        const title = entry.text.replace(/\s+/g, " ").slice(0, 34) || t("untitled");
         button.innerHTML = `
           <strong>${title}${entry.text.length > 34 ? "…" : ""}</strong>
-          <span>${entry.date} · ${entry.level} · ${entry.status}</span>
+          <span>${entry.date} · ${t("level"+entry.level[0].toUpperCase()+entry.level.slice(1))} · ${t(entry.status==="submitted"?"submittedStatus":"draftStatus")}</span>
         `;
         button.addEventListener("click", () => {
           journalText.value = entry.text;
@@ -1443,12 +1597,11 @@
     function renderPackage() {
       const end = new Date(CONFIG.packageEndDate + "T23:59:59");
       const active = new Date() <= end;
-      $("#packageStatus").textContent = active ? "Active package" : "Package ended";
-      $("#packageExpiry").textContent = active
-        ? `Reviews available until ${new Intl.DateTimeFormat("en-GB", {day:"numeric", month:"long", year:"numeric"}).format(end)}.`
-        : "Renew a package to submit new journals for review.";
-      $("#submitBtn").disabled = !active;
-      $("#submitBtn").style.opacity = active ? "1" : ".45";
+      const locale=state.language==="ko"?"ko-KR":"en-GB";
+      const date=new Intl.DateTimeFormat(locale,{day:"numeric",month:"long",year:"numeric"}).format(end);
+      $("#packageStatus").textContent=active?t("activePackage"):t("endedPackage");
+      $("#packageExpiry").textContent=active?t("packageAvailable",{date}):t("packageRenew");
+      $("#submitBtn").disabled=!active; $("#submitBtn").style.opacity=active?"1":".45";
     }
 
     function renderDailyWritingFocus() {
@@ -1463,16 +1616,40 @@
       if (missionEl) missionEl.textContent = localizeWritingItem(set.mission);
     }
 
+
+    function renderMissionProgress(){
+      const list=$("#missionChecklist");
+      if(!list) return;
+      const missions=getDailyMissions();
+      const text=(journalText.value||"").trim();
+      const savedChecks=JSON.parse(localStorage.getItem(missionStorageKey())||"{}");
+      list.innerHTML="";
+      let done=0;
+      missions.forEach((mission,index)=>{
+        const automatic=typeof mission.test==="function";
+        const checked=automatic ? mission.test(text) : Boolean(savedChecks[index]);
+        if(checked) done++;
+        const label=document.createElement("label");
+        label.className="mission-check manual-mission";
+        label.innerHTML=`<input type="checkbox" ${checked?"checked":""} ${automatic?"disabled":""}><span class="mission-box"></span><span class="mission-copy"><span class="mission-category">${t("mission"+mission.category[0].toUpperCase()+mission.category.slice(1)+"Cat")}</span><strong>${mission[state.language]||mission.en}</strong></span>`;
+        const input=label.querySelector("input");
+        if(!automatic) input.addEventListener("change",()=>{savedChecks[index]=input.checked;localStorage.setItem(missionStorageKey(),JSON.stringify(savedChecks));renderMissionProgress();});
+        list.appendChild(label);
+      });
+      const pct=Math.round(done/missions.length*100);
+      missionPercent.textContent=`${pct}%`; missionProgressFill.style.width=`${pct}%`;
+      missionNote.textContent=pct===100?t("missionNoteDone"):t("missionNoteStart");
+    }
+
     function renderAll() {
       const stats = calculateStats();
       $("#streakCount").textContent = stats.streak;
-      $("#streakMessage").textContent = stats.streak
-        ? "Keep your writing rhythm going."
-        : "Start with one entry today.";
+      $("#streakMessage").textContent = stats.streak ? t("keepRhythm") : t("streakStart");
       renderCalendar();
       renderAchievements();
       renderEntries();
       renderDailyWritingFocus();
+      renderMissionProgress();
       renderPackage();
     }
 
@@ -1484,7 +1661,7 @@
       const email = $("#studentEmail").value.trim();
 
       if (!name || !email) {
-        showToast("Please enter your name and email.");
+        showToast(t("enterNameEmail"));
         return;
       }
 
@@ -1509,10 +1686,10 @@
 
           if (!response.ok) throw new Error("Submission failed");
           submitDialog.close();
-          showToast("Journal sent for review.");
+          showToast(t("journalSent"));
           return;
         } catch (error) {
-          showToast("Could not send. Opening your email app instead.");
+          showToast(t("sendFailed"));
         }
       }
 
@@ -1546,7 +1723,10 @@ ${entry.text}`
       state.level = levelSelect.value;
       saveState();
       generatorOutput.classList.remove("show");
+      renderMissionProgress();
     });
+
+    journalText.addEventListener("input", renderMissionProgress);
 
     timezoneSelect.addEventListener("change", () => {
       state.timezone = timezoneSelect.value;
@@ -1569,8 +1749,9 @@ ${entry.text}`
     });
 
     $("#submitBtn").addEventListener("click", () => {
+      if(!wixMember.loggedIn){ showToast(t("loginRequired")); sendToWix("login"); return; }
       if (!journalText.value.trim()) {
-        showToast("Write something before submitting.");
+        showToast(t("writeBeforeSubmit"));
         return;
       }
       $("#studentName").value = state.profile.name || "";
@@ -1594,6 +1775,9 @@ ${entry.text}`
     levelSelect.value = state.level;
     updateCounts();
     applyLanguage();
+    renderMemberUI();
+    sendToWix("ready");
+    setTimeout(()=>{ if(!bridgeReady) renderMemberUI(); },800);
   </script>
 </body>
 </html>
