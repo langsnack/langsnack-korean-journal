@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A calm Korean writing journal by Langsnack." />
+  <title>Langsnack Korean Journal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper: #f6f0e7;
+      --paper-deep: #eee4d7;
+      --ink: #2f2a25;
+      --muted: #7f7469;
+      --line: #d7c9b9;
+      --accent: #8b6751;
+      --accent-soft: #e8d8c9;
+      --card: rgba(255,255,255,.62);
+      --success: #5f7a65;
+      --shadow: 0 18px 45px rgba(70, 50, 35, .10);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,.85), transparent 34%),
+        linear-gradient(145deg, var(--paper), #f9f6f1 55%, var(--paper-deep));
+    }
+
+    button, select, textarea, input { font: inherit; }
+
+    button { cursor: pointer; }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 60px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: var(--ink);
+      color: white;
+      font-family: "Nanum Myeongjo", serif;
+      font-size: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(20px, 3vw, 30px);
+      letter-spacing: -.03em;
+    }
+
+    .brand p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .profile-pill {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.5);
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 330px;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .journal-card,
+    .side-card {
+      background: var(--card);
+      border: 1px solid rgba(139,103,81,.16);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+    }
+
+    .journal-card {
+      border-radius: 30px;
+      overflow: hidden;
+    }
+
+    .journal-head {
+      padding: 24px 26px 18px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .date-korean {
+      font-family: "Nanum Myeongjo", serif;
+      font-size: clamp(24px, 4vw, 38px);
+      margin: 0 0 4px;
+    }
+
+    .date-en {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .select-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 10px 4px 12px;
+      background: rgba(255,255,255,.64);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    select {
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .inspiration {
+      padding: 22px 26px 10px;
+    }
+
+    .inspiration-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .soft-button {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.56);
+      color: var(--ink);
+      padding: 12px 14px;
+      border-radius: 14px;
+      transition: .2s ease;
+    }
+
+    .soft-button:hover {
+      transform: translateY(-1px);
+      background: white;
+      border-color: var(--accent);
+    }
+
+    .generator-output {
+      margin-top: 12px;
+      min-height: 72px;
+      border-radius: 16px;
+      background: var(--accent-soft);
+      padding: 15px 17px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .generator-output.show { display: flex; }
+
+    .generator-label {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 5px;
+    }
+
+    .generator-text {
+      font-family: "Nanum Myeongjo", serif;
+      font-size: 20px;
+      line-height: 1.55;
+    }
+
+    .close-generator {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 20px;
+    }
+
+    .paper {
+      margin: 16px 26px 0;
+      min-height: 470px;
+      border: 1px solid rgba(139,103,81,.14);
+      border-radius: 18px;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,.88) 0,
+          rgba(255,255,255,.88) 41px,
+          rgba(139,103,81,.10) 42px
+        );
+      overflow: hidden;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 470px;
+      resize: vertical;
+      border: 0;
+      outline: 0;
+      padding: 19px 22px;
+      background: transparent;
+      color: var(--ink);
+      font-family: "Nanum Myeongjo", serif;
+      font-size: 20px;
+      line-height: 42px;
+      caret-color: var(--accent);
+    }
+
+    textarea::placeholder { color: #b1a497; }
+
+    .editor-footer {
+      padding: 14px 26px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .word-count {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .action-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-weight: 700;
+    }
+
+    .button-secondary {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .button-primary {
+      background: var(--ink);
+      color: white;
+      box-shadow: 0 10px 22px rgba(47,42,37,.18);
+    }
+
+    .side {
+      display: grid;
+      gap: 16px;
+    }
+
+    .side-card {
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+
+    .side-card h2 {
+      margin: 0 0 14px;
+      font-size: 16px;
+    }
+
+    .streak-number {
+      font-family: "Nanum Myeongjo", serif;
+      font-size: 38px;
+      margin: 0;
+    }
+
+    .muted { color: var(--muted); }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .calendar-grid span {
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .calendar-grid .day-label {
+      aspect-ratio: auto;
+      font-weight: 700;
+      color: var(--ink);
+      padding-bottom: 5px;
+    }
+
+    .calendar-grid .written {
+      background: var(--ink);
+      color: white;
+    }
+
+    .calendar-grid .today {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .package-box {
+      padding: 14px;
+      background: rgba(255,255,255,.54);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .package-box strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .achievement-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .achievement {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 11px;
+      align-items: center;
+      padding: 10px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.48);
+      border: 1px solid transparent;
+    }
+
+    .achievement.locked {
+      opacity: .46;
+      filter: grayscale(1);
+    }
+
+    .achievement-icon {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      font-size: 18px;
+    }
+
+    .achievement-title {
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .achievement-desc {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .entries {
+      display: grid;
+      gap: 8px;
+      max-height: 250px;
+      overflow: auto;
+    }
+
+    .entry-item {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.45);
+      text-align: left;
+      padding: 11px 12px;
+      border-radius: 13px;
+    }
+
+    .entry-item:hover { background: white; }
+
+    .entry-item strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .entry-item span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .empty-state {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translate(-50%, 20px);
+      background: var(--ink);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 999px;
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s ease;
+      z-index: 50;
+      box-shadow: var(--shadow);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    dialog {
+      border: 0;
+      border-radius: 22px;
+      padding: 0;
+      width: min(520px, calc(100% - 28px));
+      box-shadow: 0 24px 80px rgba(30,20,15,.30);
+      background: #fbf8f3;
+      color: var(--ink);
+    }
+
+    dialog::backdrop {
+      background: rgba(47,42,37,.42);
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-content { padding: 24px; }
+
+    .modal-content h2 {
+      margin: 0 0 8px;
+      font-family: "Nanum Myeongjo", serif;
+      font-size: 26px;
+    }
+
+    .modal-content p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .field input {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: white;
+      padding: 12px 13px;
+      border-radius: 12px;
+      outline: 0;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .side { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 650px) {
+      .shell { width: min(100% - 18px, 1180px); padding-top: 14px; }
+      .topbar { align-items: flex-start; }
+      .profile-pill { display: none; }
+      .journal-head { padding: 20px 18px 16px; flex-direction: column; }
+      .controls { justify-content: flex-start; }
+      .inspiration { padding: 18px 18px 8px; }
+      .inspiration-row { grid-template-columns: 1fr; }
+      .paper { margin: 14px 18px 0; }
+      .editor-footer { padding: 13px 18px 20px; }
+      .action-group { width: 100%; }
+      .action-group .button { flex: 1; }
+      .side { grid-template-columns: 1fr; }
+      textarea { font-size: 18px; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">한</div>
+        <div>
+          <h1>Langsnack Korean Journal</h1>
+          <p>A quiet place to write in Korean.</p>
+        </div>
+      </div>
+      <div class="profile-pill">Student access</div>
+    </header>
+
+    <div class="layout">
+      <section class="journal-card">
+        <div class="journal-head">
+          <div>
+            <h2 class="date-korean" id="koreanDate"></h2>
+            <div class="date-en" id="englishDate"></div>
+          </div>
+
+          <div class="controls">
+            <label class="select-wrap">
+              <span>Level</span>
+              <select id="levelSelect" aria-label="Choose Korean level">
+                <option value="starter">Starter</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="inspiration">
+          <div class="inspiration-row">
+            <button class="soft-button" data-generator="topic">Give me a topic</button>
+            <button class="soft-button" data-generator="prompt">Give me a prompt</button>
+            <button class="soft-button" data-generator="grammar">Give me grammar</button>
+          </div>
+
+          <div class="generator-output" id="generatorOutput">
+            <div>
+              <div class="generator-label" id="generatorLabel"></div>
+              <div class="generator-text" id="generatorText"></div>
+            </div>
+            <button class="close-generator" id="closeGenerator" aria-label="Close">×</button>
+          </div>
+        </div>
+
+        <div class="paper">
+          <textarea id="journalText" spellcheck="false" placeholder="한국어로 자유롭게 써 보세요..."></textarea>
+        </div>
+
+        <div class="editor-footer">
+          <div class="word-count">
+            <span id="charCount">0</span> characters ·
+            <span id="wordCount">0</span> words
+          </div>
+
+          <div class="action-group">
+            <button class="button button-secondary" id="saveDraftBtn">Save draft</button>
+            <button class="button button-primary" id="submitBtn">Submit for review</button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="side">
+        <section class="side-card">
+          <h2>Writing streak</h2>
+          <p class="streak-number"><span id="streakCount">0</span> days</p>
+          <p class="muted" id="streakMessage">Start with one entry today.</p>
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </section>
+
+        <section class="side-card">
+          <h2>Writing review access</h2>
+          <div class="package-box">
+            <strong id="packageStatus">Active package</strong>
+            <span class="muted" id="packageExpiry">Available until your package ends.</span>
+          </div>
+        </section>
+
+        <section class="side-card">
+          <h2>Achievements</h2>
+          <div class="achievement-list" id="achievementList"></div>
+        </section>
+
+        <section class="side-card">
+          <h2>My entries</h2>
+          <div class="entries" id="entriesList"></div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <dialog id="submitDialog">
+    <div class="modal-content">
+      <h2>Submit this journal?</h2>
+      <p>Your original writing will be sent to Nicole for personal review. No automated corrections will be made.</p>
+
+      <div class="field">
+        <label for="studentName">Your name</label>
+        <input id="studentName" type="text" placeholder="Your name">
+      </div>
+
+      <div class="field">
+        <label for="studentEmail">Your email</label>
+        <input id="studentEmail" type="email" placeholder="you@example.com">
+      </div>
+
+      <div class="modal-actions">
+        <button class="button button-secondary" id="cancelSubmit">Cancel</button>
+        <button class="button button-primary" id="confirmSubmit">Send journal</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const CONFIG = {
+      teacherEmail: "YOUR_EMAIL@example.com",
+      packageEndDate: "2026-12-31",
+      formspreeEndpoint: ""
+    };
+
+    const content = {
+      starter: {
+        topic: ["오늘", "음식", "가족", "친구", "날씨", "학교", "취미", "주말", "집", "카페"],
+        prompt: [
+          "오늘 뭐 했어요?",
+          "오늘 뭐 먹었어요?",
+          "지금 어디에 있어요?",
+          "오늘 누구를 만났어요?",
+          "주말에 뭐 하고 싶어요?",
+          "좋아하는 음식은 뭐예요?",
+          "오늘 날씨가 어때요?",
+          "집에 뭐가 있어요?"
+        ],
+        grammar: ["-고", "그리고", "-았/었어요", "-고 싶어요", "-에 가요", "-에서", "있어요 / 없어요", "-지만"]
+      },
+      beginner: {
+        topic: ["오늘 하루", "최근에 본 영화", "좋아하는 계절", "친구와의 약속", "여행 계획", "요즘 관심사", "나의 취미", "기억에 남는 음식"],
+        prompt: [
+          "오늘 가장 기억에 남는 일은 뭐예요?",
+          "이번 주말에 무엇을 할 거예요?",
+          "요즘 자주 하는 일을 소개해 보세요.",
+          "최근에 맛있게 먹은 음식에 대해 써 보세요.",
+          "가장 좋아하는 계절과 그 이유를 써 보세요.",
+          "가 보고 싶은 곳은 어디예요?",
+          "기분이 안 좋을 때 보통 무엇을 해요?",
+          "최근에 새로 시작한 일이 있나요?"
+        ],
+        grammar: ["-(으)려고", "-아/어서", "-지만", "-(으)ㄹ 거예요", "-아/어 본 적이 있어요", "-(으)면서", "-기 때문에", "-는 것 같아요"]
+      },
+      intermediate: {
+        topic: ["최근의 변화", "인간관계", "스트레스를 푸는 방법", "잊지 못할 경험", "나의 목표", "생활 습관", "실패와 배움", "혼자만의 시간"],
+        prompt: [
+          "최근에 스스로 가장 뿌듯했던 순간은 언제였어요?",
+          "예전의 나와 지금의 나는 어떻게 달라졌나요?",
+          "스트레스를 받을 때 자신만의 해결 방법이 있나요?",
+          "최근에 생각이 바뀐 일이 있다면 이야기해 보세요.",
+          "오랫동안 기억하고 싶은 하루에 대해 써 보세요.",
+          "지금 가장 이루고 싶은 목표는 무엇인가요?",
+          "혼자 보내는 시간과 함께 보내는 시간 중 무엇을 더 좋아하나요?",
+          "최근에 누군가에게 고마움을 느낀 순간은 언제였나요?"
+        ],
+        grammar: ["-는 김에", "-거든요", "-아/어지다", "-게 되다", "-다 보니", "-아/어서인지", "-(으)ㄹ 수도 있다", "-기는 하지만"]
+      },
+      advanced: {
+        topic: ["행복의 기준", "기술과 인간관계", "성공의 의미", "사회적 책임", "개인의 자유", "환경과 소비", "교육의 역할", "변화에 대한 태도"],
+        prompt: [
+          "행복은 개인의 선택으로 만들어질 수 있다고 생각하시나요?",
+          "기술의 발전이 인간관계를 더 풍요롭게 만들고 있다고 생각하시나요?",
+          "실패를 사회가 바라보는 방식은 어떻게 달라져야 할까요?",
+          "개인의 자유와 사회적 책임이 충돌할 때 무엇이 우선되어야 할까요?",
+          "외국어를 배우는 과정은 사람의 사고방식을 어떻게 바꿀까요?",
+          "현대 사회에서 성공의 기준은 지나치게 단순하다고 생각하시나요?",
+          "소셜미디어는 사람들의 자아 인식에 어떤 영향을 미치나요?",
+          "환경을 위한 개인의 실천은 실제로 얼마나 큰 의미가 있을까요?"
+        ],
+        grammar: ["-(으)ㄹ 뿐만 아니라", "-는 반면에", "-(으)ㄴ/는 셈이다", "-기 마련이다", "-다고 해서", "-(으)ㄹ 리가 없다", "-는 데다가", "-고도 남다"]
+      }
+    };
+
+    const achievements = [
+      { id: "first", icon: "✦", title: "첫 기록", desc: "Write your first entry.", test: s => s.totalEntries >= 1 },
+      { id: "three", icon: "◌", title: "작은 습관", desc: "Write on three different days.", test: s => s.uniqueDays >= 3 },
+      { id: "seven", icon: "7", title: "일주일 기록", desc: "Reach a 7-day streak.", test: s => s.streak >= 7 },
+      { id: "ten", icon: "十", title: "꾸준한 작가", desc: "Save ten entries.", test: s => s.totalEntries >= 10 },
+      { id: "thousand", icon: "千", title: "천 자의 기록", desc: "Write 1,000 Korean characters.", test: s => s.totalChars >= 1000 },
+      { id: "return", icon: "↺", title: "다시 시작", desc: "Return after a break.", test: s => s.returnedAfterBreak }
+    ];
+
+    const $ = selector => document.querySelector(selector);
+    const journalText = $("#journalText");
+    const levelSelect = $("#levelSelect");
+    const generatorOutput = $("#generatorOutput");
+    const generatorLabel = $("#generatorLabel");
+    const generatorText = $("#generatorText");
+    const toast = $("#toast");
+    const submitDialog = $("#submitDialog");
+
+    let state = JSON.parse(localStorage.getItem("langsnackJournalState") || "{}");
+    state.entries = state.entries || [];
+    state.lastDraft = state.lastDraft || "";
+    state.level = state.level || "starter";
+    state.profile = state.profile || { name: "", email: "" };
+
+    function saveState() {
+      localStorage.setItem("langsnackJournalState", JSON.stringify(state));
+    }
+
+    function dateKey(date = new Date()) {
+      return date.toISOString().slice(0, 10);
+    }
+
+    function setDates() {
+      const today = new Date();
+      $("#koreanDate").textContent = new Intl.DateTimeFormat("ko-KR", {
+        month: "long", day: "numeric", weekday: "long"
+      }).format(today);
+      $("#englishDate").textContent = new Intl.DateTimeFormat("en-GB", {
+        day: "numeric", month: "long", year: "numeric"
+      }).format(today);
+    }
+
+    function randomItem(items) {
+      return items[Math.floor(Math.random() * items.length)];
+    }
+
+    function showGenerator(type) {
+      const level = levelSelect.value;
+      const labels = {
+        topic: "Today's topic",
+        prompt: "Today's prompt",
+        grammar: "Grammar inspiration"
+      };
+      generatorLabel.textContent = labels[type];
+      generatorText.textContent = randomItem(content[level][type]);
+      generatorOutput.classList.add("show");
+    }
+
+    function countWords(text) {
+      const trimmed = text.trim();
+      if (!trimmed) return 0;
+      return trimmed.split(/\s+/).length;
+    }
+
+    function updateCounts() {
+      $("#charCount").textContent = journalText.value.replace(/\s/g, "").length;
+      $("#wordCount").textContent = countWords(journalText.value);
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+
+    function saveEntry(status = "draft") {
+      const text = journalText.value.trim();
+      if (!text) {
+        showToast("Write something before saving.");
+        return null;
+      }
+
+      const now = new Date();
+      const existingIndex = state.entries.findIndex(e => e.date === dateKey(now) && e.status === "draft");
+      const entry = {
+        id: existingIndex >= 0 ? state.entries[existingIndex].id : crypto.randomUUID(),
+        date: dateKey(now),
+        createdAt: now.toISOString(),
+        text,
+        level: levelSelect.value,
+        status
+      };
+
+      if (existingIndex >= 0) state.entries[existingIndex] = entry;
+      else state.entries.unshift(entry);
+
+      state.lastDraft = text;
+      state.level = levelSelect.value;
+      saveState();
+      renderAll();
+      return entry;
+    }
+
+    function calculateStats() {
+      const writtenEntries = state.entries.filter(e => e.text.trim());
+      const uniqueDaysArray = [...new Set(writtenEntries.map(e => e.date))].sort();
+      const uniqueDays = uniqueDaysArray.length;
+      const totalChars = writtenEntries.reduce((sum, e) => sum + e.text.replace(/\s/g, "").length, 0);
+
+      let streak = 0;
+      let cursor = new Date();
+      const dates = new Set(uniqueDaysArray);
+      if (!dates.has(dateKey(cursor))) cursor.setDate(cursor.getDate() - 1);
+
+      while (dates.has(dateKey(cursor))) {
+        streak++;
+        cursor.setDate(cursor.getDate() - 1);
+      }
+
+      let returnedAfterBreak = false;
+      for (let i = 1; i < uniqueDaysArray.length; i++) {
+        const a = new Date(uniqueDaysArray[i - 1]);
+        const b = new Date(uniqueDaysArray[i]);
+        const diff = Math.round((b - a) / 86400000);
+        if (diff >= 3) returnedAfterBreak = true;
+      }
+
+      return {
+        totalEntries: writtenEntries.length,
+        uniqueDays,
+        totalChars,
+        streak,
+        returnedAfterBreak
+      };
+    }
+
+    function renderCalendar() {
+      const grid = $("#calendarGrid");
+      grid.innerHTML = "";
+      ["M","T","W","T","F","S","S"].forEach(d => {
+        const span = document.createElement("span");
+        span.className = "day-label";
+        span.textContent = d;
+        grid.appendChild(span);
+      });
+
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth();
+      const firstDay = new Date(year, month, 1);
+      const offset = (firstDay.getDay() + 6) % 7;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const written = new Set(state.entries.map(e => e.date));
+
+      for (let i = 0; i < offset; i++) {
+        const blank = document.createElement("span");
+        grid.appendChild(blank);
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const d = new Date(year, month, day);
+        const span = document.createElement("span");
+        span.textContent = day;
+        const key = dateKey(d);
+        if (written.has(key)) span.classList.add("written");
+        if (key === dateKey(today)) span.classList.add("today");
+        grid.appendChild(span);
+      }
+    }
+
+    function renderAchievements() {
+      const stats = calculateStats();
+      const list = $("#achievementList");
+      list.innerHTML = "";
+
+      achievements.forEach(a => {
+        const unlocked = a.test(stats);
+        const item = document.createElement("div");
+        item.className = `achievement ${unlocked ? "" : "locked"}`;
+        item.innerHTML = `
+          <div class="achievement-icon">${a.icon}</div>
+          <div>
+            <div class="achievement-title">${a.title}</div>
+            <div class="achievement-desc">${a.desc}</div>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function renderEntries() {
+      const list = $("#entriesList");
+      list.innerHTML = "";
+
+      if (!state.entries.length) {
+        list.innerHTML = '<div class="empty-state">Your saved entries will appear here.</div>';
+        return;
+      }
+
+      state.entries.slice(0, 12).forEach(entry => {
+        const button = document.createElement("button");
+        button.className = "entry-item";
+        const title = entry.text.replace(/\s+/g, " ").slice(0, 34) || "Untitled entry";
+        button.innerHTML = `
+          <strong>${title}${entry.text.length > 34 ? "…" : ""}</strong>
+          <span>${entry.date} · ${entry.level} · ${entry.status}</span>
+        `;
+        button.addEventListener("click", () => {
+          journalText.value = entry.text;
+          levelSelect.value = entry.level;
+          updateCounts();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+        list.appendChild(button);
+      });
+    }
+
+    function renderPackage() {
+      const end = new Date(CONFIG.packageEndDate + "T23:59:59");
+      const active = new Date() <= end;
+      $("#packageStatus").textContent = active ? "Active package" : "Package ended";
+      $("#packageExpiry").textContent = active
+        ? `Reviews available until ${new Intl.DateTimeFormat("en-GB", {day:"numeric", month:"long", year:"numeric"}).format(end)}.`
+        : "Renew a package to submit new journals for review.";
+      $("#submitBtn").disabled = !active;
+      $("#submitBtn").style.opacity = active ? "1" : ".45";
+    }
+
+    function renderAll() {
+      const stats = calculateStats();
+      $("#streakCount").textContent = stats.streak;
+      $("#streakMessage").textContent = stats.streak
+        ? "Keep your writing rhythm going."
+        : "Start with one entry today.";
+      renderCalendar();
+      renderAchievements();
+      renderEntries();
+      renderPackage();
+    }
+
+    async function submitJournal() {
+      const entry = saveEntry("submitted");
+      if (!entry) return;
+
+      const name = $("#studentName").value.trim();
+      const email = $("#studentEmail").value.trim();
+
+      if (!name || !email) {
+        showToast("Please enter your name and email.");
+        return;
+      }
+
+      state.profile = { name, email };
+      saveState();
+
+      const payload = {
+        student_name: name,
+        student_email: email,
+        level: entry.level,
+        date: entry.date,
+        journal: entry.text
+      };
+
+      if (CONFIG.formspreeEndpoint) {
+        try {
+          const response = await fetch(CONFIG.formspreeEndpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify(payload)
+          });
+
+          if (!response.ok) throw new Error("Submission failed");
+          submitDialog.close();
+          showToast("Journal sent for review.");
+          return;
+        } catch (error) {
+          showToast("Could not send. Opening your email app instead.");
+        }
+      }
+
+      const subject = encodeURIComponent(`Korean Journal Review — ${name} — ${entry.date}`);
+      const body = encodeURIComponent(
+`Student: ${name}
+Email: ${email}
+Level: ${entry.level}
+Date: ${entry.date}
+
+Journal:
+${entry.text}`
+      );
+      window.location.href = `mailto:${CONFIG.teacherEmail}?subject=${subject}&body=${body}`;
+      submitDialog.close();
+    }
+
+    document.querySelectorAll("[data-generator]").forEach(button => {
+      button.addEventListener("click", () => showGenerator(button.dataset.generator));
+    });
+
+    $("#closeGenerator").addEventListener("click", () => generatorOutput.classList.remove("show"));
+
+    journalText.addEventListener("input", () => {
+      updateCounts();
+      state.lastDraft = journalText.value;
+      saveState();
+    });
+
+    levelSelect.addEventListener("change", () => {
+      state.level = levelSelect.value;
+      saveState();
+      generatorOutput.classList.remove("show");
+    });
+
+    $("#saveDraftBtn").addEventListener("click", () => {
+      const entry = saveEntry("draft");
+      if (entry) showToast("Draft saved.");
+    });
+
+    $("#submitBtn").addEventListener("click", () => {
+      if (!journalText.value.trim()) {
+        showToast("Write something before submitting.");
+        return;
+      }
+      $("#studentName").value = state.profile.name || "";
+      $("#studentEmail").value = state.profile.email || "";
+      submitDialog.showModal();
+    });
+
+    $("#cancelSubmit").addEventListener("click", () => submitDialog.close());
+    $("#confirmSubmit").addEventListener("click", submitJournal);
+
+    setDates();
+    journalText.value = state.lastDraft;
+    levelSelect.value = state.level;
+    updateCounts();
+    renderAll();
+  </script>
+</body>
+</html>
