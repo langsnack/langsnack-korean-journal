@@ -631,7 +631,7 @@
       .controls {
         width: 100%;
         display: grid;
-        grid-template-columns: .8fr 1.2fr;
+        grid-template-columns: .72fr 1fr 1.28fr;
       }
 
       .select-wrap {
@@ -725,7 +725,103 @@
       .side { grid-template-columns: 1fr; }
       textarea { font-size: 18px; }
     }
-  </style>
+  
+    .shell {
+      width: min(1480px, calc(100% - 32px));
+    }
+
+    .layout {
+      grid-template-columns: minmax(0, 1.65fr) minmax(280px, .55fr);
+      gap: 18px;
+    }
+
+    .journal-card { width: 100%; }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-left: auto;
+    }
+
+    .header-language {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 9px 7px 12px;
+      border: 1px solid rgba(139,103,81,.2);
+      border-radius: 999px;
+      background: rgba(255,255,255,.5);
+      backdrop-filter: blur(12px);
+    }
+
+    .header-language span {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .04em;
+    }
+
+    .header-language select {
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--ink);
+      font: 600 12px "DM Sans", sans-serif;
+      cursor: pointer;
+    }
+
+    .controls {
+      grid-template-columns: minmax(120px, .7fr) minmax(190px, 1.3fr);
+    }
+
+    .paper, textarea { min-height: 58vh; }
+
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: minmax(0, 1fr) 300px; }
+    }
+
+    @media (max-width: 900px) {
+      .shell { width: min(100% - 20px, 900px); }
+      .layout { grid-template-columns: 1fr; }
+      .side { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 650px) {
+      .shell { width: 100%; padding: 8px 6px 108px; }
+      .topbar { gap: 8px; padding: 2px 2px 8px; }
+      .topbar-actions { flex: 0 0 auto; }
+      .header-language { gap: 5px; padding: 6px 7px 6px 9px; }
+      .header-language span { display: none; }
+      .header-language select { font-size: 12px; max-width: 82px; }
+      .layout { gap: 10px; }
+      .journal-card { border-radius: 18px; }
+      .journal-head { padding: 16px 12px 12px; }
+      .controls { grid-template-columns: 1fr 1.25fr; gap: 7px; }
+      .select-wrap { min-width: 0; padding: 4px 7px 4px 9px; }
+      .select-wrap span { font-size: 9px; }
+      .select-wrap select { font-size: 12px; }
+      .inspiration { padding: 10px 10px 3px; }
+      .inspiration-row { gap: 5px; }
+      .soft-button { min-height: 44px; padding: 7px 4px; font-size: 11px; }
+      .generator-output { margin-top: 8px; padding: 12px; }
+      .generator-text { font-size: 17px; line-height: 1.55; }
+      .paper { margin: 8px 8px 0; min-height: 60vh; border-radius: 13px; }
+      textarea { min-height: 60vh; padding: 14px 12px 18px; font-size: 17px; line-height: 36px; }
+      .editor-footer { padding: 10px 10px 14px; }
+      .side { display: block; }
+      .side-card { margin-bottom: 10px; }
+    }
+
+    @media (max-width: 390px) {
+      .brand p { display: none; }
+      .brand h1 { font-size: 17px; }
+      .brand-mark { width: 36px; height: 36px; }
+      .controls { grid-template-columns: 1fr; }
+      .timezone-select { width: 100%; }
+      .paper, textarea { min-height: 64vh; }
+    }
+
+</style>
 </head>
 
 <body>
@@ -739,7 +835,17 @@
         </div>
       </div>
       <div class="profile-pill">Student access</div>
-    </header>
+    
+        <div class="topbar-actions">
+          <label class="header-language">
+            <span data-i18n="languageLabel">Language</span>
+            <select id="languageSelect" aria-label="Choose interface language">
+              <option value="en">English</option>
+              <option value="ko">한국어</option>
+            </select>
+          </label>
+        </div>
+</header>
 
     <div class="layout">
       <section class="journal-card">
@@ -751,7 +857,7 @@
 
           <div class="controls">
             <label class="select-wrap">
-              <span>Level</span>
+              <span data-i18n="levelLabel">Level</span>
               <select id="levelSelect" aria-label="Choose Korean level">
                 <option value="starter">Starter</option>
                 <option value="beginner">Beginner</option>
@@ -759,8 +865,8 @@
                 <option value="advanced">Advanced</option>
               </select>
             </label>
-            <label class="select-wrap timezone-select">
-              <span>Time zone</span>
+<label class="select-wrap timezone-select">
+              <span data-i18n="timezoneLabel">Time zone</span>
               <select id="timezoneSelect" aria-label="Choose your time zone">
                 <option value="Asia/Seoul">Seoul</option>
                 <option value="Asia/Kuala_Lumpur">Kuala Lumpur</option>
@@ -818,7 +924,7 @@
         <section class="side-card">
           <div class="streak-heading-row">
             <div>
-              <h2>Writing streak</h2>
+              <h2 data-i18n="writingStreak">Writing streak</h2>
               <p class="streak-number"><span id="streakCount">0</span> days</p>
             </div>
             <div class="month-progress" id="monthProgress" style="--progress:0%">
@@ -842,7 +948,7 @@
         </section>
 
         <section class="side-card">
-          <h2>Achievements</h2>
+          <h2 data-i18n="achievementsTitle">Achievements</h2>
           <div class="achievement-list" id="achievementList"></div>
           <div class="achievement-count" id="achievementCount"></div>
         </section>
@@ -945,6 +1051,108 @@
       }
     };
 
+
+    const translations = {
+      en: {
+        languageLabel:"Language", levelLabel:"Level", timezoneLabel:"Time zone",
+        writingStreak:"Writing streak", achievementsTitle:"Achievements",
+        savedEntriesTitle:"Saved entries", writingReviewsTitle:"Writing reviews",
+        streakStart:"Start with one entry today.", streakActive:"{count}-day writing streak",
+        completed:"complete", noEntry:"No entry", futureDay:"Future day",
+        entryCompleted:"Entry completed", unlocked:"unlocked",
+        draftSaved:"Draft saved.", timezoneUpdated:"Time zone updated.",
+        languageUpdated:"Interface language updated.",
+        entryPlaceholder:"Write your Korean journal here...",
+        first:["✦","First entry","Write your first entry."],
+        threeDays:["3","A small habit","Write on three different days."],
+        weekWriter:["7","Seven writing days","Write on seven different days."],
+        streak3:["↗","A good start","Reach a 3-day streak."],
+        streak7:["○","One full week","Reach a 7-day streak."],
+        streak14:["◉","Two weeks of writing","Reach a 14-day streak."],
+        streak30:["月","A month of writing","Reach a 30-day streak."],
+        tenEntries:["十","Consistent writer","Save ten entries."],
+        fiftyEntries:["冊","Your own book","Save fifty entries."],
+        hundredChars:["百","100-character challenge","Write 100 Korean characters in total."],
+        thousandChars:["千","1,000 characters","Write 1,000 Korean characters in total."],
+        tenThousandChars:["萬","10,000-character writer","Write 10,000 Korean characters in total."],
+        longEntry:["長","A longer story","Write 300 characters in one entry."],
+        review1:["✓","First feedback","Submit your first journal for review."],
+        review10:["印","Feedback collector","Submit ten journals for review."],
+        fullMonth:["●","A complete month","Write every day in one month."],
+        return:["↺","Starting again","Return after a break."]
+      },
+      ko: {
+        languageLabel:"언어", levelLabel:"레벨", timezoneLabel:"시간대",
+        writingStreak:"연속 쓰기", achievementsTitle:"기록 배지",
+        savedEntriesTitle:"저장한 글", writingReviewsTitle:"글 첨삭",
+        streakStart:"오늘 한 편부터 시작해 보세요.", streakActive:"{count}일 연속으로 쓰고 있어요",
+        completed:"완료", noEntry:"작성한 글 없음", futureDay:"아직 오지 않은 날",
+        entryCompleted:"작성 완료", unlocked:"개 달성",
+        draftSaved:"임시 저장했어요.", timezoneUpdated:"시간대를 변경했어요.",
+        languageUpdated:"화면 언어를 변경했어요.",
+        entryPlaceholder:"여기에 한국어로 글을 써 보세요...",
+        first:["✦","첫 기록","첫 번째 글을 저장해 보세요."],
+        threeDays:["3","작은 습관","서로 다른 날에 세 번 써 보세요."],
+        weekWriter:["7","일주일 작가","서로 다른 날에 일곱 번 써 보세요."],
+        streak3:["↗","좋은 시작","3일 연속 쓰기를 달성해 보세요."],
+        streak7:["○","일주일 연속","7일 연속 쓰기를 달성해 보세요."],
+        streak14:["◉","두 주의 기록","14일 연속 쓰기를 달성해 보세요."],
+        streak30:["月","한 달의 기록","30일 연속 쓰기를 달성해 보세요."],
+        tenEntries:["十","꾸준한 작가","글 열 편을 저장해 보세요."],
+        fiftyEntries:["冊","나만의 책","글 쉰 편을 저장해 보세요."],
+        hundredChars:["百","백 자 도전","한국어로 모두 백 자를 써 보세요."],
+        thousandChars:["千","천 자의 기록","한국어로 모두 천 자를 써 보세요."],
+        tenThousandChars:["萬","만 자 작가","한국어로 모두 만 자를 써 보세요."],
+        longEntry:["長","긴 이야기","한 편에 300자 이상 써 보세요."],
+        review1:["✓","첫 첨삭","처음으로 첨삭을 요청해 보세요."],
+        review10:["印","첨삭 수집가","첨삭을 열 번 요청해 보세요."],
+        fullMonth:["●","빈틈없는 한 달","한 달 동안 매일 글을 써 보세요."],
+        return:["↺","다시 시작","쉬었다가 다시 글을 써 보세요."]
+      }
+    };
+
+    function t(key, vars = {}) {
+      let value = translations[state.language]?.[key] ?? translations.en[key] ?? key;
+      if (typeof value !== "string") return value;
+      return value.replace(/\{(\w+)\}/g, (_, name) => vars[name] ?? "");
+    }
+
+    function applyLanguage() {
+      document.documentElement.lang = state.language === "ko" ? "ko" : "en";
+      document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t(el.dataset.i18n));
+      journalText.placeholder = t("entryPlaceholder");
+      renderAll();
+    }
+
+    const bilingualWritingData = {
+      starter: [
+        {topic:{en:"My day",ko:"나의 하루"},prompt:{en:"What did you do today?",ko:"오늘 무엇을 했어요?"},grammar:{en:"-았/었어요 (past tense)",ko:"-았/었어요 (과거 표현)"},mission:{en:"Write three short sentences.",ko:"짧은 문장을 세 개 써 보세요."}},
+        {topic:{en:"Food",ko:"음식"},prompt:{en:"What did you eat today? How was it?",ko:"오늘 무엇을 먹었어요? 맛은 어땠어요?"},grammar:{en:"-고 (and)",ko:"-고 (동작이나 내용을 이어 말하기)"},mission:{en:"Use at least two food words.",ko:"음식과 관련된 단어를 두 개 이상 써 보세요."}}
+      ],
+      beginner: [
+        {topic:{en:"A memorable weekend",ko:"기억에 남는 주말"},prompt:{en:"What did you do last weekend, and what was the best part?",ko:"지난 주말에 무엇을 했어요? 그중에서 무엇이 가장 좋았어요?"},grammar:{en:"-아서/어서 (reason or sequence)",ko:"-아서/어서 (이유나 순서 표현)"},mission:{en:"Write at least five sentences.",ko:"다섯 문장 이상 써 보세요."}},
+        {topic:{en:"A place I recommend",ko:"추천하고 싶은 장소"},prompt:{en:"Which place would you recommend to a friend, and why?",ko:"친구에게 어떤 장소를 추천하고 싶어요? 그 이유는 무엇이에요?"},grammar:{en:"-(으)니까 (reason)",ko:"-(으)니까 (이유 표현)"},mission:{en:"Include one recommendation.",ko:"추천하는 표현을 한 번 써 보세요."}}
+      ],
+      intermediate: [
+        {topic:{en:"A decision I made recently",ko:"최근에 내린 결정"},prompt:{en:"What decision did you make, and what influenced you?",ko:"최근에 어떤 결정을 내렸어요? 무엇이 그 결정에 영향을 주었어요?"},grammar:{en:"-(으)려고 하다 (intention)",ko:"-(으)려고 하다 (의도나 계획)"},mission:{en:"Describe the situation and its result.",ko:"상황과 그 결과를 함께 써 보세요."}},
+        {topic:{en:"A habit I want to change",ko:"바꾸고 싶은 습관"},prompt:{en:"Which habit would you like to change, and what will you do differently?",ko:"어떤 습관을 바꾸고 싶어요? 앞으로 어떻게 달리 해 볼 생각이에요?"},grammar:{en:"-다 보니(까) (result after repeated experience)",ko:"-다 보니(까) (반복하거나 계속한 결과)"},mission:{en:"Write one concrete plan.",ko:"구체적인 계획을 한 가지 써 보세요."}}
+      ],
+      advanced: [
+        {topic:{en:"Convenience and its hidden cost",ko:"편리함 뒤에 숨은 대가"},prompt:{en:"What convenience in modern life may create an unexpected cost?",ko:"현대 생활의 편리함 가운데 예상하지 못한 대가를 만드는 것은 무엇이라고 생각해요?"},grammar:{en:"-(으)ㄴ/는 반면에 (contrast)",ko:"-(으)ㄴ/는 반면에 (대조 표현)"},mission:{en:"Present both benefits and drawbacks.",ko:"장점과 단점을 모두 제시해 보세요."}},
+        {topic:{en:"A belief that changed over time",ko:"시간이 지나며 달라진 생각"},prompt:{en:"Which belief or opinion has changed as you gained experience?",ko:"경험이 쌓이면서 달라진 생각이나 믿음이 있어요? 어떻게 달라졌어요?"},grammar:{en:"-(으)ㄹ 뿐만 아니라 (not only but also)",ko:"-(으)ㄹ 뿐만 아니라 (내용 추가와 강조)"},mission:{en:"Explain what caused the change.",ko:"생각이 달라진 계기를 구체적으로 써 보세요."}}
+      ]
+    };
+
+    function getDailyWritingSet(level = state.level) {
+      const list = bilingualWritingData[level] || bilingualWritingData.starter;
+      const seed = [...dateKey().replaceAll("-","")].reduce((sum,n)=>sum+Number(n),0);
+      return list[seed % list.length];
+    }
+
+    function localizeWritingItem(item) {
+      return item?.[state.language] || item?.en || "";
+    }
+
     const achievements = [
       { id: "first", icon: "✦", title: "첫 기록", desc: "Write your first entry.", goal: 1, value: s => s.totalEntries },
       { id: "threeDays", icon: "3", title: "작은 습관", desc: "Write on three different days.", goal: 3, value: s => s.uniqueDays },
@@ -969,6 +1177,7 @@
     const journalText = $("#journalText");
     const levelSelect = $("#levelSelect");
     const timezoneSelect = $("#timezoneSelect");
+    const languageSelect = $("#languageSelect");
     const generatorOutput = $("#generatorOutput");
     const generatorLabel = $("#generatorLabel");
     const generatorText = $("#generatorText");
@@ -980,6 +1189,7 @@
     state.lastDraft = state.lastDraft || "";
     state.level = state.level || "starter";
     state.timezone = state.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Seoul";
+    state.language = state.language || "en";
     state.profile = state.profile || { name: "", email: "" };
 
     function saveState() {
@@ -1160,7 +1370,7 @@
         if (written.has(key)) span.classList.add("written");
         if (day === todayDay) span.classList.add("today");
         if (day > todayDay) span.classList.add("future");
-        span.title = written.has(key) ? "Entry completed" : day > todayDay ? "Future day" : "No entry";
+        span.title = written.has(key) ? t("entryCompleted") : day > todayDay ? t("futureDay") : t("noEntry");
         grid.appendChild(span);
       }
 
@@ -1168,7 +1378,7 @@
       const completion = Math.round((stats.monthWrittenDays / stats.daysInMonth) * 100);
       $("#monthProgress").style.setProperty("--progress", `${completion}%`);
       $("#monthProgressText").textContent = `${stats.monthWrittenDays}/${stats.daysInMonth}`;
-      $("#monthCompletionLabel").textContent = `${completion}% complete`;
+      $("#monthCompletionLabel").textContent = `${completion}% ${t("completed")}`;
       $("#calendarMonthLabel").textContent = new Intl.DateTimeFormat("en-GB", {
         timeZone: state.timezone, month: "long", year: "numeric"
       }).format(new Date());
@@ -1182,6 +1392,7 @@
 
       achievements.forEach(a => {
         const currentValue = Math.max(0, a.value(stats));
+        const localized = t(a.id);
         const unlocked = currentValue >= a.goal;
         if (unlocked) unlockedCount++;
         const progress = Math.min(100, Math.round((currentValue / a.goal) * 100));
@@ -1189,17 +1400,17 @@
         const item = document.createElement("div");
         item.className = `achievement ${unlocked ? "" : "locked"}`;
         item.innerHTML = `
-          <div class="achievement-icon">${a.icon}</div>
+          <div class="achievement-icon">${localized[0]}</div>
           <div>
-            <div class="achievement-title">${a.title}</div>
-            <div class="achievement-desc">${a.desc}</div>
+            <div class="achievement-title">${localized[1]}</div>
+            <div class="achievement-desc">${localized[2]}</div>
             <div class="achievement-progress"><span style="width:${progress}%"></span></div>
           </div>
         `;
         list.appendChild(item);
       });
 
-      $("#achievementCount").textContent = `${unlockedCount} of ${achievements.length} unlocked`;
+      $("#achievementCount").textContent = state.language === "ko" ? `${achievements.length}개 중 ${unlockedCount}${t("unlocked")}` : `${unlockedCount} of ${achievements.length} ${t("unlocked")}`;
     }
 
     function renderEntries() {
@@ -1240,6 +1451,18 @@
       $("#submitBtn").style.opacity = active ? "1" : ".45";
     }
 
+    function renderDailyWritingFocus() {
+      const set = getDailyWritingSet();
+      const topicEl = document.querySelector("[data-output='topic'], #topicOutput");
+      const promptEl = document.querySelector("[data-output='prompt'], #promptOutput");
+      const grammarEl = document.querySelector("[data-output='grammar'], #grammarOutput");
+      const missionEl = document.querySelector("[data-output='mission'], #missionOutput");
+      if (topicEl) topicEl.textContent = localizeWritingItem(set.topic);
+      if (promptEl) promptEl.textContent = localizeWritingItem(set.prompt);
+      if (grammarEl) grammarEl.textContent = localizeWritingItem(set.grammar);
+      if (missionEl) missionEl.textContent = localizeWritingItem(set.mission);
+    }
+
     function renderAll() {
       const stats = calculateStats();
       $("#streakCount").textContent = stats.streak;
@@ -1249,6 +1472,7 @@
       renderCalendar();
       renderAchievements();
       renderEntries();
+      renderDailyWritingFocus();
       renderPackage();
     }
 
@@ -1329,12 +1553,19 @@ ${entry.text}`
       saveState();
       setDates();
       renderAll();
-      showToast("Time zone updated.");
+      showToast(t("timezoneUpdated"));
+    });
+
+    languageSelect.addEventListener("change", () => {
+      state.language = languageSelect.value;
+      saveState();
+      applyLanguage();
+      showToast(t("languageUpdated"));
     });
 
     $("#saveDraftBtn").addEventListener("click", () => {
       const entry = saveEntry("draft");
-      if (entry) showToast("Draft saved.");
+      if (entry) showToast(t("draftSaved"));
     });
 
     $("#submitBtn").addEventListener("click", () => {
@@ -1357,11 +1588,12 @@ ${entry.text}`
       timezoneSelect.appendChild(customOption);
     }
     timezoneSelect.value = state.timezone;
+    languageSelect.value = state.language;
     setDates();
     journalText.value = state.lastDraft;
     levelSelect.value = state.level;
     updateCounts();
-    renderAll();
+    applyLanguage();
   </script>
 </body>
 </html>

@@ -68,3 +68,22 @@ The current package end date is only a front-end demonstration and can be edited
 - Circular month completion indicator
 - 17 achievements with progress bars
 - Achievement progress and unlock count
+
+
+## Version 3 additions
+
+- English and Korean interface selector
+- Persistent language preference
+- Natural bilingual prompts, missions and grammar guidance
+- Localised achievements, streaks, calendar labels and notifications
+
+
+## Version 4 additions
+
+- Language selector moved outside the main writing card
+- Wider desktop editor and reduced side-panel width
+- Main writing card stretches further across the screen
+- Near edge-to-edge mobile layout
+- Taller mobile writing area
+- Compact mobile header language selector
+- Two-column tablet sidebar and single-column phone sidebar
