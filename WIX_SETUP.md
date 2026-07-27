@@ -28,3 +28,11 @@
 
 ## Important
 The standalone HTML file cannot directly open Wix's member modal. The included bridge uses `postMessage` between the embedded journal and its parent Wix page. Login, logout and Wix Data operations become functional only after the Wix page code is installed and the site is published.
+
+
+## Version 7 language fix
+
+- Removed the logo mark.
+- Kept the Langsnack Korean Journal brand name unchanged.
+- Fixed a JavaScript translation error that prevented the language selector from running.
+- All interface labels, dynamic panels, dates, time-zone names, notices, dialogs, missions, achievements and empty states now re-render in Korean.

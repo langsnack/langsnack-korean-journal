@@ -63,18 +63,6 @@
       gap: 12px;
     }
 
-    .brand-mark {
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      background: var(--ink);
-      color: white;
-      font-family: "Nanum Myeongjo", serif;
-      font-size: 20px;
-      box-shadow: var(--shadow);
-    }
 
     .brand h1 {
       margin: 0;
@@ -621,7 +609,6 @@
       body { padding-bottom: env(safe-area-inset-bottom); }
       .shell { width: 100%; padding: 10px 10px 110px; }
       .topbar { padding: 2px 4px; margin-bottom: 12px; }
-      .brand-mark { width: 39px; height: 39px; border-radius: 12px; }
       .brand h1 { font-size: 19px; }
       .brand p { font-size: 11px; }
       .journal-card { border-radius: 22px; }
@@ -815,7 +802,6 @@
     @media (max-width: 390px) {
       .brand p { display: none; }
       .brand h1 { font-size: 17px; }
-      .brand-mark { width: 36px; height: 36px; }
       .controls { grid-template-columns: 1fr; }
       .timezone-select { width: 100%; }
       .paper, textarea { min-height: 64vh; }
@@ -843,9 +829,8 @@
   <main class="shell">
     <header class="topbar">
       <div class="brand">
-        <div class="brand-mark">한</div>
         <div>
-          <h1 data-i18n="appTitle">Langsnack Korean Journal</h1>
+          <h1>Langsnack Korean Journal</h1>
           <p data-i18n="appTagline">A quiet place to write in Korean.</p>
         </div>
       </div>
@@ -891,20 +876,20 @@
 <label class="select-wrap timezone-select">
               <span data-i18n="timezoneLabel">Time zone</span>
               <select id="timezoneSelect" aria-label="Choose your time zone">
-                <option value="Asia/Seoul">Seoul</option>
-                <option value="Asia/Kuala_Lumpur">Kuala Lumpur</option>
-                <option value="Asia/Singapore">Singapore</option>
-                <option value="Asia/Hong_Kong">Hong Kong</option>
-                <option value="Asia/Tokyo">Tokyo</option>
-                <option value="Australia/Sydney">Sydney</option>
-                <option value="Europe/London">London</option>
-                <option value="Europe/Paris">Paris</option>
-                <option value="America/New_York">New York</option>
-                <option value="America/Chicago">Chicago</option>
-                <option value="America/Denver">Denver</option>
-                <option value="America/Los_Angeles">Los Angeles</option>
-                <option value="America/Toronto">Toronto</option>
-                <option value="Pacific/Auckland">Auckland</option>
+                <option value="Asia/Seoul" data-i18n="tzAsiaSeoul">Seoul</option>
+                <option value="Asia/Kuala_Lumpur" data-i18n="tzAsiaKualaLumpur">Kuala Lumpur</option>
+                <option value="Asia/Singapore" data-i18n="tzAsiaSingapore">Singapore</option>
+                <option value="Asia/Hong_Kong" data-i18n="tzAsiaHongKong">Hong Kong</option>
+                <option value="Asia/Tokyo" data-i18n="tzAsiaTokyo">Tokyo</option>
+                <option value="Australia/Sydney" data-i18n="tzAustraliaSydney">Sydney</option>
+                <option value="Europe/London" data-i18n="tzEuropeLondon">London</option>
+                <option value="Europe/Paris" data-i18n="tzEuropeParis">Paris</option>
+                <option value="America/New_York" data-i18n="tzAmericaNewYork">New York</option>
+                <option value="America/Chicago" data-i18n="tzAmericaChicago">Chicago</option>
+                <option value="America/Denver" data-i18n="tzAmericaDenver">Denver</option>
+                <option value="America/Los_Angeles" data-i18n="tzAmericaLosAngeles">Los Angeles</option>
+                <option value="America/Toronto" data-i18n="tzAmericaToronto">Toronto</option>
+                <option value="Pacific/Auckland" data-i18n="tzPacificAuckland">Auckland</option>
               </select>
             </label>
           </div>
@@ -1092,17 +1077,18 @@
         levelStarter:"Starter", levelBeginner:"Beginner", levelIntermediate:"Intermediate", levelAdvanced:"Advanced",
         giveTopic:"Give me a topic", givePrompt:"Give me a prompt", giveGrammar:"Give me grammar", charactersLabel:"characters", wordsLabel:"words", daysLabel:"days", saveDraft:"Save draft", submitReview:"Submit for review", reviewAccessTitle:"Writing review access", myEntriesTitle:"My entries",
         submitDialogTitle:"Submit this journal?", submitDialogDesc:"Your original writing will be sent to Nicole for personal review. No automated corrections will be made.", yourName:"Your name", yourEmail:"Your email", cancel:"Cancel", sendJournal:"Send journal",
-        topicLabel:"Today’s topic", promptLabel:"Today’s prompt", grammarLabel:"Grammar inspiration", noEntries:"No saved entries yet.", untitled:t("untitled"), draftStatus:"Draft", submittedStatus:"Submitted", activePackage:"Active package", endedPackage:"Package ended", packageAvailable:"Reviews available until {date}.", packageRenew:"Renew a package to submit new journals for review.", writeBeforeSave:"Write something before saving.", writeBeforeSubmit:"Write something before submitting.", enterNameEmail:"Please enter your name and email.", journalSent:"Journal sent for review.", sendFailed:"Could not send. Opening your email app instead.", keepRhythm:"Keep your writing rhythm going.",
+        topicLabel:"Today’s topic", promptLabel:"Today’s prompt", grammarLabel:"Grammar inspiration", noEntries:"No saved entries yet.", entriesEmpty:"Your saved entries will appear here.", untitled:"Untitled entry", draftStatus:"Draft", submittedStatus:"Submitted", activePackage:"Active package", endedPackage:"Package ended", packageAvailable:"Reviews available until {date}.", packageRenew:"Renew a package to submit new journals for review.", writeBeforeSave:"Write something before saving.", writeBeforeSubmit:"Write something before submitting.", enterNameEmail:"Please enter your name and email.", journalSent:"Journal sent for review.", sendFailed:"Could not send. Opening your email app instead.", keepRhythm:"Keep your writing rhythm going.",
         missionNoteStart:"Complete the three writing challenges.", missionNoteDone:"Today’s mission set is complete.", missionGrammarCat:"Grammar", missionContentCat:"Content", missionStyleCat:"Style",
 
         languageLabel:"Language", levelLabel:"Level", timezoneLabel:"Time zone",
+        tzAsiaSeoul:"Seoul", tzAsiaKualaLumpur:"Kuala Lumpur", tzAsiaSingapore:"Singapore", tzAsiaHongKong:"Hong Kong", tzAsiaTokyo:"Tokyo", tzAustraliaSydney:"Sydney", tzEuropeLondon:"London", tzEuropeParis:"Paris", tzAmericaNewYork:"New York", tzAmericaChicago:"Chicago", tzAmericaDenver:"Denver", tzAmericaLosAngeles:"Los Angeles", tzAmericaToronto:"Toronto", tzPacificAuckland:"Auckland",
         writingStreak:"Writing streak", achievementsTitle:"Achievements",
         savedEntriesTitle:"Saved entries", writingReviewsTitle:"Writing reviews",
         streakStart:"Start with one entry today.", streakActive:"{count}-day writing streak",
         completed:"complete", noEntry:"No entry", futureDay:"Future day",
         entryCompleted:"Entry completed", unlocked:"unlocked",
         draftSaved:"Draft saved.", timezoneUpdated:"Time zone updated.",
-        languageUpdated:"Interface language updated.",
+        languageUpdated:"Interface language updated.", closeLabel:"Close",
         entryPlaceholder:"Write your Korean journal here...", missionProgressEyebrow:"Today", missionProgressTitle:"Mission progress",
         first:["✦","First entry","Write your first entry."],
         threeDays:["3","A small habit","Write on three different days."],
@@ -1128,17 +1114,18 @@
         levelStarter:"입문", levelBeginner:"초급", levelIntermediate:"중급", levelAdvanced:"고급",
         giveTopic:"주제 추천", givePrompt:"질문 추천", giveGrammar:"문법 추천", charactersLabel:"자", wordsLabel:"어절", daysLabel:"일", saveDraft:"임시 저장", submitReview:"첨삭 요청", reviewAccessTitle:"첨삭 이용 정보", myEntriesTitle:"내 글", 
         submitDialogTitle:"이 글을 첨삭 요청할까요?", submitDialogDesc:"작성한 원문은 니콜쌤에게 전달돼요. AI 자동 첨삭은 하지 않아요.", yourName:"이름", yourEmail:"이메일", cancel:"취소", sendJournal:"글 보내기",
-        topicLabel:"오늘의 주제", promptLabel:"오늘의 질문", grammarLabel:"문법 힌트", noEntries:"아직 저장한 글이 없어요.", untitled:"제목 없는 글", draftStatus:"임시 저장", submittedStatus:"첨삭 요청 완료", activePackage:"이용권 사용 중", endedPackage:"이용권 종료", packageAvailable:"{date}까지 첨삭을 요청할 수 있어요.", packageRenew:"새 글의 첨삭을 요청하려면 이용권을 갱신해 주세요.", writeBeforeSave:"저장할 글을 먼저 써 주세요.", writeBeforeSubmit:"첨삭을 요청할 글을 먼저 써 주세요.", enterNameEmail:"이름과 이메일을 입력해 주세요.", journalSent:"첨삭 요청을 보냈어요.", sendFailed:"전송하지 못했어요. 이메일 앱을 열게요.", keepRhythm:"지금의 글쓰기 흐름을 이어 가 보세요.",
+        topicLabel:"오늘의 주제", promptLabel:"오늘의 질문", grammarLabel:"문법 힌트", noEntries:"아직 저장한 글이 없어요.", entriesEmpty:"저장한 글이 여기에 표시돼요.", untitled:"제목 없는 글", draftStatus:"임시 저장", submittedStatus:"첨삭 요청 완료", activePackage:"이용권 사용 중", endedPackage:"이용권 종료", packageAvailable:"{date}까지 첨삭을 요청할 수 있어요.", packageRenew:"새 글의 첨삭을 요청하려면 이용권을 갱신해 주세요.", writeBeforeSave:"저장할 글을 먼저 써 주세요.", writeBeforeSubmit:"첨삭을 요청할 글을 먼저 써 주세요.", enterNameEmail:"이름과 이메일을 입력해 주세요.", journalSent:"첨삭 요청을 보냈어요.", sendFailed:"전송하지 못했어요. 이메일 앱을 열게요.", keepRhythm:"지금의 글쓰기 흐름을 이어 가 보세요.",
         missionNoteStart:"오늘의 글쓰기 미션 세 가지를 완료해 보세요.", missionNoteDone:"오늘의 미션을 모두 완료했어요.", missionGrammarCat:"문법", missionContentCat:"내용", missionStyleCat:"표현 방식",
 
         languageLabel:"언어", levelLabel:"레벨", timezoneLabel:"시간대",
+        tzAsiaSeoul:"서울", tzAsiaKualaLumpur:"쿠알라룸푸르", tzAsiaSingapore:"싱가포르", tzAsiaHongKong:"홍콩", tzAsiaTokyo:"도쿄", tzAustraliaSydney:"시드니", tzEuropeLondon:"런던", tzEuropeParis:"파리", tzAmericaNewYork:"뉴욕", tzAmericaChicago:"시카고", tzAmericaDenver:"덴버", tzAmericaLosAngeles:"로스앤젤레스", tzAmericaToronto:"토론토", tzPacificAuckland:"오클랜드",
         writingStreak:"연속 쓰기", achievementsTitle:"기록 배지",
         savedEntriesTitle:"저장한 글", writingReviewsTitle:"글 첨삭",
         streakStart:"오늘 한 편부터 시작해 보세요.", streakActive:"{count}일 연속으로 쓰고 있어요",
         completed:"완료", noEntry:"작성한 글 없음", futureDay:"아직 오지 않은 날",
         entryCompleted:"작성 완료", unlocked:"개 달성",
         draftSaved:"임시 저장했어요.", timezoneUpdated:"시간대를 변경했어요.",
-        languageUpdated:"화면 언어를 변경했어요.",
+        languageUpdated:"화면 언어를 변경했어요.", closeLabel:"닫기",
         entryPlaceholder:"여기에 한국어로 글을 써 보세요...", missionProgressEyebrow:"오늘", missionProgressTitle:"미션 달성률",
         first:["✦","첫 기록","첫 번째 글을 저장해 보세요."],
         threeDays:["3","작은 습관","서로 다른 날에 세 번 써 보세요."],
@@ -1168,7 +1155,7 @@
 
     function applyLanguage() {
       document.documentElement.lang = state.language === "ko" ? "ko" : "en";
-      document.title = t("appTitle");
+      document.title = "Langsnack Korean Journal";
       document.querySelectorAll("[data-i18n]").forEach(el => el.textContent = t(el.dataset.i18n));
       document.querySelectorAll("[data-i18n-placeholder]").forEach(el => el.placeholder = t(el.dataset.i18nPlaceholder));
       journalText.placeholder = t("entryPlaceholder");
@@ -1177,9 +1164,13 @@
       languageSelect.setAttribute("aria-label", state.language === "ko" ? "화면 언어 선택" : "Choose interface language");
       levelSelect.setAttribute("aria-label", state.language === "ko" ? "한국어 레벨 선택" : "Choose Korean level");
       timezoneSelect.setAttribute("aria-label", state.language === "ko" ? "시간대 선택" : "Choose your time zone");
+      $("#closeGenerator").setAttribute("aria-label", t("closeLabel"));
       setDates();
-      renderAll();
+      if (generatorOutput.classList.contains("show") && generatorOutput.dataset.currentType) {
+        showGenerator(generatorOutput.dataset.currentType, true);
+      }
       renderMemberUI();
+      renderAll();
     }
 
     const bilingualWritingData = {
@@ -1390,11 +1381,18 @@
       return items[Math.floor(Math.random() * items.length)];
     }
 
-    function showGenerator(type) {
+    function showGenerator(type, preserveCurrent = false) {
       const level = levelSelect.value;
       const labels = {topic:"topicLabel",prompt:"promptLabel",grammar:"grammarLabel"};
+      const items = content[level][type];
+      let index = Number(generatorOutput.dataset.currentIndex);
+      if (!preserveCurrent || !Number.isInteger(index) || !items[index]) {
+        index = Math.floor(Math.random() * items.length);
+      }
+      generatorOutput.dataset.currentType = type;
+      generatorOutput.dataset.currentIndex = String(index);
       generatorLabel.textContent = t(labels[type]);
-      generatorText.textContent = randomItem(content[level][type]);
+      generatorText.textContent = items[index];
       generatorOutput.classList.add("show");
     }
 
@@ -1533,7 +1531,7 @@
       $("#monthProgress").style.setProperty("--progress", `${completion}%`);
       $("#monthProgressText").textContent = `${stats.monthWrittenDays}/${stats.daysInMonth}`;
       $("#monthCompletionLabel").textContent = `${completion}% ${t("completed")}`;
-      $("#calendarMonthLabel").textContent = new Intl.DateTimeFormat("en-GB", {
+      $("#calendarMonthLabel").textContent = new Intl.DateTimeFormat(state.language === "ko" ? "ko-KR" : "en-GB", {
         timeZone: state.timezone, month: "long", year: "numeric"
       }).format(new Date());
     }
@@ -1572,7 +1570,7 @@
       list.innerHTML = "";
 
       if (!state.entries.length) {
-        list.innerHTML = '<div class="empty-state">Your saved entries will appear here.</div>';
+        list.innerHTML = `<div class="empty-state">${t("entriesEmpty")}</div>`;
         return;
       }
 
