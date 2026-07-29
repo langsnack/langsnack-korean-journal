@@ -724,42 +724,54 @@
 
     .journal-card { width: 100%; }
 
-    .topbar-actions {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      margin-left: auto;
-    }
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-left: auto;
+  min-width: 0;
+}
 
-    .header-language {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 7px 9px 7px 12px;
-      border: 1px solid rgba(139,103,81,.2);
-      border-radius: 999px;
-      background: rgba(255,255,255,.5);
-      backdrop-filter: blur(12px);
-    }
+.header-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 7px 9px;
+  border: 1px solid rgba(139,103,81,.2);
+  border-radius: 999px;
+  background: rgba(255,255,255,.5);
+  backdrop-filter: blur(12px);
+}
 
-    .header-language span {
-      color: var(--muted);
-      font-size: 11px;
-      letter-spacing: .04em;
-    }
+.header-control span {
+  color: var(--muted);
+  font-size: 10px;
+  white-space: nowrap;
+}
 
-    .header-language select {
-      border: 0;
-      outline: 0;
-      background: transparent;
-      color: var(--ink);
-      font: 600 12px "DM Sans", sans-serif;
-      cursor: pointer;
-    }
+.header-control select {
+  min-width: 0;
+  max-width: 110px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 600 12px "DM Sans", sans-serif;
+  cursor: pointer;
+  text-overflow: ellipsis;
+}
+
+.header-timezone select {
+  width: 118px;
+  max-width: 118px;
+}
 
     .controls {
-      grid-template-columns: minmax(120px, .7fr) minmax(190px, 1.3fr);
-    }
+  display: flex;
+  justify-content: flex-end;
+}
 
     .paper, textarea { min-height: 58vh; }
 
@@ -774,12 +786,54 @@
     }
 
     @media (max-width: 650px) {
-      .shell { width: 100%; padding: 8px 6px 108px; }
-      .topbar { gap: 8px; padding: 2px 2px 8px; }
-      .topbar-actions { flex: 0 0 auto; }
-      .header-language { gap: 5px; padding: 6px 7px 6px 9px; }
-      .header-language span { display: none; }
-      .header-language select { font-size: 12px; max-width: 82px; }
+  .shell {
+    width: 100%;
+    padding: 8px 6px 108px;
+  }
+
+  .topbar {
+    gap: 7px;
+    padding: 2px 2px 8px;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .brand h1 {
+    font-size: 17px;
+    white-space: nowrap;
+  }
+
+  .topbar-actions {
+    flex: 0 0 auto;
+    gap: 5px;
+  }
+
+  .header-control {
+    gap: 0;
+    padding: 6px 7px;
+  }
+
+  .header-control span {
+    display: none;
+  }
+
+  .header-control select {
+    font-size: 11px;
+  }
+
+  #languageSelect {
+    width: 68px;
+    max-width: 68px;
+  }
+
+  .header-timezone select {
+    width: 105px;
+    max-width: 105px;
+  }
       .layout { gap: 10px; }
       .journal-card { border-radius: 18px; }
       .journal-head { padding: 16px 12px 12px; }
@@ -799,13 +853,21 @@
       .side-card { margin-bottom: 10px; }
     }
 
-    @media (max-width: 390px) {
-      .brand p { display: none; }
-      .brand h1 { font-size: 17px; }
-      .controls { grid-template-columns: 1fr; }
-      .timezone-select { width: 100%; }
-      .paper, textarea { min-height: 64vh; }
-    }
+   @media (max-width: 390px) {
+  .brand h1 {
+    font-size: 15px;
+  }
+
+  #languageSelect {
+    width: 54px;
+    max-width: 54px;
+  }
+
+  .header-timezone select {
+    width: 92px;
+    max-width: 92px;
+  }
+}
 
 
     .mission-percent{min-width:54px;padding:7px 10px;border-radius:999px;background:var(--soft);color:var(--accent);font:700 14px "DM Sans",sans-serif;text-align:center}
@@ -843,14 +905,135 @@
         <button class="member-button member-button-secondary" id="logoutBtn" data-i18n="logout" hidden>Log out</button>
       </div>
 <div class="topbar-actions">
-          <label class="header-language">
-            <span data-i18n="languageLabel">Language</span>
-            <select id="languageSelect" aria-label="Choose interface language">
-              <option value="en">English</option>
-              <option value="ko">한국어</option>
-            </select>
-          </label>
-        </div>
+  <label class="header-control">
+    <span data-i18n="languageLabel">Language</span>
+    <select id="languageSelect" aria-label="Choose interface language">
+      <option value="en">EN</option>
+      <option value="ko">한국어</option>
+    </select>
+  </label>
+
+  <label class="header-control header-timezone">
+    <span data-i18n="timezoneLabel">Time zone</span>
+
+    <select id="timezoneSelect" aria-label="Choose your time zone">
+      <optgroup label="UTC+13">
+        <option value="Pacific/Apia">🇼🇸 Samoa</option>
+        <option value="Pacific/Auckland">🇳🇿 Auckland</option>
+      </optgroup>
+
+      <optgroup label="UTC+12">
+        <option value="Pacific/Fiji">🇫🇯 Fiji</option>
+      </optgroup>
+
+      <optgroup label="UTC+11">
+        <option value="Pacific/Guadalcanal">🇸🇧 Solomon Is.</option>
+      </optgroup>
+
+      <optgroup label="UTC+10">
+        <option value="Australia/Sydney">🇦🇺 Sydney</option>
+      </optgroup>
+
+      <optgroup label="UTC+09">
+        <option value="Asia/Seoul">🇰🇷 Seoul</option>
+        <option value="Asia/Tokyo">🇯🇵 Tokyo</option>
+      </optgroup>
+
+      <optgroup label="UTC+08">
+        <option value="Asia/Kuala_Lumpur">🇲🇾 Malaysia</option>
+        <option value="Asia/Singapore">🇸🇬 Singapore</option>
+        <option value="Asia/Hong_Kong">🇭🇰 Hong Kong</option>
+        <option value="Asia/Shanghai">🇨🇳 China</option>
+        <option value="Asia/Taipei">🇹🇼 Taiwan</option>
+        <option value="Asia/Manila">🇵🇭 Manila</option>
+        <option value="Australia/Perth">🇦🇺 Perth</option>
+      </optgroup>
+
+      <optgroup label="UTC+07">
+        <option value="Asia/Bangkok">🇹🇭 Bangkok</option>
+        <option value="Asia/Ho_Chi_Minh">🇻🇳 Vietnam</option>
+        <option value="Asia/Jakarta">🇮🇩 Jakarta</option>
+      </optgroup>
+
+      <optgroup label="UTC+06">
+        <option value="Asia/Dhaka">🇧🇩 Dhaka</option>
+      </optgroup>
+
+      <optgroup label="UTC+05:30">
+        <option value="Asia/Kolkata">🇮🇳 India</option>
+      </optgroup>
+
+      <optgroup label="UTC+05">
+        <option value="Asia/Karachi">🇵🇰 Karachi</option>
+        <option value="Asia/Tashkent">🇺🇿 Tashkent</option>
+      </optgroup>
+
+      <optgroup label="UTC+04">
+        <option value="Asia/Dubai">🇦🇪 Dubai</option>
+        <option value="Asia/Baku">🇦🇿 Baku</option>
+      </optgroup>
+
+      <optgroup label="UTC+03">
+        <option value="Asia/Riyadh">🇸🇦 Riyadh</option>
+        <option value="Europe/Moscow">🇷🇺 Moscow</option>
+        <option value="Europe/Athens">🇬🇷 Athens</option>
+        <option value="Europe/Helsinki">🇫🇮 Helsinki</option>
+        <option value="Africa/Nairobi">🇰🇪 Nairobi</option>
+      </optgroup>
+
+      <optgroup label="UTC+02">
+        <option value="Africa/Cairo">🇪🇬 Cairo</option>
+        <option value="Africa/Johannesburg">🇿🇦 Johannesburg</option>
+      </optgroup>
+
+      <optgroup label="UTC+01">
+        <option value="Europe/Paris">🇫🇷 Paris</option>
+        <option value="Europe/Berlin">🇩🇪 Berlin</option>
+        <option value="Europe/Amsterdam">🇳🇱 Amsterdam</option>
+        <option value="Europe/Brussels">🇧🇪 Brussels</option>
+        <option value="Europe/Madrid">🇪🇸 Madrid</option>
+        <option value="Europe/Rome">🇮🇹 Rome</option>
+        <option value="Europe/Zurich">🇨🇭 Zurich</option>
+        <option value="Europe/Warsaw">🇵🇱 Warsaw</option>
+      </optgroup>
+
+      <optgroup label="UTC±00">
+        <option value="Europe/London">🇬🇧 London</option>
+        <option value="Atlantic/Reykjavik">🇮🇸 Iceland</option>
+      </optgroup>
+
+      <optgroup label="UTC−03">
+        <option value="America/Sao_Paulo">🇧🇷 São Paulo</option>
+        <option value="America/Argentina/Buenos_Aires">🇦🇷 Buenos Aires</option>
+      </optgroup>
+
+      <optgroup label="UTC−05">
+        <option value="America/New_York">🇺🇸 New York</option>
+        <option value="America/Toronto">🇨🇦 Toronto</option>
+        <option value="America/Bogota">🇨🇴 Bogotá</option>
+        <option value="America/Lima">🇵🇪 Lima</option>
+      </optgroup>
+
+      <optgroup label="UTC−06">
+        <option value="America/Chicago">🇺🇸 Chicago</option>
+        <option value="America/Mexico_City">🇲🇽 Mexico City</option>
+      </optgroup>
+
+      <optgroup label="UTC−07">
+        <option value="America/Denver">🇺🇸 Denver</option>
+      </optgroup>
+
+      <optgroup label="UTC−08">
+        <option value="America/Los_Angeles">🇺🇸 Los Angeles</option>
+        <option value="America/Vancouver">🇨🇦 Vancouver</option>
+      </optgroup>
+
+      <optgroup label="UTC−10">
+        <option value="Pacific/Honolulu">🇺🇸 Hawaii</option>
+      </optgroup>
+    </select>
+  </label>
+</div>
 </header>
 
     <div class="cloud-banner" id="cloudBanner" data-i18n="guestStorageNotice">You are writing as a guest. This draft is stored only in this browser until you log in.</div>
@@ -873,27 +1056,7 @@
                 <option value="advanced" data-i18n="levelAdvanced">Advanced</option>
               </select>
             </label>
-<label class="select-wrap timezone-select">
-              <span data-i18n="timezoneLabel">Time zone</span>
-              <select id="timezoneSelect" aria-label="Choose your time zone">
-                <option value="Asia/Seoul" data-i18n="tzAsiaSeoul">Seoul</option>
-                <option value="Asia/Kuala_Lumpur" data-i18n="tzAsiaKualaLumpur">Kuala Lumpur</option>
-                <option value="Asia/Singapore" data-i18n="tzAsiaSingapore">Singapore</option>
-                <option value="Asia/Hong_Kong" data-i18n="tzAsiaHongKong">Hong Kong</option>
-                <option value="Asia/Tokyo" data-i18n="tzAsiaTokyo">Tokyo</option>
-                <option value="Australia/Sydney" data-i18n="tzAustraliaSydney">Sydney</option>
-                <option value="Europe/London" data-i18n="tzEuropeLondon">London</option>
-                <option value="Europe/Paris" data-i18n="tzEuropeParis">Paris</option>
-                <option value="America/New_York" data-i18n="tzAmericaNewYork">New York</option>
-                <option value="America/Chicago" data-i18n="tzAmericaChicago">Chicago</option>
-                <option value="America/Denver" data-i18n="tzAmericaDenver">Denver</option>
-                <option value="America/Los_Angeles" data-i18n="tzAmericaLosAngeles">Los Angeles</option>
-                <option value="America/Toronto" data-i18n="tzAmericaToronto">Toronto</option>
-                <option value="Pacific/Auckland" data-i18n="tzPacificAuckland">Auckland</option>
-              </select>
-            </label>
           </div>
-        </div>
 
         <div class="inspiration">
           <div class="inspiration-row">
