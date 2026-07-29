@@ -504,9 +504,6 @@
       margin-top: 20px;
     }
 
-
-    .timezone-select { max-width: 185px; }
-
     .streak-heading-row {
       display: flex;
       align-items: flex-start;
@@ -616,9 +613,9 @@
       .date-korean { font-size: 27px; }
 
       .controls {
-        width: 100%;
-        display: grid;
-        grid-template-columns: .72fr 1fr 1.28fr;
+        width: auto;
+        display: flex;
+        justify-content: flex-start;
       }
 
       .select-wrap {
@@ -634,7 +631,6 @@
         font-size: 13px;
       }
 
-      .timezone-select { max-width: none; }
       .inspiration { padding: 14px 15px 5px; }
 
       .inspiration-row {
@@ -837,7 +833,7 @@
       .layout { gap: 10px; }
       .journal-card { border-radius: 18px; }
       .journal-head { padding: 16px 12px 12px; }
-      .controls { grid-template-columns: 1fr 1.25fr; gap: 7px; }
+      .controls {width: auto; display: flex; justify-content: flex-start;}    
       .select-wrap { min-width: 0; padding: 4px 7px 4px 9px; }
       .select-wrap span { font-size: 9px; }
       .select-wrap select { font-size: 12px; }
@@ -878,7 +874,7 @@
     .mission-copy{display:grid;gap:2px}.mission-copy strong{font:600 13px "DM Sans",sans-serif}.mission-copy small,.mission-note{color:var(--muted);font-size:11px;line-height:1.45}.mission-note{margin:12px 2px 0}
 
 
-    .member-area{display:flex;align-items:center;gap:10px;margin-left:auto}.member-copy{display:grid;gap:1px;text-align:right;max-width:240px}.member-copy strong{font-size:12px}.member-copy span{font-size:10px;color:var(--muted);line-height:1.25}.member-button{border:0;border-radius:999px;background:var(--ink);color:#fff;padding:9px 13px;font-weight:700;font-size:11px;white-space:nowrap}.member-button-secondary{background:rgba(255,255,255,.62);color:var(--ink);border:1px solid rgba(139,103,81,.2)}
+    .member-area{display: flex;align-items: center;gap: 10px;margin-left: 0}.member-copy{display:grid;gap:1px;text-align:right;max-width:240px}.member-copy strong{font-size:12px}.member-copy span{font-size:10px;color:var(--muted);line-height:1.25}.member-button{border:0;border-radius:999px;background:var(--ink);color:#fff;padding:9px 13px;font-weight:700;font-size:11px;white-space:nowrap}.member-button-secondary{background:rgba(255,255,255,.62);color:var(--ink);border:1px solid rgba(139,103,81,.2)}
     .mission-category{display:inline-flex;width:max-content;padding:3px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.mission-check.manual-mission{grid-template-columns:22px minmax(0,1fr)}
     .cloud-banner{display:none;margin:0 0 12px;padding:10px 12px;border-radius:12px;background:rgba(139,103,81,.09);font-size:11px;color:var(--muted)}.cloud-banner.show{display:block}
     @media(max-width:800px){.topbar{flex-wrap:wrap}.member-area{order:3;width:100%;justify-content:space-between;margin-left:0}.member-copy{text-align:left;max-width:none;flex:1}}
@@ -1057,6 +1053,8 @@
               </select>
             </label>
           </div>
+
+          </div><!-- closes journal-head -->
 
         <div class="inspiration">
           <div class="inspiration-row">
