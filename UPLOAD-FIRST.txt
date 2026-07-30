@@ -1,0 +1,34 @@
+LANGSNACK JOURNAL RESTORED VERSION
+
+This package restores the journal design from index(11).html.
+
+Upload these to the ROOT of the GitHub repository:
+- index.html
+- shared.css
+- shared.js
+- timezone-picker.js
+- submit.html
+- submission.html
+- history.html
+- teacher-dashboard.html
+
+Replace the files with the same names.
+
+Do not upload index.html as index(11).html.
+
+After committing:
+Mac: Command + Shift + R
+Windows: Ctrl + Shift + R
+
+The homepage keeps:
+- journal paper
+- Korean date
+- prompts
+- levels
+- streak
+- calendar
+- missions
+- entries
+- member area
+
+The timezone selector now loads the full browser-supported IANA list.

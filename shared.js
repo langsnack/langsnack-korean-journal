@@ -1,32 +1,20 @@
+
 const LS = {
-  state: "langsnackJournalStateV4",
-  draft: "langsnackReviewDraftV4",
-  submissions: "langsnackReviewSubmissionsV4",
-  timezone: "langsnackTimeZone"
+  journalState: "langsnackJournalState",
+  reviewDraft: "langsnackReviewDraftV3",
+  submissions: "langsnackReviewSubmissionsV3"
 };
 
 const STATUS = {
-  en: {
-    pending: "Waiting for review",
-    reviewing: "Review in progress",
-    completed: "Review complete"
-  },
-  ko: {
-    pending: "첨삭 대기 중",
-    reviewing: "첨삭 중",
-    completed: "첨삭 완료"
-  }
+  en: { pending: "Waiting for review", reviewing: "Review in progress", completed: "Review complete" },
+  ko: { pending: "첨삭 대기 중", reviewing: "첨삭 중", completed: "첨삭 완료" }
 };
 
-function safeJSON(value, fallback) {
-  try {
-    return JSON.parse(value);
-  } catch {
-    return fallback;
-  }
+function safeParse(value, fallback) {
+  try { return JSON.parse(value); } catch { return fallback; }
 }
 
-function detectedTimeZone() {
+function detectTimeZone() {
   try {
     return Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Seoul";
   } catch {
@@ -34,50 +22,52 @@ function detectedTimeZone() {
   }
 }
 
-function getTimeZone() {
-  return (
-    localStorage.getItem(LS.timezone) ||
-    safeJSON(localStorage.getItem(LS.state), {})?.timeZone ||
-    detectedTimeZone()
-  );
+function getJournalState() {
+  const saved = safeParse(localStorage.getItem(LS.journalState), {});
+  return {
+    entries: Array.isArray(saved.entries) ? saved.entries : [],
+    lastDraft: saved.lastDraft || "",
+    level: saved.level || "starter",
+    timezone: saved.timezone || localStorage.getItem("langsnackTimeZone") || detectTimeZone(),
+    language: saved.language || "en",
+    profile: saved.profile || { name: "", email: "" }
+  };
+}
+
+function saveJournalState(state) {
+  localStorage.setItem(LS.journalState, JSON.stringify(state));
+  if (state.timezone) localStorage.setItem("langsnackTimeZone", state.timezone);
 }
 
 function getState() {
-  const saved = safeJSON(localStorage.getItem(LS.state), {});
+  const journal = getJournalState();
   return {
-    language: saved.language || "en",
-    timeZone: saved.timeZone || getTimeZone(),
-    profile: saved.profile || { name: "", email: "" },
-    journal: saved.journal || ""
+    language: journal.language,
+    timeZone: journal.timezone,
+    timezone: journal.timezone,
+    profile: journal.profile,
+    journal: journal.lastDraft
   };
 }
 
 function saveState(state) {
-  const next = {
-    ...state,
-    timeZone: state.timeZone || getTimeZone()
-  };
-  localStorage.setItem(LS.state, JSON.stringify(next));
-  localStorage.setItem(LS.timezone, next.timeZone);
-}
-
-function setTimeZone(timeZone) {
-  if (!timeZone) return;
-  localStorage.setItem(LS.timezone, timeZone);
-  const state = getState();
-  state.timeZone = timeZone;
-  saveState(state);
+  const journal = getJournalState();
+  journal.language = state.language || journal.language;
+  journal.timezone = state.timeZone || state.timezone || journal.timezone;
+  journal.profile = state.profile || journal.profile;
+  if (typeof state.journal === "string") journal.lastDraft = state.journal;
+  saveJournalState(journal);
 }
 
 function getSubmissions() {
-  return safeJSON(localStorage.getItem(LS.submissions), []);
+  return safeParse(localStorage.getItem(LS.submissions), []);
 }
 
-function saveSubmissions(value) {
-  localStorage.setItem(LS.submissions, JSON.stringify(value));
+function saveSubmissions(items) {
+  localStorage.setItem(LS.submissions, JSON.stringify(items));
 }
 
-function statusText(status, language) {
+function statusText(status, language = "en") {
   return STATUS[language]?.[status] || status;
 }
 
@@ -86,145 +76,91 @@ function statusClass(status) {
 }
 
 function stripHTML(html = "") {
-  const element = document.createElement("div");
-  element.innerHTML = html;
-  return (element.textContent || "").trim();
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return (div.textContent || "").trim();
 }
 
 function escapeHTML(value = "") {
-  return String(value).replace(
-    /[&<>"']/g,
-    character =>
-      ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-      })[character]
-  );
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+  })[char]);
 }
 
-function formatDate(value, language = "en", timeZone = getTimeZone()) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-
-  try {
-    return new Intl.DateTimeFormat(language === "ko" ? "ko-KR" : "en-GB", {
-      timeZone,
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit"
-    }).format(date);
-  } catch {
-    return new Intl.DateTimeFormat(language === "ko" ? "ko-KR" : "en-GB", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit"
-    }).format(date);
-  }
+function formatDate(value, language = "en") {
+  const state = getJournalState();
+  return new Intl.DateTimeFormat(language === "ko" ? "ko-KR" : "en-GB", {
+    timeZone: state.timezone,
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(new Date(value));
 }
 
-function toast(message) {
+function showToast(message) {
   const element = document.getElementById("toast");
   if (!element) return;
   element.textContent = message;
   element.classList.add("show");
-  window.setTimeout(() => element.classList.remove("show"), 2200);
+  setTimeout(() => element.classList.remove("show"), 2200);
 }
 
+function toast(message) { showToast(message); }
+
 function makeId() {
-  return (
-    "JR-" +
-    Date.now().toString(36).toUpperCase() +
-    "-" +
-    Math.random().toString(36).slice(2, 6).toUpperCase()
-  );
+  return "JR-" + Date.now().toString(36).toUpperCase() + "-" +
+    Math.random().toString(36).slice(2, 6).toUpperCase();
 }
 
 function initRichEditor(root) {
   const editor = root.querySelector(".editor-content");
-  if (!editor) throw new Error("Rich text editor element was not found.");
-
   root.querySelectorAll("[data-cmd]").forEach(button => {
-    button.addEventListener("mousedown", event => event.preventDefault());
     button.addEventListener("click", event => {
       event.preventDefault();
       editor.focus();
-      document.execCommand(
-        button.dataset.cmd,
-        false,
-        button.dataset.value || null
-      );
+      document.execCommand(button.dataset.cmd, false, button.dataset.value || null);
     });
   });
-
   const block = root.querySelector("[data-block]");
-  if (block) {
-    block.addEventListener("change", () => {
-      editor.focus();
-      document.execCommand("formatBlock", false, block.value);
-    });
-  }
-
+  if (block) block.onchange = () => {
+    editor.focus();
+    document.execCommand("formatBlock", false, block.value);
+  };
   const color = root.querySelector("[data-color]");
-  if (color) {
-    color.addEventListener("input", () => {
-      editor.focus();
-      document.execCommand("foreColor", false, color.value);
-    });
-  }
-
+  if (color) color.oninput = () => {
+    editor.focus();
+    document.execCommand("foreColor", false, color.value);
+  };
   const highlight = root.querySelector("[data-highlight]");
-  if (highlight) {
-    highlight.addEventListener("input", () => {
-      editor.focus();
-      document.execCommand("hiliteColor", false, highlight.value);
-    });
-  }
-
+  if (highlight) highlight.oninput = () => {
+    editor.focus();
+    document.execCommand("hiliteColor", false, highlight.value);
+  };
   const clear = root.querySelector("[data-clear]");
-  if (clear) {
-    clear.addEventListener("click", event => {
-      event.preventDefault();
-      editor.focus();
-      document.execCommand("removeFormat");
-    });
-  }
-
+  if (clear) clear.onclick = event => {
+    event.preventDefault();
+    editor.focus();
+    document.execCommand("removeFormat");
+  };
   return editor;
 }
 
 function richEditorHTML(id, placeholder) {
   return `<div class="rich-editor" id="${escapeHTML(id)}">
-    <div class="toolbar" role="toolbar" aria-label="Text formatting">
-      <button type="button" class="tool-btn" data-cmd="bold" title="Bold" aria-label="Bold"><b>B</b></button>
-      <button type="button" class="tool-btn" data-cmd="italic" title="Italic" aria-label="Italic"><i>I</i></button>
-      <button type="button" class="tool-btn" data-cmd="underline" title="Underline" aria-label="Underline"><u>U</u></button>
-      <button type="button" class="tool-btn" data-cmd="strikeThrough" title="Strikethrough" aria-label="Strikethrough">S̶</button>
-      <select data-block title="Text style" aria-label="Text style">
-        <option value="p">Paragraph</option>
-        <option value="h2">Heading</option>
-        <option value="blockquote">Quote</option>
-      </select>
-      <button type="button" class="tool-btn" data-cmd="insertUnorderedList" title="Bullet list">• List</button>
-      <button type="button" class="tool-btn" data-cmd="insertOrderedList" title="Numbered list">1. List</button>
-      <label class="colour-tool" title="Text colour">A <input type="color" data-color value="#2f2a25" aria-label="Text colour"></label>
-      <label class="colour-tool" title="Highlight">▰ <input type="color" data-highlight value="#fff0a8" aria-label="Highlight colour"></label>
-      <button type="button" class="tool-btn" data-clear title="Clear formatting" aria-label="Clear formatting">Tx</button>
+    <div class="toolbar">
+      <button class="tool-btn" data-cmd="bold"><b>B</b></button>
+      <button class="tool-btn" data-cmd="italic"><i>I</i></button>
+      <button class="tool-btn" data-cmd="underline"><u>U</u></button>
+      <button class="tool-btn" data-cmd="strikeThrough">S̶</button>
+      <select data-block><option value="p">Paragraph</option><option value="h2">Heading</option><option value="blockquote">Quote</option></select>
+      <button class="tool-btn" data-cmd="insertUnorderedList">• List</button>
+      <button class="tool-btn" data-cmd="insertOrderedList">1. List</button>
+      <label>A <input type="color" data-color value="#2f2a25"></label>
+      <label>▰ <input type="color" data-highlight value="#fff0a8"></label>
+      <button class="tool-btn" data-clear>Tx</button>
     </div>
-    <div class="editor-content" contenteditable="true" spellcheck="true" data-placeholder="${escapeHTML(placeholder)}"></div>
+    <div class="editor-content" contenteditable="true" data-placeholder="${escapeHTML(placeholder)}"></div>
   </div>`;
-}
-
-function bindTimezone(state, render) {
-  window.addEventListener("langsnack:timezone-change", event => {
-    state.timeZone = event.detail.timeZone;
-    saveState(state);
-    if (typeof render === "function") render();
-  });
 }

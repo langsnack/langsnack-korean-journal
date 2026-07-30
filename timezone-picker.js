@@ -183,7 +183,7 @@
   function populateTimeZones(select) {
     const now = new Date();
     const detectedZone = getBrowserTimeZone();
-    const storedZone = localStorage.getItem(STORAGE_KEY) || (typeof getState === "function" ? getState().timeZone : null);
+    const storedZone = localStorage.getItem(STORAGE_KEY);
     const existingValue = select.value;
 
     const zones = getAllTimeZones();

@@ -1,21 +1,9 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>History | Langsnack</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="shared.css"></head>
-<body><main class="shell"><header class="topbar"><div class="brand"><h1>Langsnack Korean Journal</h1><p id="tagline">Your review history</p></div><div class="header-actions">
-      <div class="control language-control">
-        <label for="language">Language</label>
-        <select id="language" aria-label="Language">
-          <option value="en">EN</option>
-          <option value="ko">한국어</option>
-        </select>
-      </div>
-      <div class="control timezone-control">
-        <label for="timezoneSelect">Time zone</label>
-        <select id="timezoneSelect" aria-label="Time zone"></select>
-      </div>
-    </div></header>
+<body><main class="shell"><header class="topbar"><div class="brand"><h1>Langsnack Korean Journal</h1><p id="tagline">Your review history</p></div><div class="header-actions"><div class="control"><label>Language</label><select id="language"><option value="en">EN</option><option value="ko">한국어</option></select></div></div></header>
 <nav class="page-nav"><a class="nav-link" href="index.html" id="navJournal">Journal</a><a class="nav-link active" href="history.html" id="navHistory">Submission history</a></nav><section class="card page-card"><p class="eyebrow" id="eye">Student history</p><h2 class="page-title" id="title">Submission history</h2><p class="intro" id="intro">Open a submission to edit it or view returned feedback.</p><div class="history-list" id="list"></div></section></main>
-<script src="shared.js"></script><script src="timezone-picker.js"></script><script>
+<script src="shared.js"></script><script>
 const state=getState();const T={en:{tag:"Your review history",journal:"Journal",history:"Submission history",eye:"Student history",title:"Submission history",intro:"Open a submission to edit it or view returned feedback.",empty:"No submissions yet."},ko:{tag:"나의 첨삭 기록",journal:"일기장",history:"제출 내역",eye:"학생 기록",title:"제출 내역",intro:"제출한 글을 열어 수정하거나 완료된 첨삭을 확인할 수 있어요.",empty:"아직 제출한 글이 없어요."}};
 function render(){const t=T[state.language];tagline.textContent=t.tag;navJournal.textContent=t.journal;navHistory.textContent=t.history;eye.textContent=t.eye;title.textContent=t.title;intro.textContent=t.intro;language.value=state.language;const items=getSubmissions();list.innerHTML=items.length?"":`<div class="empty">${t.empty}</div>`;items.forEach(x=>{const a=document.createElement("a");a.href=`submission.html?id=${encodeURIComponent(x.id)}`;a.className="card history-row";a.innerHTML=`<div><div class="history-title">${formatDate(x.submittedAt,state.language)}</div><div class="history-preview">${escapeHTML(x.studentPlain)}</div></div><span class="${statusClass(x.status)}">${statusText(x.status,state.language)}</span>`;list.appendChild(a)})}
-language.onchange=()=>{state.language=language.value;saveState(state);render()};bindTimezone(state,render);render();
+language.onchange=()=>{state.language=language.value;saveState(state);render()};render();
 </script></body></html>
