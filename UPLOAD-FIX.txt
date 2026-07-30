@@ -1,0 +1,13 @@
+Upload and replace these files in GitHub:
+
+- shared.css
+- submit.html
+- submission.html
+- history.html
+- teacher-dashboard.html
+
+You do not need to replace index.html again.
+
+After committing, hard refresh:
+Mac: Command + Shift + R
+Windows: Ctrl + Shift + R

@@ -1,8 +1,20 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Submission | Langsnack</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="shared.css"></head>
-<body><main class="shell"><header class="topbar"><div class="brand"><h1>Langsnack Korean Journal</h1><p id="tagline">Submission details</p></div><div class="header-actions"><div class="control"><label>Language</label><select id="language"><option value="en">EN</option><option value="ko">한국어</option></select></div></div></header>
+<body><main class="shell"><header class="topbar"><div class="brand"><h1>Langsnack Korean Journal</h1><p id="tagline">Submission details</p></div><div class="topbar-actions">
+  <label class="header-control">
+    <span>Language</span>
+    <select id="language" aria-label="Language">
+      <option value="en">EN</option>
+      <option value="ko">한국어</option>
+    </select>
+  </label>
+  <label class="header-control header-timezone">
+    <span>Time zone</span>
+    <select id="timezoneSelect" aria-label="Choose your time zone"></select>
+  </label>
+</div></header>
 <nav class="page-nav"><a class="nav-link" href="index.html" id="navJournal">Journal</a><a class="nav-link" href="history.html" id="navHistory">Submission history</a></nav><section class="card page-card" id="content"></section></main><div class="toast" id="toast"></div>
-<script src="shared.js"></script><script>
+<script src="shared.js"></script><script src="timezone-picker.js"></script><script>
 const state=getState(),id=new URLSearchParams(location.search).get("id");let item=getSubmissions().find(x=>x.id===id);if(!item)location.href="history.html";
 const T={en:{tag:"Submission details",journal:"Journal",history:"Submission history",submitted:"Submitted writing",note:"Note for Nicole",edit:"Edit submission",save:"Save changes",cancel:"Cancel",corrected:"Corrected version",teacher:"Teacher notes",locked:"Nicole has started reviewing this submission, so it can no longer be edited.",waiting:"You can still edit this submission until Nicole starts reviewing it.",saved:"Your changes were saved."},ko:{tag:"제출한 글 확인",journal:"일기장",history:"제출 내역",submitted:"제출한 글",note:"니콜쌤에게 전한 말",edit:"제출한 글 수정",save:"수정 내용 저장",cancel:"취소",corrected:"첨삭본",teacher:"선생님 코멘트",locked:"니콜쌤이 첨삭을 시작해서 이제 제출한 글을 수정할 수 없어요.",waiting:"니콜쌤이 첨삭을 시작하기 전까지 제출한 글을 수정할 수 있어요.",saved:"수정 내용을 저장했어요."}};
 function render(){item=getSubmissions().find(x=>x.id===id);const t=T[state.language];document.documentElement.lang=state.language;tagline.textContent=t.tag;navJournal.textContent=t.journal;navHistory.textContent=t.history;language.value=state.language;
@@ -13,5 +25,12 @@ ${editable?`<div class="actions" style="justify-content:flex-end;margin-top:18px
 ${item.status==="completed"?`<div class="field"><label>${t.corrected}</label><div class="editor-content read-only">${item.teacherHtml}</div></div><div class="field"><label>${t.teacher}</label><div class="notice">${escapeHTML(item.teacherNote||"")}</div></div>`:""}`;
 if(editable)document.getElementById("editBtn").onclick=openEdit}
 function openEdit(){const t=T[state.language];content.innerHTML=`<p class="eyebrow">${formatDate(item.submittedAt,state.language)}</p><h2 class="page-title">${t.edit}</h2><div id="editMount"></div><div class="field"><label>${t.note}</label><textarea id="editNote">${escapeHTML(item.studentNote||"")}</textarea></div><div class="actions" style="justify-content:flex-end;margin-top:18px"><button class="button button-secondary" id="cancelBtn">${t.cancel}</button><button class="button button-primary" id="saveBtn">${t.save}</button></div>`;editMount.innerHTML=richEditorHTML("editRich","");const ed=initRichEditor(editMount);ed.innerHTML=item.studentHtml;cancelBtn.onclick=render;saveBtn.onclick=()=>{const items=getSubmissions(),i=items.findIndex(x=>x.id===id);if(i<0||items[i].status!=="pending"){render();return}items[i].studentHtml=ed.innerHTML;items[i].studentPlain=stripHTML(ed.innerHTML);items[i].studentNote=editNote.value.trim();items[i].studentUpdatedAt=new Date().toISOString();saveSubmissions(items);toast(t.saved);render()}}
-language.onchange=()=>{state.language=language.value;saveState(state);render()};render();
+language.onchange=()=>{state.language=language.value;saveState(state);render()};
+window.addEventListener("langsnack:timezone-change",event=>{
+  const journalState=getJournalState();
+  journalState.timezone=event.detail.timeZone;
+  saveJournalState(journalState);
+  render();
+});
+render();
 </script></body></html>

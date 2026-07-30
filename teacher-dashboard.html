@@ -1,10 +1,22 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Teacher Dashboard | Langsnack</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="shared.css"></head>
-<body><main class="shell"><header class="topbar"><div class="brand"><h1>Langsnack Teacher Dashboard</h1><p id="tagline">Review submissions and keep your teaching records.</p></div><div class="header-actions"><div class="control"><label>Language</label><select id="language"><option value="en">EN</option><option value="ko">한국어</option></select></div></div></header>
+<body><main class="shell"><header class="topbar"><div class="brand"><h1>Langsnack Teacher Dashboard</h1><p id="tagline">Review submissions and keep your teaching records.</p></div><div class="topbar-actions">
+  <label class="header-control">
+    <span>Language</span>
+    <select id="language" aria-label="Language">
+      <option value="en">EN</option>
+      <option value="ko">한국어</option>
+    </select>
+  </label>
+  <label class="header-control header-timezone">
+    <span>Time zone</span>
+    <select id="timezoneSelect" aria-label="Choose your time zone"></select>
+  </label>
+</div></header>
 <div class="stats"><div class="card stat-card"><strong id="pendingCount">0</strong><span id="pendingLabel">Waiting</span></div><div class="card stat-card"><strong id="reviewCount">0</strong><span id="reviewLabel">In progress</span></div><div class="card stat-card"><strong id="completeCount">0</strong><span id="completeLabel">Completed</span></div><div class="card stat-card"><strong id="totalCount">0</strong><span id="totalLabel">Total records</span></div></div>
 <div class="dashboard-grid"><aside class="card page-card"><p class="eyebrow" id="queueEye">Teacher page</p><h2 class="page-title" id="queueTitle">Submitted writing</h2><div class="filter-row"><input class="search" id="search" placeholder="Search student or writing"><select class="control" id="statusFilter"><option value="all">All</option><option value="pending">Waiting</option><option value="reviewing">In progress</option><option value="completed">Completed</option></select></div><div class="queue" id="queue"></div></aside>
 <section class="card page-card" id="workspace"><div class="empty" id="selectMessage">Select a submission to begin.</div></section></div></main><div class="toast" id="toast"></div>
-<script src="shared.js"></script><script>
+<script src="shared.js"></script><script src="timezone-picker.js"></script><script>
 const state=getState();let selectedId=null;
 const T={en:{tag:"Review submissions and keep your teaching records.",waiting:"Waiting",progress:"In progress",complete:"Completed",total:"Total records",eye:"Teacher page",title:"Submitted writing",search:"Search student or writing",all:"All",select:"Select a submission to begin.",original:"Student's latest version",note:"Student note",corrected:"Corrected version",teacherNote:"Private/return note",start:"Start review",save:"Save teacher draft",return:"Mark complete and return",reopen:"Reopen review",delete:"Delete record",started:"Review started. The student can no longer edit it.",saved:"Teacher draft saved.",returned:"Review completed and returned.",reopened:"Review reopened.",deleted:"Record deleted."},ko:{tag:"제출된 글을 첨삭하고 수업 기록을 관리해요.",waiting:"첨삭 대기 중",progress:"첨삭 중",complete:"첨삭 완료",total:"전체 기록",eye:"선생님 페이지",title:"제출된 글",search:"학생 이름이나 글 검색",all:"전체",select:"첨삭할 글을 선택해 주세요.",original:"학생이 마지막으로 수정한 원문",note:"학생이 전한 말",corrected:"첨삭본",teacherNote:"선생님 코멘트",start:"첨삭 시작",save:"첨삭 임시 저장",return:"첨삭 완료 및 학생에게 보내기",reopen:"첨삭 다시 열기",delete:"기록 삭제",started:"첨삭을 시작했어요. 이제 학생은 원문을 수정할 수 없어요.",saved:"첨삭 내용을 임시 저장했어요.",returned:"첨삭을 완료하고 학생에게 보냈어요.",reopened:"첨삭을 다시 열었어요.",deleted:"기록을 삭제했어요."}};
 function items(){return getSubmissions()}
@@ -28,5 +40,12 @@ if(action==="complete"){a[i].status="completed";a[i].completedAt=new Date().toIS
 saveSubmissions(a);toast(action==="start"?t.started:action==="save"?t.saved:action==="complete"?t.returned:t.reopened);renderAll()}
 function deleteRecord(){const t=T[state.language];saveSubmissions(items().filter(x=>x.id!==selectedId));selectedId=null;toast(t.deleted);renderAll()}
 function renderAll(){applyText();renderStats();renderQueue();renderWorkspace()}
-search.oninput=renderQueue;statusFilter.onchange=renderQueue;language.onchange=()=>{state.language=language.value;saveState(state);renderAll()};renderAll();
+search.oninput=renderQueue;statusFilter.onchange=renderQueue;language.onchange=()=>{state.language=language.value;saveState(state);renderAll()};
+window.addEventListener("langsnack:timezone-change",event=>{
+  const journalState=getJournalState();
+  journalState.timezone=event.detail.timeZone;
+  saveJournalState(journalState);
+  renderAll();
+});
+renderAll();
 </script></body></html>
