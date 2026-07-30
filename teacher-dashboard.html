@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Teacher Dashboard | Langsnack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="shared.css"></head>
+<body><main class="shell"><header class="topbar"><div class="brand"><h1>Langsnack Teacher Dashboard</h1><p id="tagline">Review submissions and keep your teaching records.</p></div><div class="header-actions">
+      <div class="control language-control">
+        <label for="language">Language</label>
+        <select id="language" aria-label="Language">
+          <option value="en">EN</option>
+          <option value="ko">한국어</option>
+        </select>
+      </div>
+      <div class="control timezone-control">
+        <label for="timezoneSelect">Time zone</label>
+        <select id="timezoneSelect" aria-label="Time zone"></select>
+      </div>
+    </div></header>
+<div class="stats"><div class="card stat-card"><strong id="pendingCount">0</strong><span id="pendingLabel">Waiting</span></div><div class="card stat-card"><strong id="reviewCount">0</strong><span id="reviewLabel">In progress</span></div><div class="card stat-card"><strong id="completeCount">0</strong><span id="completeLabel">Completed</span></div><div class="card stat-card"><strong id="totalCount">0</strong><span id="totalLabel">Total records</span></div></div>
+<div class="dashboard-grid"><aside class="card page-card"><p class="eyebrow" id="queueEye">Teacher page</p><h2 class="page-title" id="queueTitle">Submitted writing</h2><div class="filter-row"><input class="search" id="search" placeholder="Search student or writing"><select class="control" id="statusFilter"><option value="all">All</option><option value="pending">Waiting</option><option value="reviewing">In progress</option><option value="completed">Completed</option></select></div><div class="queue" id="queue"></div></aside>
+<section class="card page-card" id="workspace"><div class="empty" id="selectMessage">Select a submission to begin.</div></section></div></main><div class="toast" id="toast"></div>
+<script src="shared.js"></script><script src="timezone-picker.js"></script><script>
+const state=getState();let selectedId=null;
+const T={en:{tag:"Review submissions and keep your teaching records.",waiting:"Waiting",progress:"In progress",complete:"Completed",total:"Total records",eye:"Teacher page",title:"Submitted writing",search:"Search student or writing",all:"All",select:"Select a submission to begin.",original:"Student's latest version",note:"Student note",corrected:"Corrected version",teacherNote:"Private/return note",start:"Start review",save:"Save teacher draft",return:"Mark complete and return",reopen:"Reopen review",delete:"Delete record",started:"Review started. The student can no longer edit it.",saved:"Teacher draft saved.",returned:"Review completed and returned.",reopened:"Review reopened.",deleted:"Record deleted."},ko:{tag:"제출된 글을 첨삭하고 수업 기록을 관리해요.",waiting:"첨삭 대기 중",progress:"첨삭 중",complete:"첨삭 완료",total:"전체 기록",eye:"선생님 페이지",title:"제출된 글",search:"학생 이름이나 글 검색",all:"전체",select:"첨삭할 글을 선택해 주세요.",original:"학생이 마지막으로 수정한 원문",note:"학생이 전한 말",corrected:"첨삭본",teacherNote:"선생님 코멘트",start:"첨삭 시작",save:"첨삭 임시 저장",return:"첨삭 완료 및 학생에게 보내기",reopen:"첨삭 다시 열기",delete:"기록 삭제",started:"첨삭을 시작했어요. 이제 학생은 원문을 수정할 수 없어요.",saved:"첨삭 내용을 임시 저장했어요.",returned:"첨삭을 완료하고 학생에게 보냈어요.",reopened:"첨삭을 다시 열었어요.",deleted:"기록을 삭제했어요."}};
+function items(){return getSubmissions()}
+function applyText(){const t=T[state.language];tagline.textContent=t.tag;pendingLabel.textContent=t.waiting;reviewLabel.textContent=t.progress;completeLabel.textContent=t.complete;totalLabel.textContent=t.total;queueEye.textContent=t.eye;queueTitle.textContent=t.title;search.placeholder=t.search;statusFilter.options[0].text=t.all;statusFilter.options[1].text=t.waiting;statusFilter.options[2].text=t.progress;statusFilter.options[3].text=t.complete;language.value=state.language}
+function renderStats(){const a=items();pendingCount.textContent=a.filter(x=>x.status==="pending").length;reviewCount.textContent=a.filter(x=>x.status==="reviewing").length;completeCount.textContent=a.filter(x=>x.status==="completed").length;totalCount.textContent=a.length}
+function renderQueue(){const q=search.value.toLowerCase(),f=statusFilter.value;queue.innerHTML="";items().filter(x=>(f==="all"||x.status===f)&&(`${x.studentName} ${x.studentPlain}`.toLowerCase().includes(q))).forEach(x=>{const b=document.createElement("button");b.className=`queue-item ${x.id===selectedId?"active":""}`;b.innerHTML=`<div class="submission-head"><div><div class="queue-title">${escapeHTML(x.studentName||"Student")}</div><div class="queue-meta">${formatDate(x.submittedAt,state.language)} · ${escapeHTML(x.id)}</div></div><span class="${statusClass(x.status)}">${statusText(x.status,state.language)}</span></div><div class="history-preview">${escapeHTML(x.studentPlain)}</div>`;b.onclick=()=>{selectedId=x.id;renderQueue();renderWorkspace()};queue.appendChild(b)});if(selectedId&&!items().some(x=>x.id===selectedId)){selectedId=null;renderWorkspace()}}
+function renderWorkspace(){const t=T[state.language],x=items().find(v=>v.id===selectedId);if(!x){workspace.innerHTML=`<div class="empty">${t.select}</div>`;return}
+workspace.innerHTML=`<div class="submission-head"><div><p class="eyebrow">${formatDate(x.submittedAt,state.language)}</p><h2 class="page-title">${escapeHTML(x.studentName||"Student")}</h2><div class="meta">${escapeHTML(x.studentEmail||"No email")} · ${escapeHTML(x.id)}</div></div><span class="${statusClass(x.status)}">${statusText(x.status,state.language)}</span></div>
+<div class="teacher-panels"><div class="panel"><span class="panel-label">${t.original}</span><div class="html-display">${x.studentHtml}</div></div><div class="panel"><span class="panel-label">${t.note}</span><div class="notice">${escapeHTML(x.studentNote||"—")}</div></div></div>
+<div class="field"><label>${t.corrected}</label><div id="teacherEditorMount"></div></div><div class="field"><label>${t.teacherNote}</label><textarea id="teacherNote">${escapeHTML(x.teacherNote||"")}</textarea></div><div class="actions" style="justify-content:flex-end;margin-top:18px" id="teacherActions"></div>`;
+teacherEditorMount.innerHTML=richEditorHTML("teacherEditor","");const ed=initRichEditor(teacherEditorMount);ed.innerHTML=x.teacherHtml||x.studentHtml;
+const acts=teacherActions;
+if(x.status==="pending"){acts.innerHTML=`<button class="button button-primary" id="startBtn">${t.start}</button>`;startBtn.onclick=()=>updateRecord("start",ed)}
+else{acts.innerHTML=`<button class="button button-danger" id="deleteBtn">${t.delete}</button>${x.status==="completed"?`<button class="button button-secondary" id="reopenBtn">${t.reopen}</button>`:""}<button class="button button-secondary" id="saveBtn">${t.save}</button><button class="button button-success" id="completeBtn">${t.return}</button>`;deleteBtn.onclick=deleteRecord;if(document.getElementById("reopenBtn"))reopenBtn.onclick=()=>updateRecord("reopen",ed);saveBtn.onclick=()=>updateRecord("save",ed);completeBtn.onclick=()=>updateRecord("complete",ed)}
+}
+function updateRecord(action,ed){const t=T[state.language],a=items(),i=a.findIndex(x=>x.id===selectedId);if(i<0)return;
+if(action==="start"){a[i].status="reviewing";a[i].reviewStartedAt=new Date().toISOString()}
+if(action==="reopen"){a[i].status="reviewing";a[i].completedAt=null}
+if(action==="save"||action==="complete"){a[i].teacherHtml=ed.innerHTML;a[i].teacherNote=teacherNote.value.trim();a[i].teacherUpdatedAt=new Date().toISOString()}
+if(action==="complete"){a[i].status="completed";a[i].completedAt=new Date().toISOString();window.parent?.postMessage({source:"langsnack-journal",type:"reviewCompleted",payload:a[i]},"*")}
+saveSubmissions(a);toast(action==="start"?t.started:action==="save"?t.saved:action==="complete"?t.returned:t.reopened);renderAll()}
+function deleteRecord(){const t=T[state.language];saveSubmissions(items().filter(x=>x.id!==selectedId));selectedId=null;toast(t.deleted);renderAll()}
+function renderAll(){applyText();renderStats();renderQueue();renderWorkspace()}
+search.oninput=renderQueue;statusFilter.onchange=renderQueue;language.onchange=()=>{state.language=language.value;saveState(state);renderAll()};bindTimezone(state,renderAll);renderAll();
+</script></body></html>
