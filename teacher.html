@@ -1,0 +1,37 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Submitted Writing | Langsnack Teacher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css"></head><body><main class="shell">
+<header class="topbar"><div class="brand"><h1>Langsnack Teacher</h1><p id="tagline">Writing review dashboard</p></div><div class="topbar-actions"><label class="header-control"><span>Language</span><select id="languageSelect"><option value="en">EN</option><option value="ko">한국어</option></select></label></div><div class="member-area"><div class="member-copy"><strong>Nicole</strong><span>Teacher view</span></div></div></header>
+<section class="page-card"><p class="eyebrow" id="eyebrow">Teacher page</p><h2 class="page-title" id="title">Submitted writing</h2><p class="intro" id="intro">Open each submission, write corrections, add explanations, and return it to the student.</p><div class="card-list" id="teacherList"></div></section>
+</main><div class="toast" id="toast"></div><script src="shared.js"></script><script>
+const state=getJournalState();
+const tx={en:{tagline:"Writing review dashboard",eyebrow:"Teacher page",title:"Submitted writing",intro:"Open each submission, write corrections, add explanations, and return it to the student.",empty:"No submitted writing.",question:"Student question",focus:"Requested focus",original:"Original",corrected:"Corrected version",notes:"Teacher notes",save:"Save draft",return:"Return to student",saved:"Review draft saved.",sent:"The corrected version was returned to the student."},ko:{tagline:"글쓰기 첨삭 관리",eyebrow:"선생님 페이지",title:"제출된 글",intro:"학생이 제출한 글을 열고 첨삭과 설명을 작성한 뒤 다시 돌려주는 페이지예요.",empty:"제출된 글이 없어요.",question:"학생 질문",focus:"중점 첨삭 요청",original:"원문",corrected:"첨삭본",notes:"선생님 코멘트",save:"임시 저장",return:"학생에게 보내기",saved:"첨삭 내용을 임시 저장했어요.",sent:"학생에게 첨삭본을 보냈어요."}};
+function render(){
+ const t=tx[state.language];document.documentElement.lang=state.language;tagline.textContent=t.tagline;eyebrow.textContent=t.eyebrow;title.textContent=t.title;intro.textContent=t.intro;languageSelect.value=state.language;
+ const items=getSubmissions();teacherList.innerHTML="";
+ if(!items.length){teacherList.innerHTML=`<p class="muted">${t.empty}</p>`;return}
+ items.forEach(s=>{
+  const article=document.createElement("article");article.className="page-card submission-card";
+  article.innerHTML=`<div class="submission-head"><div><h3>${escapeHTML(s.studentName||"Student")} · ${escapeHTML(s.level)}</h3><div class="meta">${formatDate(s.submittedAt,state.language)} · ${escapeHTML(s.id)}</div></div><span class="${statusClass(s.status)}">${statusText(s.status,state.language)}</span></div>
+  <div class="question-box"><strong>${t.question}</strong><br>${escapeHTML(s.studentQuestion||"—")}</div>
+  <div class="question-box"><strong>${t.focus}</strong><br>${escapeHTML((s.requestedFocus||[]).join(", ")||"—")}</div>
+  <div class="teacher-grid"><div class="teacher-box"><strong>${t.original}</strong><p>${escapeHTML(s.originalText)}</p></div><div class="teacher-box"><strong>${t.corrected}</strong><textarea class="correctedText">${escapeHTML(s.correctedText||s.originalText)}</textarea></div></div>
+  <div class="field"><label>${t.notes}</label><textarea class="teacherComment">${escapeHTML(s.teacherComment||"")}</textarea></div>
+  <div class="actions" style="justify-content:flex-end;margin-top:18px"><button class="button button-secondary saveBtn">${t.save}</button><button class="button button-primary completeBtn">${t.return}</button></div>`;
+  article.querySelector(".saveBtn").onclick=()=>saveReview(s.id,article,false);
+  article.querySelector(".completeBtn").onclick=()=>saveReview(s.id,article,true);
+  teacherList.appendChild(article);
+ })
+}
+function saveReview(id,article,complete){
+ const items=getSubmissions(),i=items.findIndex(x=>x.id===id);if(i<0)return;
+ items[i].correctedText=article.querySelector(".correctedText").value.trim();
+ items[i].teacherComment=article.querySelector(".teacherComment").value.trim();
+ if(complete){items[i].status="completed";items[i].completedAt=new Date().toISOString()}
+ saveSubmissions(items);showToast(complete?tx[state.language].sent:tx[state.language].saved);render();
+}
+languageSelect.onchange=()=>{state.language=languageSelect.value;saveJournalState(state);render()};render();
+</script></body></html>

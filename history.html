@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Submission History | Langsnack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css"></head><body><main class="shell">
+<header class="topbar"><div class="brand"><h1>Langsnack Korean Journal</h1><p id="tagline">Your writing feedback</p></div><div class="topbar-actions"><label class="header-control"><span>Language</span><select id="languageSelect"><option value="en">EN</option><option value="ko">한국어</option></select></label></div><div class="member-area"><div class="member-copy"><strong id="memberTitle">Student account</strong><span id="memberSub">Review your past submissions.</span></div></div></header>
+<nav class="page-nav"><a class="nav-link" href="index.html" id="navJournal">Journal</a><a class="nav-link active" href="history.html" id="navHistory">Submission history</a></nav>
+<section class="page-card"><p class="eyebrow" id="eyebrow">Student history</p><h2 class="page-title" id="title">Submission history</h2><p class="intro" id="intro">Check submitted journals and open completed feedback.</p><div class="card-list" id="historyList"></div></section>
+</main><div class="toast" id="toast"></div><script src="shared.js"></script><script>
+const state=getJournalState();
+const tx={en:{tagline:"Your writing feedback",student:"Student account",sub:"Review your past submissions.",journal:"Journal",history:"Submission history",eyebrow:"Student history",title:"Submission history",intro:"Check submitted journals and open completed feedback.",empty:"No submissions yet.",open:"Open feedback"},ko:{tagline:"나의 글쓰기 첨삭",student:"학생 계정",sub:"제출한 글과 첨삭을 확인해요.",journal:"일기장",history:"제출 내역",eyebrow:"학생 기록",title:"제출 내역",intro:"제출한 글과 완료된 첨삭을 다시 확인할 수 있어요.",empty:"아직 제출한 글이 없어요.",open:"첨삭 확인"}};
+function render(){
+ const t=tx[state.language];document.documentElement.lang=state.language;tagline.textContent=t.tagline;memberTitle.textContent=t.student;memberSub.textContent=t.sub;navJournal.textContent=t.journal;navHistory.textContent=t.history;eyebrow.textContent=t.eyebrow;title.textContent=t.title;intro.textContent=t.intro;languageSelect.value=state.language;
+ const items=getSubmissions();historyList.innerHTML="";
+ if(!items.length){historyList.innerHTML=`<p class="muted">${t.empty}</p>`;return}
+ items.forEach(s=>{const a=document.createElement("a");a.className="page-card history-row";a.href=`review.html?id=${encodeURIComponent(s.id)}`;a.innerHTML=`<div><div class="history-title">${formatDate(s.submittedAt,state.language)} · ${escapeHTML(s.level)}</div><div class="history-preview">${escapeHTML(s.originalText)}</div></div><span class="${statusClass(s.status)}">${statusText(s.status,state.language)}</span>`;historyList.appendChild(a)})
+}
+languageSelect.onchange=()=>{state.language=languageSelect.value;saveJournalState(state);render()};render();
+</script></body></html>
