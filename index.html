@@ -29,6 +29,14 @@
   </div>
 </header>
 
+<section class="guest-banner" id="guestBanner" hidden>
+  <div>
+    <strong id="guestBannerTitle">You are using Guest Mode</strong>
+    <span id="guestBannerText">You can try writing, but drafts and submissions are not saved.</span>
+  </div>
+  <button type="button" class="button green-button" id="guestLoginButton">Log in / Sign up</button>
+</section>
+
 <div class="notebook-app">
   <aside class="notebook-sidebar" aria-label="Notebook navigation">
     <nav class="sidebar-nav">
@@ -205,28 +213,6 @@ const content={
  }
 };
 
-const badges=[
- {key:"first",titleKo:"첫 제출",titleEn:"First submission",descKo:"첫 번째 글을 제출해요",descEn:"Submit your first writing",goal:1,type:"submissions"},
- {key:"three",titleKo:"좋은 시작",titleEn:"Off to a good start",descKo:"글을 3번 제출해요",descEn:"Submit 3 writings",goal:3,type:"submissions"},
- {key:"five",titleKo:"글쓰기 루틴",titleEn:"Writing routine",descKo:"글을 5번 제출해요",descEn:"Submit 5 writings",goal:5,type:"submissions"},
- {key:"ten",titleKo:"집중력 작가",titleEn:"Focused writer",descKo:"글을 10번 제출해요",descEn:"Submit 10 writings",goal:10,type:"submissions"},
- {key:"twenty",titleKo:"꾸준한 작가",titleEn:"Dedicated writer",descKo:"글을 20번 제출해요",descEn:"Submit 20 writings",goal:20,type:"submissions"},
- {key:"fifty",titleKo:"기록 수집가",titleEn:"Writing collector",descKo:"글을 50번 제출해요",descEn:"Submit 50 writings",goal:50,type:"submissions"},
- {key:"streak3",titleKo:"3일의 시작",titleEn:"Three-day spark",descKo:"3일 연속으로 글을 써요",descEn:"Write for 3 days in a row",goal:3,type:"streak"},
- {key:"streak7",titleKo:"일주일의 습관",titleEn:"One-week habit",descKo:"7일 연속으로 글을 써요",descEn:"Write for 7 days in a row",goal:7,type:"streak"},
- {key:"streak14",titleKo:"꾸준한 발걸음",titleEn:"Steady steps",descKo:"14일 연속으로 글을 써요",descEn:"Write for 14 days in a row",goal:14,type:"streak"},
- {key:"streak30",titleKo:"한 달의 기록",titleEn:"A month of writing",descKo:"30일 연속으로 글을 써요",descEn:"Write for 30 days in a row",goal:30,type:"streak"},
- {key:"feedback1",titleKo:"첫 피드백",titleEn:"First feedback",descKo:"첫 번째 첨삭을 받아요",descEn:"Receive your first review",goal:1,type:"completed"},
- {key:"feedback5",titleKo:"피드백 수집가",titleEn:"Feedback seeker",descKo:"첨삭을 5번 받아요",descEn:"Receive 5 reviews",goal:5,type:"completed"},
- {key:"feedback10",titleKo:"성장하는 작가",titleEn:"Growing writer",descKo:"첨삭을 10번 받아요",descEn:"Receive 10 reviews",goal:10,type:"completed"},
- {key:"question1",titleKo:"첫 질문",titleEn:"First question",descKo:"첨삭 질문을 처음 남겨요",descEn:"Ask your first question",goal:1,type:"questions"},
- {key:"question5",titleKo:"궁금증 탐험가",titleEn:"Curious learner",descKo:"질문을 5번 남겨요",descEn:"Ask 5 questions",goal:5,type:"questions"},
- {key:"saved1",titleKo:"첫 설명 저장",titleEn:"First saved note",descKo:"도움이 된 설명을 처음 저장해요",descEn:"Save your first explanation",goal:1,type:"saved"},
- {key:"saved5",titleKo:"설명 수집가",titleEn:"Knowledge keeper",descKo:"설명을 5개 저장해요",descEn:"Save 5 explanations",goal:5,type:"saved"},
- {key:"chars500",titleKo:"500자의 기록",titleEn:"500 characters",descKo:"누적 500자를 작성해요",descEn:"Write 500 Korean characters",goal:500,type:"characters"},
- {key:"chars2000",titleKo:"2,000자의 성장",titleEn:"2,000 characters",descKo:"누적 2,000자를 작성해요",descEn:"Write 2,000 Korean characters",goal:2000,type:"characters"},
- {key:"chars10000",titleKo:"만 자 작가",titleEn:"Ten-thousand writer",descKo:"누적 10,000자를 작성해요",descEn:"Write 10,000 Korean characters",goal:10000,type:"characters"}
-];
 
 function tr(key){return translations[state.language][key]}
 function setText(id,key){const el=document.getElementById(id);if(el)el.textContent=tr(key)}
@@ -247,32 +233,53 @@ function applyLanguage(){
 function updateCounts(){charCount.textContent=journalText.value.replace(/\s/g,"").length;wordCount.textContent=journalText.value.trim()?journalText.value.trim().split(/\s+/).length:0}
 function pick(type){const arr=content[levelSelect.value][type];return arr[Math.floor(Math.random()*arr.length)]}
 function showRecommendation(type){activeGenerator=type;generatorLabel.textContent=tr(type+"Label");generatorText.textContent=pick(type);generatorOutput.hidden=false}
-function saveEntry(){const text=journalText.value.trim();if(!text){showToast(tr("writeFirst"));return}const existing=state.entries.findIndex(e=>e.date===dateKey()&&e.status==="draft");const entry={id:existing>=0?state.entries[existing].id:crypto.randomUUID(),date:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):dateKey(),journalDate:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):null,createdAt:new Date().toISOString(),text,level:levelSelect.value,status:"draft",category:activeCategory};if(existing>=0)state.entries[existing]=entry;else state.entries.unshift(entry);state.lastDraft=text;state.level=levelSelect.value;saveJournalState(state);renderAll();showToast(tr("draftSaved"))}
+function saveEntry(){
+ if(!isNotebookMember()){requestNotebookLogin();showToast(state.language==="ko"?"로그인하면 임시 저장을 사용할 수 있어요.":"Log in to save your draft.");return}
+ const text=journalText.value.trim();if(!text){showToast(tr("writeFirst"));return}const existing=state.entries.findIndex(e=>e.date===dateKey()&&e.status==="draft");const entry={id:existing>=0?state.entries[existing].id:crypto.randomUUID(),date:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):dateKey(),journalDate:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):null,createdAt:new Date().toISOString(),text,level:levelSelect.value,status:"draft",category:activeCategory};if(existing>=0)state.entries[existing]=entry;else state.entries.unshift(entry);state.lastDraft=text;state.level=levelSelect.value;saveJournalState(state);renderAll();showToast(tr("draftSaved"))}
 function renderEntries(){entriesList.innerHTML="";if(!state.entries.length){entriesList.innerHTML=`<div class="empty-state">${tr("noEntries")}</div>`;return}state.entries.slice(0,5).forEach(e=>{const item=document.createElement("button");item.className="recent-item";item.innerHTML=`<span class="recent-icon">✎</span><span class="recent-copy"><strong>${escapeHTML(e.text.slice(0,40))}${e.text.length>40?"…":""}</strong><small>${escapeHTML(e.category||e.level)}</small></span><span class="recent-status">${e.status==="draft"?(state.language==="ko"?"임시 저장":"Draft"):(state.language==="ko"?"작성 완료":"Written")}</span><span class="card-arrow">›</span>`;item.onclick=()=>{journalText.value=e.text;levelSelect.value=e.level;activeCategory=e.category||"journal";mainJournalDateInput.value=e.journalDate||e.date||dateKey();updateMainJournalDateVisibility();document.querySelectorAll('.category-tab').forEach(x=>x.classList.toggle('active',x.dataset.category===activeCategory));updateCounts();document.getElementById('writing').scrollIntoView({behavior:'smooth'})};entriesList.appendChild(item)})}
 function renderCalendar(){calendarGrid.innerHTML="";const labels=state.language==="ko"?["월","화","수","목","금","토","일"]:["M","T","W","T","F","S","S"];labels.forEach(d=>{const s=document.createElement("span");s.className="day-label";s.textContent=d;calendarGrid.appendChild(s)});const cur=getDateParts(),first=new Date(cur.year,cur.month-1,1),offset=(first.getDay()+6)%7,dim=new Date(cur.year,cur.month,0).getDate(),written=new Set(state.entries.map(e=>e.date));for(let i=0;i<offset;i++)calendarGrid.appendChild(document.createElement("span"));for(let d=1;d<=dim;d++){const s=document.createElement("span");s.className="calendar-day";s.textContent=d;const k=`${cur.year}-${String(cur.month).padStart(2,"0")}-${String(d).padStart(2,"0")}`;if(written.has(k))s.classList.add("written");if(d===cur.day)s.classList.add("today");if(d>cur.day)s.classList.add("future");calendarGrid.appendChild(s)}calendarMonthLabel.textContent=new Intl.DateTimeFormat(state.language==="ko"?"ko-KR":"en-GB",{timeZone:state.timezone,month:"long",year:"numeric"}).format(new Date())}
 function renderStreak(){streakCount.textContent=getStreak()}
-function badgeValues(){
- const submissions=getSubmissions();
- const completed=submissions.filter(x=>x.status==="completed").length;
- const savedCount=safeParse(localStorage.getItem("langsnackSavedExplanations"),[]).length;
- const questions=submissions.filter(x=>(x.studentNote||"").trim()).length;
- const characters=submissions.reduce((sum,x)=>sum+(x.studentPlain||"").replace(/\s/g,"").length,0);
- return {entries:state.entries.length,submissions:submissions.length,streak:getStreak(),saved:savedCount,completed,questions,characters};
-}
+
 function renderBadges(){
- const values=badgeValues();
- const next=badges.find(b=>(values[b.type]||0)<b.goal) || badges[badges.length-1];
- const current=Math.min(values[next.type]||0,next.goal);
- const percent=Math.min(100,Math.round((current/next.goal)*100));
+ const progress=getNotebookBadgeProgress();
+ const next=getNextNotebookBadge();
+ const label=state.language==="ko"?"다음 배지":"Next badge";
+ const earnedLabel=state.language==="ko"?"획득한 배지":"Earned badges";
+ const mini=progress.filter(item=>item.earned).slice(-3).reverse();
+ const fallback=progress.filter(item=>!item.earned&&item.key!==next.key).slice(0,3-mini.length);
+ const preview=[...mini,...fallback];
+
  badgeGrid.innerHTML=`<article class="next-badge-preview">
-   <span class="badge-medal badge-1">${percent>=100?'✓':'✦'}</span>
-   <span class="next-badge-copy"><small>${state.language==='ko'?'다음 배지':'Next badge'}</small><strong>${state.language==='ko'?next.titleKo:next.titleEn}</strong><span>${state.language==='ko'?next.descKo:next.descEn}</span></span>
-   <div class="badge-progress"><div class="badge-progress-bar"><i style="width:${percent}%"></i></div><b>${current} / ${next.goal}</b></div>
- </article>`;
- allBadgesGrid.innerHTML=badges.map((b,index)=>{
-   const value=values[b.type]||0, earned=value>=b.goal, pct=Math.min(100,Math.round(value/b.goal*100));
-   return `<article class="all-badge ${earned?'earned':''}"><span class="all-badge-icon">${earned?'✓':'✦'}</span><div><strong>${state.language==='ko'?b.titleKo:b.titleEn}</strong><p>${state.language==='ko'?b.descKo:b.descEn}</p><div class="badge-progress-bar"><i style="width:${pct}%"></i></div><small>${Math.min(value,b.goal)} / ${b.goal}</small></div></article>`;
- }).join('');
+   <span class="badge-medal badge-1">${next.earned?"✓":"✦"}</span>
+   <span class="next-badge-copy">
+     <small>${label}</small>
+     <strong>${state.language==="ko"?next.titleKo:next.titleEn}</strong>
+     <span>${state.language==="ko"?next.descKo:next.descEn}</span>
+   </span>
+   <div class="badge-progress">
+     <div class="badge-progress-bar"><i style="width:${next.percent}%"></i></div>
+     <b>${Math.min(next.value,next.goal)} / ${next.goal}</b>
+   </div>
+ </article>
+ <div class="badge-peek-label">${earnedLabel}</div>
+ <div class="badge-peek-row">
+   ${preview.map(item=>`<div class="badge-peek ${item.earned?"earned":""}" title="${state.language==="ko"?item.descKo:item.descEn}">
+     <span>${item.earned?"✓":"✦"}</span>
+     <small>${state.language==="ko"?item.titleKo:item.titleEn}</small>
+   </div>`).join("")}
+ </div>`;
+
+ allBadgesGrid.innerHTML=progress.map(item=>`
+   <article class="all-badge ${item.earned?"earned":""}">
+     <span class="all-badge-icon">${item.earned?"✓":"✦"}</span>
+     <div>
+       <strong>${state.language==="ko"?item.titleKo:item.titleEn}</strong>
+       <p>${state.language==="ko"?item.descKo:item.descEn}</p>
+       <div class="badge-progress-bar"><i style="width:${item.percent}%"></i></div>
+       <small>${Math.min(item.value,item.goal)} / ${item.goal}</small>
+     </div>
+   </article>
+ `).join("");
 }
 function saveDailyPickState(value){localStorage.setItem(DAILY_PICK_KEY,JSON.stringify(value))}
 function dailyElement(type){return document.getElementById("daily"+type[0].toUpperCase()+type.slice(1))}
@@ -305,6 +312,36 @@ function showSurprise(){
 }
 function renderAll(){renderEntries();renderCalendar();renderStreak();renderBadges()}
 
+
+function applyAuthUI(){
+ const auth=getAuthSession();
+ guestBanner.hidden=auth.loggedIn;
+ guestLoginButton.onclick=requestNotebookLogin;
+
+ if(auth.loggedIn){
+   loginBtn.textContent=(auth.name||"Member").split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase()||"ME";
+   loginBtn.title=auth.name||auth.email||"Member";
+   loginBtn.onclick=()=>{};
+   saveDraftBtn.hidden=false;
+   submitBtn.disabled=false;
+   submitBtn.textContent=tr("submit");
+   welcomeHeading.textContent=`${tr(greetingKey())}, ${auth.name||displayName()}!`;
+ }else{
+   loginBtn.textContent=state.language==="ko"?"로그인":"Log in";
+   loginBtn.title=state.language==="ko"?"로그인 또는 회원가입":"Log in or sign up";
+   loginBtn.onclick=requestNotebookLogin;
+   saveDraftBtn.hidden=true;
+   submitBtn.disabled=false;
+   submitBtn.textContent=state.language==="ko"?"로그인 후 제출":"Log in to submit";
+   welcomeHeading.textContent=`${tr(greetingKey())}, ${state.language==="ko"?"게스트":"Guest"}!`;
+ }
+}
+
+window.addEventListener("langsnack:auth-change",()=>{
+ applyAuthUI();
+ renderAll();
+});
+
 document.querySelectorAll("[data-generator]").forEach(btn=>btn.onclick=()=>showRecommendation(btn.dataset.generator));
 surpriseMeBtn.onclick=showSurprise;
 shuffleAgainBtn.onclick=()=>activeGenerator==="surprise"?showSurprise():showRecommendation(activeGenerator);closeGenerator.onclick=()=>generatorOutput.hidden=true;
@@ -315,14 +352,22 @@ document.querySelectorAll("[data-prefix]").forEach(btn=>btn.onclick=()=>{const s
 document.querySelectorAll("[data-insert]").forEach(btn=>btn.onclick=()=>{const start=journalText.selectionStart,value=journalText.value,insert=btn.dataset.insert;journalText.value=value.slice(0,start)+insert+value.slice(start);journalText.focus();journalText.setSelectionRange(start+insert.length,start+insert.length);journalText.dispatchEvent(new Event("input"))});
 clearFormatBtn.onclick=()=>{journalText.value=journalText.value.replace(/\*\*|__|_/g,"");journalText.dispatchEvent(new Event("input"))};
 clearAllBtn.onclick=()=>{if(!journalText.value||confirm(state.language==="ko"?"작성 중인 글을 모두 지울까요?":"Clear the current writing?")){journalText.value="";state.lastDraft="";saveJournalState(state);updateCounts();showToast(tr("cleared"))}};
-journalText.oninput=()=>{state.lastDraft=journalText.value;saveJournalState(state);updateCounts()};
+journalText.oninput=()=>{
+ if(isNotebookMember()){
+   state.lastDraft=journalText.value;
+   saveJournalState(state);
+ }
+ updateCounts();
+};
 levelSelect.onchange=()=>{state.level=levelSelect.value;saveJournalState(state)};
 mainJournalDateInput.onchange=()=>{state.journalDate=mainJournalDateInput.value;saveJournalState(state)};
 timezoneSelect.onchange=()=>{state.timezone=timezoneSelect.value;saveJournalState(state);applyLanguage()};
 window.addEventListener("langsnack:timezone-change",event=>{state.timezone=event.detail.timeZone;saveJournalState(state);applyLanguage()});
 languageSelect.onchange=()=>{state.language=languageSelect.value;saveJournalState(state);applyLanguage()};
 saveDraftBtn.onclick=saveEntry;
-submitBtn.onclick=()=>{const text=journalText.value.trim();if(!text){showToast(tr("writeFirst"));return}const draft={entryId:crypto.randomUUID(),journal:text,level:levelSelect.value,date:dateKey(),language:state.language,category:activeCategory,journalDate:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):null};sessionStorage.setItem(LS.reviewDraft,JSON.stringify(draft));location.href="submit.html"};
+submitBtn.onclick=()=>{
+ if(!isNotebookMember()){requestNotebookLogin();showToast(state.language==="ko"?"글을 제출하려면 먼저 로그인해 주세요.":"Please log in before submitting.");return}
+ const text=journalText.value.trim();if(!text){showToast(tr("writeFirst"));return}const draft={entryId:crypto.randomUUID(),journal:text,level:levelSelect.value,date:dateKey(),language:state.language,category:activeCategory,journalDate:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):null};sessionStorage.setItem(LS.reviewDraft,JSON.stringify(draft));location.href="submit.html"};
 viewAchievementsBtn.onclick=()=>{achievementModal.hidden=false;document.body.classList.add('modal-open')};
 document.querySelectorAll('[data-close-badges]').forEach(el=>el.onclick=()=>{achievementModal.hidden=true;document.body.classList.remove('modal-open')});
 function updateMainJournalDateVisibility(){

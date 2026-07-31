@@ -62,3 +62,17 @@ export const getMySubmissions = webMethod(
     return result.items;
   }
 );
+
+
+export const deleteMySubmission = webMethod(
+  Permissions.SiteMember,
+  async ({ submissionId, memberId }) => {
+    const existing = await wixData.get(COLLECTION, submissionId);
+
+    if (!existing || existing.memberId !== memberId) {
+      throw new Error("You are not allowed to delete this submission.");
+    }
+
+    return wixData.remove(COLLECTION, submissionId);
+  }
+);

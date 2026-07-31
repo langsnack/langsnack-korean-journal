@@ -1,26 +1,134 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My work | Langsnack Notebook</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="shared.css"></head><body><main class="nb-shell"><header class="nb-header"><a class="nb-brand" href="/" style="text-decoration:none;color:inherit"><span class="nb-logo">ㄱ</span><span><strong>Langsnack Notebook</strong><span>Your Korean learning space</span></span></a><nav class="nb-nav"><a href="/" data-nav="home">Write</a><a href="history.html" data-nav="work">My work</a><a href="saved.html" data-nav="saved">Saved</a></nav><div class="nb-actions"><select id="languageSelect" aria-label="Language"><option value="en">EN</option><option value="ko">한국어</option></select><label class="header-timezone"><select id="timezoneSelect" aria-label="Time zone"></select></label></div></header><section class="nb-main"><div class="nb-page-head"><div><span class="nb-kicker">Your learning history</span><h1>My work</h1><p>Open any submission to see feedback, questions and its version history.</p></div><div class="nb-filter"><input id="searchInput" placeholder="Search your work"><select id="statusInput"><option value="all">All statuses</option><option value="pending">Waiting</option><option value="reviewing">Reviewing</option><option value="completed">Returned</option></select><a class="button button-primary" href="/#writing">New writing</a></div></div><div class="my-work-summary">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My work | Langsnack Notebook</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="shared.css"></head><body><main class="nb-shell"><header class="nb-header"><a class="nb-brand" href="/" style="text-decoration:none;color:inherit"><span class="nb-logo">ㄱ</span><span><strong>Langsnack Notebook</strong><span>Your Korean learning space</span></span></a><nav class="nb-nav"><a href="/" data-nav="home">Write</a><a href="history.html" data-nav="work">My work</a><a href="saved.html" data-nav="saved">Saved</a></nav><div class="nb-actions"><select id="languageSelect" aria-label="Language"><option value="en">EN</option><option value="ko">한국어</option></select><label class="header-timezone"><select id="timezoneSelect" aria-label="Time zone"></select></label><button class="member-login-button" id="historyLoginButton" type="button">Log in</button></div></header><section class="nb-main"><div class="nb-page-head"><div><span class="nb-kicker">Your learning history</span><h1>My work</h1><p>Open any submission to see feedback, questions and its version history.</p></div><div class="nb-filter"><input id="searchInput" placeholder="Search your work"><select id="statusInput"><option value="all">All statuses</option><option value="pending">Waiting</option><option value="reviewing">Reviewing</option><option value="completed">Returned</option></select><a class="button button-primary" href="/#writing">New writing</a></div></div><div class="my-work-summary">
 <section class="nb-card nb-card-pad"><span class="nb-kicker">Writing overview</span><h2 style="margin:5px 0 6px">Keep everything in one place</h2><p class="muted" style="margin:0">Re-read your writing, make changes and return to Nicole’s feedback anytime.</p></section>
 <section class="nb-card mini-achievement" id="miniAchievement"></section>
 </div>
-<section class="nb-card nb-card-pad"><div class="nb-work-list" id="workList"></div></section></section></main><script src="shared.js"></script><script src="timezone-picker.js"></script><script>
+<section class="nb-card nb-card-pad"><div class="nb-work-list" id="workList"></div></section></section></main>
+<div class="achievement-modal" id="historyBadgeModal" hidden>
+  <div class="achievement-modal-backdrop" data-close-history-badges></div>
+  <section class="achievement-modal-card" role="dialog" aria-modal="true">
+    <div class="achievement-modal-head">
+      <div><p class="nb-kicker">Your progress</p><h2>Achievement badges</h2></div>
+      <button class="modal-close" type="button" data-close-history-badges>×</button>
+    </div>
+    <div class="all-badges-grid" id="historyAllBadges"></div>
+  </section>
+</div>
+
+<div class="delete-confirm-modal" id="deleteConfirmModal" hidden>
+  <div class="delete-confirm-backdrop"></div>
+  <section class="delete-confirm-card" role="dialog" aria-modal="true" aria-labelledby="deleteConfirmTitle">
+    <p class="nb-kicker">Permanent deletion</p>
+    <h2 id="deleteConfirmTitle">Delete this writing?</h2>
+    <p>This cannot be undone. Type <strong>삭제</strong> below to permanently delete it.</p>
+    <input id="deleteConfirmInput" class="nb-input" autocomplete="off" placeholder="삭제">
+    <div class="delete-confirm-actions">
+      <button class="button button-secondary" id="cancelDeleteButton" type="button">Cancel</button>
+      <button class="button button-danger" id="confirmDeleteButton" type="button" disabled>Confirm delete</button>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast"></div><script src="shared.js"></script><script src="timezone-picker.js"></script><script>
 const state=getState();
 function renderAchievement(){
- const count=getSubmissions().length;
- const goals=[{n:1,name:'First submission'},{n:3,name:'Off to a good start'},{n:5,name:'Writing routine'},{n:10,name:'Focused writer'},{n:20,name:'Dedicated writer'},{n:50,name:'Writing collector'}];
- const next=goals.find(g=>count<g.n)||goals[goals.length-1];
- const current=Math.min(count,next.n),percent=Math.min(100,Math.round(current/next.n*100));
- miniAchievement.innerHTML=`<span class="badge-medal">✦</span><div class="mini-achievement-copy"><small>Next achievement</small><strong>${next.name}</strong><span class="muted">${current} / ${next.n} writings</span><div class="badge-progress"><div class="badge-progress-bar"><i style="width:${percent}%"></i></div></div></div>`;
+ const next=getNextNotebookBadge();
+ const progress=getNotebookBadgeProgress();
+ const earned=progress.filter(item=>item.earned).slice(-4).reverse();
+
+ miniAchievement.innerHTML=`<div class="history-achievement-head">
+   <span class="badge-medal">✦</span>
+   <div class="mini-achievement-copy">
+     <small>${state.language==="ko"?"다음 배지":"Next achievement"}</small>
+     <strong>${state.language==="ko"?next.titleKo:next.titleEn}</strong>
+     <span class="muted">${state.language==="ko"?next.descKo:next.descEn}</span>
+     <div class="badge-progress"><div class="badge-progress-bar"><i style="width:${next.percent}%"></i></div><b>${Math.min(next.value,next.goal)} / ${next.goal}</b></div>
+   </div>
+ </div>
+ <div class="history-badge-peek">
+   ${earned.length?earned.map(item=>`<span title="${state.language==="ko"?item.descKo:item.descEn}"><b>✓</b>${state.language==="ko"?item.titleKo:item.titleEn}</span>`).join(""):`<span class="muted">${state.language==="ko"?"첫 글을 제출하고 첫 배지를 받아 보세요.":"Submit your first writing to earn a badge."}</span>`}
+ </div>
+ <button class="button-ghost history-view-badges" id="historyViewBadges" type="button">${state.language==="ko"?"배지 모두 보기":"View all badges"}</button>`;
+
+ historyViewBadges.onclick=()=>{historyBadgeModal.hidden=false;document.body.classList.add("modal-open")};
+ historyAllBadges.innerHTML=progress.map(item=>`<article class="all-badge ${item.earned?"earned":""}">
+   <span class="all-badge-icon">${item.earned?"✓":"✦"}</span>
+   <div><strong>${state.language==="ko"?item.titleKo:item.titleEn}</strong><p>${state.language==="ko"?item.descKo:item.descEn}</p><div class="badge-progress-bar"><i style="width:${item.percent}%"></i></div><small>${Math.min(item.value,item.goal)} / ${item.goal}</small></div>
+ </article>`).join("");
 }
 function draw(){
+ const auth=getAuthSession();
+ historyLoginButton.textContent=auth.loggedIn?(auth.name||"Member"):(state.language==="ko"?"로그인 / 회원가입":"Log in / Sign up");
+ historyLoginButton.onclick=auth.loggedIn?()=>{}:requestNotebookLogin;
+ if(!auth.loggedIn){
+   workList.innerHTML=`<div class="nb-empty guest-history-empty"><h2>${state.language==="ko"?"게스트 모드예요":"You’re in Guest Mode"}</h2><p>${state.language==="ko"?"내 글을 저장하고 확인하려면 로그인해 주세요.":"Log in to save and view your work across devices."}</p><button class="button button-primary" id="historyGuestLogin">${state.language==="ko"?"로그인 / 회원가입":"Log in / Sign up"}</button></div>`;
+   document.getElementById("historyGuestLogin").onclick=requestNotebookLogin;
+   return;
+ }
  const q=searchInput.value.toLowerCase(),s=statusInput.value;
  const all=getSubmissions().filter(x=>(s==='all'||x.status===s)&&`${x.title||''} ${x.studentPlain||''} ${x.category||''}`.toLowerCase().includes(q));
  workList.innerHTML=all.length?'':'<div class="nb-empty"><h2>No work here yet</h2><p>Start a new writing from your notebook.</p></div>';
  all.forEach(x=>{
   const id=encodeURIComponent(x.id||x._id);
   const row=document.createElement('article');row.className='nb-work-card-wrap';
-  row.innerHTML=`<a class="nb-work-card-main" href="submission.html?id=${id}"><span class="nb-work-icon">${x.category==='Sentences'?'≡':'✎'}</span><span><strong>${escapeHTML(x.title||x.category||'Untitled')}</strong><p>${x.journalDate?`<small class=\"journal-date\">${escapeHTML(x.journalDate)}</small>`:''}${escapeHTML((x.studentPlain||x.attachments?.map(a=>a.name).join(', ')||'Attachment submission').slice(0,100))}</p></span><span style="text-align:right"><span class="${statusClass(x.status)}">${statusText(x.status,state.language)}</span><time style="display:block;margin-top:8px">${relativeDate(x.submittedAt)}</time></span></a><div class="nb-work-actions"><a class="button-ghost" href="submission.html?id=${id}">Re-read</a><a class="button button-secondary" href="submit.html?id=${id}">Edit</a></div>`;
-  workList.appendChild(row)
+  row.innerHTML=`<a class="nb-work-card-main" href="submission.html?id=${id}"><span class="nb-work-icon">${x.category==='Sentences'?'≡':'✎'}</span><span><strong>${escapeHTML(x.title||x.category||'Untitled')}</strong><p>${x.journalDate?`<small class=\"journal-date\">${escapeHTML(x.journalDate)}</small>`:''}${escapeHTML((x.studentPlain||x.attachments?.map(a=>a.name).join(', ')||'Attachment submission').slice(0,100))}</p></span><span style="text-align:right"><span class="${statusClass(x.status)}">${statusText(x.status,state.language)}</span><time style="display:block;margin-top:8px">${relativeDate(x.submittedAt)}</time></span></a><div class="nb-work-actions"><a class="button-ghost" href="submission.html?id=${id}">Re-read</a><a class="button button-secondary" href="submit.html?id=${id}">Edit</a><button class="button-danger-soft" type="button" data-delete-id="${escapeHTML(x.id||x._id)}">Delete</button></div>`;
+  workList.appendChild(row);
+  row.querySelector("[data-delete-id]")?.addEventListener("click",event=>{
+    event.preventDefault();
+    openDeleteModal(event.currentTarget.dataset.deleteId);
+  });
  })
 }
+
+let pendingDeleteId=null;
+
+function openDeleteModal(id){
+ pendingDeleteId=id;
+ deleteConfirmInput.value="";
+ confirmDeleteButton.disabled=true;
+ deleteConfirmModal.hidden=false;
+ document.body.classList.add("modal-open");
+ deleteConfirmInput.focus();
+}
+
+function closeDeleteModal(){
+ pendingDeleteId=null;
+ deleteConfirmModal.hidden=true;
+ document.body.classList.remove("modal-open");
+}
+
+deleteConfirmInput.addEventListener("input",()=>{
+ confirmDeleteButton.disabled=deleteConfirmInput.value.trim()!=="삭제";
+});
+
+cancelDeleteButton.onclick=closeDeleteModal;
+document.querySelector(".delete-confirm-backdrop").onclick=closeDeleteModal;
+
+confirmDeleteButton.onclick=()=>{
+ if(deleteConfirmInput.value.trim()!=="삭제"||!pendingDeleteId)return;
+
+ const auth=getAuthSession();
+ const id=pendingDeleteId;
+
+ saveSubmissions((getSubmissions()||[]).filter(item=>(item.id||item._id)!==id));
+ window.parent?.postMessage({
+   source:"langsnack-journal",
+   type:"deleteSubmissionRequested",
+   payload:{submissionId:id,memberId:auth.memberId}
+ },"*");
+
+ closeDeleteModal();
+ showToast(state.language==="ko"?"글을 영구 삭제했어요.":"The writing was permanently deleted.");
+ renderAchievement();
+ draw();
+};
+
+document.querySelectorAll("[data-close-history-badges]").forEach(element=>{
+ element.onclick=()=>{historyBadgeModal.hidden=true;document.body.classList.remove("modal-open")};
+});
+
+window.addEventListener("langsnack:auth-change",()=>{
+ renderAchievement();
+ draw();
+});
+
 searchInput.oninput=draw;statusInput.onchange=draw;document.querySelector('[data-nav="work"]').classList.add('active');languageSelect.value=state.language;renderAchievement();draw();
 </script></body></html>
