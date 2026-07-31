@@ -235,11 +235,22 @@ function isNotebookMember() {
   return getAuthSession().loggedIn;
 }
 
+const WIX_NOTEBOOK_URL = "https://www.langsnack.com/journal";
+
 function requestNotebookLogin() {
-  window.parent?.postMessage({
-    source: "langsnack-journal",
-    type: "loginRequested"
-  }, "*");
+  const isEmbedded = window.parent && window.parent !== window;
+
+  if (isEmbedded) {
+    window.parent.postMessage({
+      source: "langsnack-journal",
+      type: "loginRequested"
+    }, "*");
+    return;
+  }
+
+  // journal.langsnack.com is hosted separately from Wix.
+  // Open the private Wix Notebook page so Wix can handle login and membership.
+  window.location.href = WIX_NOTEBOOK_URL;
 }
 
 function announceNotebookReady() {

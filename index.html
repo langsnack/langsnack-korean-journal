@@ -220,7 +220,7 @@ function getDateParts(date=new Date()){const parts=new Intl.DateTimeFormat("en-C
 function dateKey(date=new Date()){const p=getDateParts(date);return `${p.year}-${String(p.month).padStart(2,"0")}-${String(p.day).padStart(2,"0")}`}
 function getStreak(){const days=[...new Set(state.entries.map(e=>e.date))].sort();let streak=0;let cursor=new Date(dateKey()+"T12:00:00");if(!days.includes(dateKey()))cursor.setDate(cursor.getDate()-1);while(days.includes(cursor.toISOString().slice(0,10))){streak++;cursor.setDate(cursor.getDate()-1)}return streak}
 function greetingKey(){const hour=Number(new Intl.DateTimeFormat("en-GB",{timeZone:state.timezone,hour:"2-digit",hour12:false}).format(new Date()));return hour<12?"greetingMorning":hour<18?"greetingAfternoon":"greetingEvening"}
-function displayName(){return state.profile?.name?.trim()||"Jennifer"}
+function displayName(){return state.profile?.name?.trim()||""}
 
 function applyLanguage(){
  document.documentElement.lang=state.language;
@@ -323,6 +323,7 @@ function applyAuthUI(){
    loginBtn.title=auth.name||auth.email||"Member";
    loginBtn.onclick=()=>{};
    saveDraftBtn.hidden=false;
+   saveDraftBtn.textContent=tr("save");
    submitBtn.disabled=false;
    submitBtn.textContent=tr("submit");
    welcomeHeading.textContent=`${tr(greetingKey())}, ${auth.name||displayName()}!`;
@@ -330,10 +331,13 @@ function applyAuthUI(){
    loginBtn.textContent=state.language==="ko"?"로그인":"Log in";
    loginBtn.title=state.language==="ko"?"로그인 또는 회원가입":"Log in or sign up";
    loginBtn.onclick=requestNotebookLogin;
-   saveDraftBtn.hidden=true;
+   saveDraftBtn.hidden=false;
+   saveDraftBtn.textContent=state.language==="ko"?"로그인 후 저장":"Log in to save";
    submitBtn.disabled=false;
    submitBtn.textContent=state.language==="ko"?"로그인 후 제출":"Log in to submit";
-   welcomeHeading.textContent=`${tr(greetingKey())}, ${state.language==="ko"?"게스트":"Guest"}!`;
+   welcomeHeading.textContent=state.language==="ko"
+     ? `${tr(greetingKey())}!`
+     : `${tr(greetingKey())}!`;
  }
 }
 
@@ -374,7 +378,14 @@ function updateMainJournalDateVisibility(){
   mainJournalDateField.hidden=activeCategory!=="journal";
   if(!mainJournalDateInput.value)mainJournalDateInput.value=state.journalDate||dateKey();
 }
-languageSelect.value=state.language;levelSelect.value=state.level;journalText.value=state.lastDraft;mainJournalDateInput.value=state.journalDate||dateKey();updateMainJournalDateVisibility();updateCounts();applyLanguage();
+languageSelect.value=state.language;
+levelSelect.value=state.level;
+journalText.value=isNotebookMember()?state.lastDraft:"";
+mainJournalDateInput.value=state.journalDate||dateKey();
+updateMainJournalDateVisibility();
+updateCounts();
+applyLanguage();
+applyAuthUI();
 </script>
 </body>
 </html>
