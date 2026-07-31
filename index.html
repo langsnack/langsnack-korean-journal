@@ -39,11 +39,11 @@
       <a class="sidebar-link" href="#achievements"><span class="nav-icon">▥</span><span id="navAchievements">Achievements</span></a>
       <a class="sidebar-link" href="#calendar"><span class="nav-icon">□</span><span id="navCalendar">Calendar</span></a>
     </nav>
-    <a class="sidebar-help" href="#writing">
+    <div class="sidebar-help">
       <strong id="helpTitle">Need help?</strong>
       <span id="helpText">Visit the guide</span>
       <span aria-hidden="true">›</span>
-    </a>
+    </div>
   </aside>
 
   <main class="notebook-main">
@@ -94,17 +94,10 @@
 
         <div class="writing-controls">
           <label class="level-control"><span id="levelLabel">Level</span><select id="levelSelect"><option value="starter">Starter</option><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></label>
+          <button class="recommend-button" data-generator="topic" type="button"><span>↻</span><span id="topicButtonText">Random topic</span></button>
+          <button class="recommend-button" data-generator="grammar" type="button"><span>Aa</span><span id="grammarButtonText">Random grammar</span></button>
           <button class="recommend-button" data-generator="prompt" type="button"><span>“</span><span id="promptButtonText">Random prompt</span></button>
-          <button class="surprise-button" id="surpriseMeBtn" type="button"><span class="dice-icon">✦</span><span id="surpriseButtonText">Surprise me</span><small id="surpriseButtonHint">One lucky pick a day</small></button>
-        </div>
-
-        <div class="surprise-panel" id="surprisePanel" hidden>
-          <div class="surprise-topline"><span class="surprise-spark">✦</span><strong id="surpriseHeading">Today's lucky pick</strong><span class="surprise-status" id="surpriseStatus"></span></div>
-          <div class="surprise-results">
-            <article><span id="surpriseTopicLabel">Topic</span><strong id="surpriseTopic"></strong></article>
-            <article><span id="surpriseGrammarLabel">Grammar</span><strong id="surpriseGrammar"></strong></article>
-            <article><span id="surprisePromptLabel">Prompt</span><strong id="surprisePrompt"></strong></article>
-          </div>
+          <button class="surprise-button" id="surpriseMeBtn" type="button"><span class="dice">✦</span><span id="surpriseButtonText">Surprise me</span></button>
         </div>
 
         <div class="recommendation-panel" id="generatorOutput" hidden>
@@ -113,11 +106,23 @@
         </div>
 
         <div class="editor-toolbar" aria-label="Formatting toolbar">
-          <button type="button" data-editor-command="undo">↶</button><button type="button" data-editor-command="redo">↷</button>
+          <button type="button" data-editor-command="undo" title="Undo">↶</button>
+          <button type="button" data-editor-command="redo" title="Redo">↷</button>
           <span class="toolbar-divider"></span>
-          <button type="button" data-wrap="**"><b>B</b></button><button type="button" data-wrap="_"><i>I</i></button><button type="button" data-wrap="__"><u>U</u></button>
+          <button type="button" data-wrap="**" title="Bold"><b>B</b></button>
+          <button type="button" data-wrap="_" title="Italic"><i>I</i></button>
+          <button type="button" data-wrap="__" title="Underline"><u>U</u></button>
           <span class="toolbar-divider"></span>
-          <button type="button" id="clearFormatBtn">Clear</button>
+          <button type="button" data-prefix="# " title="Heading 1">H1</button>
+          <button type="button" data-prefix="## " title="Heading 2">H2</button>
+          <button type="button" data-prefix="• " title="Bullet list">• List</button>
+          <button type="button" data-prefix="1. " title="Numbered list">1. List</button>
+          <button type="button" data-prefix="> " title="Quote">❝</button>
+          <button type="button" data-insert="
+────────────
+" title="Divider">—</button>
+          <span class="toolbar-divider"></span>
+          <button type="button" id="clearFormatBtn" title="Clear formatting">Clear</button>
         </div>
         <div class="paper notebook-paper"><textarea id="journalText" spellcheck="false" placeholder="Write your Korean here..."></textarea></div>
         <div class="editor-footer notebook-editor-footer">
@@ -127,9 +132,9 @@
       </section>
 
       <aside class="dashboard-stack">
-        <section class="dashboard-card achievements-card next-badge-card" id="achievements">
-          <div class="card-heading"><div><p class="section-kicker" id="nextBadgeKicker">Next badge</p><h2 id="achievementTitle">First step</h2></div><button class="text-button" id="viewAchievementsBtn" type="button">View all</button></div>
-          <div class="next-badge-preview" id="badgeGrid"></div>
+        <section class="dashboard-card achievements-card" id="achievements">
+          <div class="card-heading"><h2 id="achievementTitle">Achievement badges</h2><button class="text-button" id="viewAchievementsBtn" type="button">View all</button></div>
+          <div class="badge-grid" id="badgeGrid"></div>
         </section>
         <section class="dashboard-card progress-card">
           <div class="card-heading"><h2 id="progressTitle">Level & progress</h2><span id="xpLabel">380 / 600 XP</span></div>
@@ -153,13 +158,9 @@
       </section>
     </div>
 
-    <footer class="notebook-footer"><span>© 2026 Langsnack.</span><span><a href="#writing">Writing guide</a><a href="history.html">My work</a><a href="saved.html">Saved</a><a href="mailto:hello@langsnack.com">Support</a></span></footer>
+    <footer class="notebook-footer"><span>© 2026 Langsnack.</span><span><a href="#">Guide</a><a href="#">Support</a><a href="#">Privacy</a><a href="#">Terms</a></span></footer>
   </main>
 </div>
-<dialog class="badge-modal" id="badgeModal">
-  <div class="badge-modal-head"><div><p class="section-kicker">Achievements</p><h2 id="badgeModalTitle">Your badges</h2></div><button type="button" id="closeBadgeModal" aria-label="Close">×</button></div>
-  <div class="badge-modal-grid" id="badgeModalGrid"></div>
-</dialog>
 <div class="toast" id="toast"></div>
 <script src="shared.js"></script>
 <script src="timezone-picker.js"></script>
@@ -169,8 +170,8 @@ let activeGenerator="prompt";
 let activeCategory="journal";
 
 const translations={
- en:{language:"Language",timezone:"Time zone",dashboard:"Dashboard",write:"Write",work:"My work",saved:"Saved",achievements:"Achievements",calendar:"Calendar",help:"Need help?",guide:"Visit the guide",greetingMorning:"Good morning",greetingAfternoon:"Good afternoon",greetingEvening:"Good evening",subtitle:"Keep writing. Keep growing.",dayStreak:"day streak",keepGoing:"Keep it going",feedbackTitle:"Get your writing feedback",feedbackSub:"Write and send your work to Nicole.",workTitle:"Previous work",workSub:"Review your submissions and feedback.",savedTitle:"Saved explanations",savedSub:"Keep useful feedback for later.",workspace:"Writing workspace",startWriting:"Start a new writing",clearAll:"Clear all",journal:"Journal",essay:"Essay",story:"Story",random:"Random",level:"Level",topic:"Random topic",grammar:"Random grammar",prompt:"Random prompt",surprise:"Surprise me",surpriseHint:"One lucky pick a day",luckyPick:"Today’s lucky pick",openedToday:"Opened today",shuffling:"Shuffling…",nextBadge:"Next badge",another:"Try another",placeholder:"Write your Korean here...",characters:" characters",words:" words",save:"Save draft",submit:"Get feedback",badgeTitle:"Achievement badges",viewAll:"View all",progress:"Level & progress",calendarTitle:"Writing calendar",written:"Written",today:"Today",recent:"Recent work",daily:"Today’s random picks",newPick:"Reveal",usedToday:"Used today",revealPick:"Click to reveal",tip:"Quick tip",tipText:"Writing a little every day builds a stronger habit than writing a lot once in a while.",draftSaved:"Draft saved.",writeFirst:"Write something before saving.",cleared:"Writing cleared.",noEntries:"No writing yet. Start your first one today.",topicLabel:"Topic",grammarLabel:"Grammar",promptLabel:"Prompt"},
- ko:{language:"언어",timezone:"시간대",dashboard:"대시보드",write:"새 글쓰기",work:"내 글",saved:"저장한 설명",achievements:"성장 기록",calendar:"글쓰기 달력",help:"도움이 필요하신가요?",guide:"이용 가이드 보기",greetingMorning:"좋은 아침이에요",greetingAfternoon:"좋은 오후예요",greetingEvening:"좋은 저녁이에요",subtitle:"꾸준히 쓰고, 천천히 성장해 보세요.",dayStreak:"일 연속 작성",keepGoing:"오늘도 이어 가 보세요",feedbackTitle:"글쓰기 피드백 받기",feedbackSub:"글을 작성하고 니콜 선생님께 보내 보세요.",workTitle:"내가 쓴 글",workSub:"제출한 글과 받은 피드백을 확인해 보세요.",savedTitle:"저장한 설명",savedSub:"도움이 된 설명을 저장해 두고 다시 확인해 보세요.",workspace:"글쓰기 공간",startWriting:"새로운 글쓰기",clearAll:"전체 지우기",journal:"일기",essay:"에세이",story:"이야기",random:"랜덤",level:"레벨",topic:"랜덤 주제",grammar:"랜덤 문법",prompt:"랜덤 질문",surprise:"랜덤 뽑기",surpriseHint:"하루에 한 번",luckyPick:"오늘의 랜덤 뽑기",openedToday:"오늘 확인 완료",shuffling:"고르는 중…",nextBadge:"다음 배지",another:"다시 추천",placeholder:"여기에 한국어로 글을 써 보세요...",characters:"자",words:"어절",save:"임시 저장",submit:"피드백 받기",badgeTitle:"나의 배지",viewAll:"모두 보기",progress:"레벨 & 경험치",calendarTitle:"글쓰기 달력",written:"작성 완료",today:"오늘",recent:"최근 작업",daily:"오늘의 랜덤 추천",newPick:"오늘의 추천 보기",usedToday:"오늘 사용 완료",revealPick:"눌러서 확인하세요",tip:"작은 팁",tipText:"한 번에 많이 쓰는 것보다 매일 조금씩 쓰는 습관이 더 오래갑니다.",draftSaved:"임시 저장했어요.",writeFirst:"저장할 글을 먼저 작성해 주세요.",cleared:"작성 중인 글을 지웠어요.",noEntries:"아직 작성한 글이 없어요. 오늘 첫 글을 시작해 보세요.",topicLabel:"주제",grammarLabel:"문법",promptLabel:"질문"}
+ en:{language:"Language",timezone:"Time zone",dashboard:"Dashboard",write:"Write",work:"My work",saved:"Saved",achievements:"Achievements",calendar:"Calendar",help:"Need help?",guide:"Visit the guide",greetingMorning:"Good morning",greetingAfternoon:"Good afternoon",greetingEvening:"Good evening",subtitle:"Keep writing. Keep growing.",dayStreak:"day streak",keepGoing:"Keep it going",feedbackTitle:"Get your writing feedback",feedbackSub:"Write and send your work to Nicole.",workTitle:"Previous work",workSub:"Review your submissions and feedback.",savedTitle:"Saved explanations",savedSub:"Keep useful feedback for later.",workspace:"Writing workspace",startWriting:"Start a new writing",clearAll:"Clear all",journal:"Journal",essay:"Essay",story:"Story",random:"Random",level:"Level",topic:"Random topic",grammar:"Random grammar",prompt:"Random prompt",surprise:"Surprise me",another:"Try another",placeholder:"Write your Korean here...",characters:" characters",words:" words",save:"Save draft",submit:"Get feedback",badgeTitle:"Achievement badges",viewAll:"View all",progress:"Level & progress",calendarTitle:"Writing calendar",written:"Written",today:"Today",recent:"Recent work",daily:"Today’s random picks",newPick:"Reveal",usedToday:"Used today",revealPick:"Click to reveal",tip:"Quick tip",tipText:"Writing a little every day builds a stronger habit than writing a lot once in a while.",draftSaved:"Draft saved.",writeFirst:"Write something before saving.",cleared:"Writing cleared.",noEntries:"No writing yet. Start your first one today.",topicLabel:"Topic",grammarLabel:"Grammar",promptLabel:"Prompt"},
+ ko:{language:"언어",timezone:"시간대",dashboard:"대시보드",write:"새 글쓰기",work:"내 글",saved:"저장한 설명",achievements:"성장 기록",calendar:"글쓰기 달력",help:"도움이 필요하신가요?",guide:"이용 가이드 보기",greetingMorning:"좋은 아침이에요",greetingAfternoon:"좋은 오후예요",greetingEvening:"좋은 저녁이에요",subtitle:"꾸준히 쓰고, 천천히 성장해 보세요.",dayStreak:"일 연속 작성",keepGoing:"오늘도 이어 가 보세요",feedbackTitle:"글쓰기 피드백 받기",feedbackSub:"글을 작성하고 니콜 선생님께 보내 보세요.",workTitle:"내가 쓴 글",workSub:"제출한 글과 받은 피드백을 확인해 보세요.",savedTitle:"저장한 설명",savedSub:"도움이 된 설명을 저장해 두고 다시 확인해 보세요.",workspace:"글쓰기 공간",startWriting:"새로운 글쓰기",clearAll:"전체 지우기",journal:"일기",essay:"에세이",story:"이야기",random:"랜덤",level:"레벨",topic:"랜덤 주제",grammar:"랜덤 문법",prompt:"랜덤 질문",surprise:"깜짝 추천",another:"다시 추천",placeholder:"여기에 한국어로 글을 써 보세요...",characters:"자",words:"어절",save:"임시 저장",submit:"피드백 받기",badgeTitle:"나의 배지",viewAll:"모두 보기",progress:"레벨 & 경험치",calendarTitle:"글쓰기 달력",written:"작성 완료",today:"오늘",recent:"최근 작업",daily:"오늘의 랜덤 추천",newPick:"오늘의 추천 보기",usedToday:"오늘 사용 완료",revealPick:"눌러서 확인하세요",tip:"작은 팁",tipText:"한 번에 많이 쓰는 것보다 매일 조금씩 쓰는 습관이 더 오래갑니다.",draftSaved:"임시 저장했어요.",writeFirst:"저장할 글을 먼저 작성해 주세요.",cleared:"작성 중인 글을 지웠어요.",noEntries:"아직 작성한 글이 없어요. 오늘 첫 글을 시작해 보세요.",topicLabel:"주제",grammarLabel:"문법",promptLabel:"질문"}
 };
 
 const content={
@@ -215,11 +216,11 @@ function displayName(){return state.profile?.name?.trim()||"Jennifer"}
 
 function applyLanguage(){
  document.documentElement.lang=state.language;
- const map={languageLabel:"language",timezoneLabel:"timezone",navDashboard:"dashboard",navWrite:"write",navWork:"work",navSaved:"saved",navAchievements:"achievements",navCalendar:"calendar",helpTitle:"help",helpText:"guide",welcomeSubtitle:"subtitle",streakUnit:"dayStreak",streakStatus:"keepGoing",quickFeedbackTitle:"feedbackTitle",quickFeedbackSub:"feedbackSub",quickWorkTitle:"workTitle",quickWorkSub:"workSub",quickSavedTitle:"savedTitle",quickSavedSub:"savedSub",writingKicker:"workspace",writingTitle:"startWriting",clearAllBtn:"clearAll",catJournal:"journal",catEssay:"essay",catStory:"story",catRandom:"random",levelLabel:"level",promptButtonText:"prompt",surpriseButtonText:"surprise",surpriseButtonHint:"surpriseHint",surpriseHeading:"luckyPick",nextBadgeKicker:"nextBadge",charactersLabel:"characters",wordsLabel:"words",saveDraftBtn:"save",submitBtn:"submit",achievementTitle:"badgeTitle",viewAchievementsBtn:"viewAll",progressTitle:"progress",calendarTitle:"calendarTitle",legendSubmitted:"written",legendToday:"today",recentTitle:"recent",viewAllWork:"viewAll",tipTitle:"tip",tipText:"tipText"};
+ const map={languageLabel:"language",timezoneLabel:"timezone",navDashboard:"dashboard",navWrite:"write",navWork:"work",navSaved:"saved",navAchievements:"achievements",navCalendar:"calendar",helpTitle:"help",helpText:"guide",welcomeSubtitle:"subtitle",streakUnit:"dayStreak",streakStatus:"keepGoing",quickFeedbackTitle:"feedbackTitle",quickFeedbackSub:"feedbackSub",quickWorkTitle:"workTitle",quickWorkSub:"workSub",quickSavedTitle:"savedTitle",quickSavedSub:"savedSub",writingKicker:"workspace",writingTitle:"startWriting",clearAllBtn:"clearAll",catJournal:"journal",catEssay:"essay",catStory:"story",catRandom:"random",levelLabel:"level",topicButtonText:"topic",grammarButtonText:"grammar",promptButtonText:"prompt",surpriseButtonText:"surprise",charactersLabel:"characters",wordsLabel:"words",saveDraftBtn:"save",submitBtn:"submit",achievementTitle:"badgeTitle",viewAchievementsBtn:"viewAll",progressTitle:"progress",calendarTitle:"calendarTitle",legendSubmitted:"written",legendToday:"today",recentTitle:"recent",viewAllWork:"viewAll",dailyTitle:"daily",dailyTopicLabel:"topicLabel",dailyGrammarLabel:"grammarLabel",dailyPromptLabel:"promptLabel",dailyTopicButton:"newPick",dailyGrammarButton:"newPick",dailyPromptButton:"newPick",tipTitle:"tip",tipText:"tipText"};
  Object.entries(map).forEach(([id,key])=>setText(id,key));
  welcomeHeading.textContent=`${tr(greetingKey())}, ${displayName()}!`;
  journalText.placeholder=tr("placeholder");
- renderAll();renderSurprise();
+ renderAll();
 }
 function updateCounts(){charCount.textContent=journalText.value.replace(/\s/g,"").length;wordCount.textContent=journalText.value.trim()?journalText.value.trim().split(/\s+/).length:0}
 function pick(type){const arr=content[levelSelect.value][type];return arr[Math.floor(Math.random()*arr.length)]}
@@ -228,30 +229,59 @@ function saveEntry(){const text=journalText.value.trim();if(!text){showToast(tr(
 function renderEntries(){entriesList.innerHTML="";if(!state.entries.length){entriesList.innerHTML=`<div class="empty-state">${tr("noEntries")}</div>`;return}state.entries.slice(0,5).forEach(e=>{const item=document.createElement("button");item.className="recent-item";item.innerHTML=`<span class="recent-icon">✎</span><span class="recent-copy"><strong>${escapeHTML(e.text.slice(0,40))}${e.text.length>40?"…":""}</strong><small>${escapeHTML(e.category||e.level)}</small></span><span class="recent-status">${e.status==="draft"?(state.language==="ko"?"임시 저장":"Draft"):(state.language==="ko"?"작성 완료":"Written")}</span><span class="card-arrow">›</span>`;item.onclick=()=>{journalText.value=e.text;levelSelect.value=e.level;activeCategory=e.category||"journal";document.querySelectorAll('.category-tab').forEach(x=>x.classList.toggle('active',x.dataset.category===activeCategory));updateCounts();document.getElementById('writing').scrollIntoView({behavior:'smooth'})};entriesList.appendChild(item)})}
 function renderCalendar(){calendarGrid.innerHTML="";const labels=state.language==="ko"?["월","화","수","목","금","토","일"]:["M","T","W","T","F","S","S"];labels.forEach(d=>{const s=document.createElement("span");s.className="day-label";s.textContent=d;calendarGrid.appendChild(s)});const cur=getDateParts(),first=new Date(cur.year,cur.month-1,1),offset=(first.getDay()+6)%7,dim=new Date(cur.year,cur.month,0).getDate(),written=new Set(state.entries.map(e=>e.date));for(let i=0;i<offset;i++)calendarGrid.appendChild(document.createElement("span"));for(let d=1;d<=dim;d++){const s=document.createElement("span");s.className="calendar-day";s.textContent=d;const k=`${cur.year}-${String(cur.month).padStart(2,"0")}-${String(d).padStart(2,"0")}`;if(written.has(k))s.classList.add("written");if(d===cur.day)s.classList.add("today");if(d>cur.day)s.classList.add("future");calendarGrid.appendChild(s)}calendarMonthLabel.textContent=new Intl.DateTimeFormat(state.language==="ko"?"ko-KR":"en-GB",{timeZone:state.timezone,month:"long",year:"numeric"}).format(new Date())}
 function renderStreak(){streakCount.textContent=getStreak()}
-function badgeValues(){const submissions=getSubmissions();return {entries:state.entries.length,streak:getStreak(),saved:safeParse(localStorage.getItem("langsnackSavedExplanations"),[]).length,completed:submissions.filter(x=>x.status==="completed").length}}
 function renderBadges(){
- const values=badgeValues();
- const next=badges.find(b=>values[b.type]<b.goal)||badges[badges.length-1];
- const current=Math.min(values[next.type],next.goal), pct=Math.round(current/next.goal*100);
- achievementTitle.textContent=state.language==="ko"?next.titleKo:next.titleEn;
- badgeGrid.innerHTML=`<span class="next-badge-medal">${current>=next.goal?'✓':'✦'}</span><div class="next-badge-copy"><p>${state.language==="ko"?next.descKo:next.descEn}</p><div class="badge-progress"><i style="width:${pct}%"></i></div><small><b>${current}</b> / ${next.goal}</small></div>`;
- badgeModalGrid.innerHTML=badges.map((b,i)=>{const done=values[b.type]>=b.goal;return `<article class="badge-item ${done?'earned':''}"><span class="badge-medal badge-${i+1}">${done?'✓':'○'}</span><strong>${state.language==="ko"?b.titleKo:b.titleEn}</strong><small>${state.language==="ko"?b.descKo:b.descEn}</small></article>`}).join('');
+ const submissions=getSubmissions();
+ const completed=submissions.filter(x=>x.status==="completed").length;
+ const savedCount=safeParse(localStorage.getItem("langsnackSavedExplanations"),[]).length;
+ const values={entries:state.entries.length,streak:getStreak(),saved:savedCount,completed};
+ const next=badges.find(b=>values[b.type]<b.goal) || badges[badges.length-1];
+ const current=Math.min(values[next.type]||0,next.goal);
+ const percent=Math.min(100,Math.round((current/next.goal)*100));
+ badgeGrid.innerHTML=`<article class="next-badge-preview">
+   <span class="badge-medal badge-1">${percent>=100?'✓':'✦'}</span>
+   <span class="next-badge-copy"><small>${state.language==='ko'?'다음 배지':'Next badge'}</small><strong>${state.language==='ko'?next.titleKo:next.titleEn}</strong><span>${state.language==='ko'?next.descKo:next.descEn}</span></span>
+   <div class="badge-progress"><div class="badge-progress-bar"><i style="width:${percent}%"></i></div><b>${current} / ${next.goal}</b></div>
+ </article>`;
 }
-const SURPRISE_KEY="langsnackLuckyPickV3";
-function getSurprise(){const saved=safeParse(localStorage.getItem(SURPRISE_KEY),{});return saved.date===dateKey()?saved:null}
-function renderSurprise(){const saved=getSurprise();if(!saved){surprisePanel.hidden=true;surpriseMeBtn.disabled=false;surpriseButtonText.textContent=tr("surprise");surpriseButtonHint.textContent=tr("surpriseHint");return}surprisePanel.hidden=false;surpriseTopic.textContent=saved.topic;surpriseGrammar.textContent=saved.grammar;surprisePrompt.textContent=saved.prompt;surpriseStatus.textContent=tr("openedToday");surpriseMeBtn.disabled=true;surpriseButtonText.textContent=tr("openedToday");surpriseButtonHint.textContent=tr("surpriseHint")}
-function runSurprise(){if(getSurprise())return;surpriseMeBtn.classList.add("is-shuffling");surpriseButtonText.textContent=tr("shuffling");surprisePanel.hidden=false;surpriseStatus.textContent=tr("shuffling");let turns=0;const timer=setInterval(()=>{surpriseTopic.textContent=pick("topic");surpriseGrammar.textContent=pick("grammar");surprisePrompt.textContent=pick("prompt");if(++turns>=8){clearInterval(timer);const result={date:dateKey(),level:levelSelect.value,topic:pick("topic"),grammar:pick("grammar"),prompt:pick("prompt")};localStorage.setItem(SURPRISE_KEY,JSON.stringify(result));surpriseMeBtn.classList.remove("is-shuffling");renderSurprise()}},95)}
+function saveDailyPickState(value){localStorage.setItem(DAILY_PICK_KEY,JSON.stringify(value))}
+function dailyElement(type){return document.getElementById("daily"+type[0].toUpperCase()+type.slice(1))}
+function dailyButton(type){return document.getElementById("daily"+type[0].toUpperCase()+type.slice(1)+"Button")}
+function revealDailyPick(type){
+ const daily=getDailyPickState();
+ if(daily.picks[type])return;
+ daily.picks[type]={value:pick(type),level:levelSelect.value};
+ saveDailyPickState(daily);
+ renderDaily();
+}
+function renderDaily(){
+ const daily=getDailyPickState();
+ ["topic","grammar","prompt"].forEach(type=>{
+  const output=dailyElement(type),button=dailyButton(type),saved=daily.picks[type];
+  if(saved){output.textContent=saved.value;output.classList.remove("daily-placeholder");button.textContent=tr("usedToday");button.disabled=true;}
+  else{output.textContent=tr("revealPick");output.classList.add("daily-placeholder");button.textContent=tr("newPick");button.disabled=false;}
+ });
+}
+function showSurprise(){
+ const button=document.getElementById("surpriseMeBtn");
+ button.classList.add("is-shuffling"); button.disabled=true;
+ generatorOutput.hidden=false; generatorLabel.textContent=state.language==="ko"?"오늘의 깜짝 추천":"Your lucky mix";
+ generatorText.innerHTML=`<span class="shuffle-copy">${state.language==="ko"?"추천을 고르는 중...":"Mixing your ideas..."}</span>`;
+ setTimeout(()=>{
+   const topic=pick("topic"),grammar=pick("grammar"),prompt=pick("prompt");
+   generatorText.innerHTML=`<span class="surprise-result"><small>TOPIC</small><b>${escapeHTML(topic)}</b></span><span class="surprise-result"><small>GRAMMAR</small><b>${escapeHTML(grammar)}</b></span><span class="surprise-result full"><small>PROMPT</small><b>${escapeHTML(prompt)}</b></span>`;
+   activeGenerator="surprise"; button.classList.remove("is-shuffling"); button.disabled=false;
+ },850);
+}
 function renderAll(){renderEntries();renderCalendar();renderStreak();renderBadges()}
 
 document.querySelectorAll("[data-generator]").forEach(btn=>btn.onclick=()=>showRecommendation(btn.dataset.generator));
-shuffleAgainBtn.onclick=()=>showRecommendation(activeGenerator);closeGenerator.onclick=()=>generatorOutput.hidden=true;
-surpriseMeBtn.onclick=runSurprise;
-viewAchievementsBtn.onclick=()=>badgeModal.showModal();
-closeBadgeModal.onclick=()=>badgeModal.close();
-badgeModal.onclick=e=>{if(e.target===badgeModal)badgeModal.close()};
+surpriseMeBtn.onclick=showSurprise;
+shuffleAgainBtn.onclick=()=>activeGenerator==="surprise"?showSurprise():showRecommendation(activeGenerator);closeGenerator.onclick=()=>generatorOutput.hidden=true;
 document.querySelectorAll(".category-tab").forEach(btn=>btn.onclick=()=>{activeCategory=btn.dataset.category;document.querySelectorAll(".category-tab").forEach(x=>x.classList.toggle("active",x===btn))});
 document.querySelectorAll("[data-editor-command]").forEach(btn=>btn.onclick=()=>{journalText.focus();document.execCommand(btn.dataset.editorCommand)});
 document.querySelectorAll("[data-wrap]").forEach(btn=>btn.onclick=()=>{const start=journalText.selectionStart,end=journalText.selectionEnd,wrap=btn.dataset.wrap,value=journalText.value;journalText.value=value.slice(0,start)+wrap+value.slice(start,end)+wrap+value.slice(end);journalText.focus();journalText.setSelectionRange(start+wrap.length,end+wrap.length);journalText.dispatchEvent(new Event("input"))});
+document.querySelectorAll("[data-prefix]").forEach(btn=>btn.onclick=()=>{const start=journalText.selectionStart,end=journalText.selectionEnd,value=journalText.value,prefix=btn.dataset.prefix;const lineStart=value.lastIndexOf("\n",start-1)+1;const selected=value.slice(lineStart,end);const changed=selected.split("\n").map(line=>prefix+line).join("\n");journalText.value=value.slice(0,lineStart)+changed+value.slice(end);journalText.focus();journalText.setSelectionRange(lineStart+prefix.length,lineStart+changed.length);journalText.dispatchEvent(new Event("input"))});
+document.querySelectorAll("[data-insert]").forEach(btn=>btn.onclick=()=>{const start=journalText.selectionStart,value=journalText.value,insert=btn.dataset.insert;journalText.value=value.slice(0,start)+insert+value.slice(start);journalText.focus();journalText.setSelectionRange(start+insert.length,start+insert.length);journalText.dispatchEvent(new Event("input"))});
 clearFormatBtn.onclick=()=>{journalText.value=journalText.value.replace(/\*\*|__|_/g,"");journalText.dispatchEvent(new Event("input"))};
 clearAllBtn.onclick=()=>{if(!journalText.value||confirm(state.language==="ko"?"작성 중인 글을 모두 지울까요?":"Clear the current writing?")){journalText.value="";state.lastDraft="";saveJournalState(state);updateCounts();showToast(tr("cleared"))}};
 journalText.oninput=()=>{state.lastDraft=journalText.value;saveJournalState(state);updateCounts()};
@@ -261,7 +291,7 @@ window.addEventListener("langsnack:timezone-change",event=>{state.timezone=event
 languageSelect.onchange=()=>{state.language=languageSelect.value;saveJournalState(state);applyLanguage()};
 saveDraftBtn.onclick=saveEntry;
 submitBtn.onclick=()=>{const text=journalText.value.trim();if(!text){showToast(tr("writeFirst"));return}const draft={entryId:crypto.randomUUID(),journal:text,level:levelSelect.value,date:dateKey(),language:state.language,category:activeCategory};sessionStorage.setItem(LS.reviewDraft,JSON.stringify(draft));location.href="submit.html"};
-languageSelect.value=state.language;levelSelect.value=state.level;journalText.value=state.lastDraft;updateCounts();applyLanguage();renderSurprise();
+languageSelect.value=state.language;levelSelect.value=state.level;journalText.value=state.lastDraft;updateCounts();applyLanguage();
 </script>
 </body>
 </html>
