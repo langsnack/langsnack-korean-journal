@@ -1,0 +1,8 @@
+Langsnack Notebook V3.4
+
+- Homepage links now use / so the public address stays https://journal.langsnack.com/
+- Journal date added to the main writing page and shown only for Journal.
+- Journal date is preserved when moving to the submission page.
+- Submission writing editor forced to remain visible and full width.
+- Next achievement widget is visible on the main page.
+- All internal HTML links were checked.

@@ -28,6 +28,7 @@ function getJournalState() {
     entries: Array.isArray(saved.entries) ? saved.entries : [],
     lastDraft: saved.lastDraft || "",
     level: saved.level || "starter",
+    journalDate: saved.journalDate || "",
     timezone: saved.timezone || localStorage.getItem("langsnackTimeZone") || detectTimeZone(),
     language: saved.language || "en",
     profile: saved.profile || { name: "", email: "" }
