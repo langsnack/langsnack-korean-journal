@@ -6,7 +6,7 @@
 const state=getState();
 function renderAchievement(){
  const count=getSubmissions().length;
- const goals=[{n:1,name:'First Step'},{n:5,name:'Getting Consistent'},{n:10,name:'Writing Habit'},{n:20,name:'Dedicated Writer'}];
+ const goals=[{n:1,name:'First submission'},{n:3,name:'Off to a good start'},{n:5,name:'Writing routine'},{n:10,name:'Focused writer'},{n:20,name:'Dedicated writer'},{n:50,name:'Writing collector'}];
  const next=goals.find(g=>count<g.n)||goals[goals.length-1];
  const current=Math.min(count,next.n),percent=Math.min(100,Math.round(current/next.n*100));
  miniAchievement.innerHTML=`<span class="badge-medal">✦</span><div class="mini-achievement-copy"><small>Next achievement</small><strong>${next.name}</strong><span class="muted">${current} / ${next.n} writings</span><div class="badge-progress"><div class="badge-progress-bar"><i style="width:${percent}%"></i></div></div></div>`;
@@ -18,7 +18,7 @@ function draw(){
  all.forEach(x=>{
   const id=encodeURIComponent(x.id||x._id);
   const row=document.createElement('article');row.className='nb-work-card-wrap';
-  row.innerHTML=`<a class="nb-work-card-main" href="submission.html?id=${id}"><span class="nb-work-icon">${x.category==='Speaking'?'🎤':x.category==='TOPIK writing'?'📄':'📝'}</span><span><strong>${escapeHTML(x.title||x.category||'Untitled')}</strong><p>${escapeHTML((x.studentPlain||x.attachments?.map(a=>a.name).join(', ')||'Attachment submission').slice(0,100))}</p></span><span style="text-align:right"><span class="${statusClass(x.status)}">${statusText(x.status,state.language)}</span><time style="display:block;margin-top:8px">${relativeDate(x.submittedAt)}</time></span></a><div class="nb-work-actions"><a class="button-ghost" href="submission.html?id=${id}">Re-read</a><a class="button button-secondary" href="submit.html?id=${id}">Edit</a></div>`;
+  row.innerHTML=`<a class="nb-work-card-main" href="submission.html?id=${id}"><span class="nb-work-icon">${x.category==='Sentences'?'≡':'✎'}</span><span><strong>${escapeHTML(x.title||x.category||'Untitled')}</strong><p>${x.journalDate?`<small class=\"journal-date\">${escapeHTML(x.journalDate)}</small>`:''}${escapeHTML((x.studentPlain||x.attachments?.map(a=>a.name).join(', ')||'Attachment submission').slice(0,100))}</p></span><span style="text-align:right"><span class="${statusClass(x.status)}">${statusText(x.status,state.language)}</span><time style="display:block;margin-top:8px">${relativeDate(x.submittedAt)}</time></span></a><div class="nb-work-actions"><a class="button-ghost" href="submission.html?id=${id}">Re-read</a><a class="button button-secondary" href="submit.html?id=${id}">Edit</a></div>`;
   workList.appendChild(row)
  })
 }

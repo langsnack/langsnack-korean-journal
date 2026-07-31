@@ -161,6 +161,13 @@
     <footer class="notebook-footer"><span>© 2026 Langsnack.</span><span><a href="#">Guide</a><a href="#">Support</a><a href="#">Privacy</a><a href="#">Terms</a></span></footer>
   </main>
 </div>
+<div class="achievement-modal" id="achievementModal" hidden>
+  <div class="achievement-modal-backdrop" data-close-badges></div>
+  <section class="achievement-modal-card" role="dialog" aria-modal="true" aria-labelledby="allBadgesTitle">
+    <div class="achievement-modal-head"><div><p class="section-kicker">Your progress</p><h2 id="allBadgesTitle">Achievement badges</h2></div><button type="button" class="modal-close" data-close-badges aria-label="Close">×</button></div>
+    <div class="all-badges-grid" id="allBadgesGrid"></div>
+  </section>
+</div>
 <div class="toast" id="toast"></div>
 <script src="shared.js"></script>
 <script src="timezone-picker.js"></script>
@@ -198,12 +205,26 @@ const content={
 };
 
 const badges=[
- {key:"first",titleKo:"첫걸음",titleEn:"First step",descKo:"첫 글 제출하기",descEn:"Submit your first writing",goal:1,type:"entries"},
- {key:"steady",titleKo:"꾸준한 노력",titleEn:"Consistent writer",descKo:"7일 연속 작성하기",descEn:"Write for 7 days in a row",goal:7,type:"streak"},
- {key:"focused",titleKo:"집중력 작가",titleEn:"Focused writer",descKo:"글 10편 작성하기",descEn:"Write 10 pieces",goal:10,type:"entries"},
- {key:"collector",titleKo:"설명 수집가",titleEn:"Knowledge keeper",descKo:"설명 5개 저장하기",descEn:"Save 5 explanations",goal:5,type:"saved"},
- {key:"dedicated",titleKo:"열정 작가",titleEn:"Dedicated writer",descKo:"글 20편 작성하기",descEn:"Write 20 pieces",goal:20,type:"entries"},
- {key:"feedback",titleKo:"피드백 수집가",titleEn:"Feedback seeker",descKo:"피드백 10회 받기",descEn:"Receive 10 reviews",goal:10,type:"completed"}
+ {key:"first",titleKo:"첫 제출",titleEn:"First submission",descKo:"첫 번째 글을 제출해요",descEn:"Submit your first writing",goal:1,type:"submissions"},
+ {key:"three",titleKo:"좋은 시작",titleEn:"Off to a good start",descKo:"글을 3번 제출해요",descEn:"Submit 3 writings",goal:3,type:"submissions"},
+ {key:"five",titleKo:"글쓰기 루틴",titleEn:"Writing routine",descKo:"글을 5번 제출해요",descEn:"Submit 5 writings",goal:5,type:"submissions"},
+ {key:"ten",titleKo:"집중력 작가",titleEn:"Focused writer",descKo:"글을 10번 제출해요",descEn:"Submit 10 writings",goal:10,type:"submissions"},
+ {key:"twenty",titleKo:"꾸준한 작가",titleEn:"Dedicated writer",descKo:"글을 20번 제출해요",descEn:"Submit 20 writings",goal:20,type:"submissions"},
+ {key:"fifty",titleKo:"기록 수집가",titleEn:"Writing collector",descKo:"글을 50번 제출해요",descEn:"Submit 50 writings",goal:50,type:"submissions"},
+ {key:"streak3",titleKo:"3일의 시작",titleEn:"Three-day spark",descKo:"3일 연속으로 글을 써요",descEn:"Write for 3 days in a row",goal:3,type:"streak"},
+ {key:"streak7",titleKo:"일주일의 습관",titleEn:"One-week habit",descKo:"7일 연속으로 글을 써요",descEn:"Write for 7 days in a row",goal:7,type:"streak"},
+ {key:"streak14",titleKo:"꾸준한 발걸음",titleEn:"Steady steps",descKo:"14일 연속으로 글을 써요",descEn:"Write for 14 days in a row",goal:14,type:"streak"},
+ {key:"streak30",titleKo:"한 달의 기록",titleEn:"A month of writing",descKo:"30일 연속으로 글을 써요",descEn:"Write for 30 days in a row",goal:30,type:"streak"},
+ {key:"feedback1",titleKo:"첫 피드백",titleEn:"First feedback",descKo:"첫 번째 첨삭을 받아요",descEn:"Receive your first review",goal:1,type:"completed"},
+ {key:"feedback5",titleKo:"피드백 수집가",titleEn:"Feedback seeker",descKo:"첨삭을 5번 받아요",descEn:"Receive 5 reviews",goal:5,type:"completed"},
+ {key:"feedback10",titleKo:"성장하는 작가",titleEn:"Growing writer",descKo:"첨삭을 10번 받아요",descEn:"Receive 10 reviews",goal:10,type:"completed"},
+ {key:"question1",titleKo:"첫 질문",titleEn:"First question",descKo:"첨삭 질문을 처음 남겨요",descEn:"Ask your first question",goal:1,type:"questions"},
+ {key:"question5",titleKo:"궁금증 탐험가",titleEn:"Curious learner",descKo:"질문을 5번 남겨요",descEn:"Ask 5 questions",goal:5,type:"questions"},
+ {key:"saved1",titleKo:"첫 설명 저장",titleEn:"First saved note",descKo:"도움이 된 설명을 처음 저장해요",descEn:"Save your first explanation",goal:1,type:"saved"},
+ {key:"saved5",titleKo:"설명 수집가",titleEn:"Knowledge keeper",descKo:"설명을 5개 저장해요",descEn:"Save 5 explanations",goal:5,type:"saved"},
+ {key:"chars500",titleKo:"500자의 기록",titleEn:"500 characters",descKo:"누적 500자를 작성해요",descEn:"Write 500 Korean characters",goal:500,type:"characters"},
+ {key:"chars2000",titleKo:"2,000자의 성장",titleEn:"2,000 characters",descKo:"누적 2,000자를 작성해요",descEn:"Write 2,000 Korean characters",goal:2000,type:"characters"},
+ {key:"chars10000",titleKo:"만 자 작가",titleEn:"Ten-thousand writer",descKo:"누적 10,000자를 작성해요",descEn:"Write 10,000 Korean characters",goal:10000,type:"characters"}
 ];
 
 function tr(key){return translations[state.language][key]}
@@ -229,12 +250,17 @@ function saveEntry(){const text=journalText.value.trim();if(!text){showToast(tr(
 function renderEntries(){entriesList.innerHTML="";if(!state.entries.length){entriesList.innerHTML=`<div class="empty-state">${tr("noEntries")}</div>`;return}state.entries.slice(0,5).forEach(e=>{const item=document.createElement("button");item.className="recent-item";item.innerHTML=`<span class="recent-icon">✎</span><span class="recent-copy"><strong>${escapeHTML(e.text.slice(0,40))}${e.text.length>40?"…":""}</strong><small>${escapeHTML(e.category||e.level)}</small></span><span class="recent-status">${e.status==="draft"?(state.language==="ko"?"임시 저장":"Draft"):(state.language==="ko"?"작성 완료":"Written")}</span><span class="card-arrow">›</span>`;item.onclick=()=>{journalText.value=e.text;levelSelect.value=e.level;activeCategory=e.category||"journal";document.querySelectorAll('.category-tab').forEach(x=>x.classList.toggle('active',x.dataset.category===activeCategory));updateCounts();document.getElementById('writing').scrollIntoView({behavior:'smooth'})};entriesList.appendChild(item)})}
 function renderCalendar(){calendarGrid.innerHTML="";const labels=state.language==="ko"?["월","화","수","목","금","토","일"]:["M","T","W","T","F","S","S"];labels.forEach(d=>{const s=document.createElement("span");s.className="day-label";s.textContent=d;calendarGrid.appendChild(s)});const cur=getDateParts(),first=new Date(cur.year,cur.month-1,1),offset=(first.getDay()+6)%7,dim=new Date(cur.year,cur.month,0).getDate(),written=new Set(state.entries.map(e=>e.date));for(let i=0;i<offset;i++)calendarGrid.appendChild(document.createElement("span"));for(let d=1;d<=dim;d++){const s=document.createElement("span");s.className="calendar-day";s.textContent=d;const k=`${cur.year}-${String(cur.month).padStart(2,"0")}-${String(d).padStart(2,"0")}`;if(written.has(k))s.classList.add("written");if(d===cur.day)s.classList.add("today");if(d>cur.day)s.classList.add("future");calendarGrid.appendChild(s)}calendarMonthLabel.textContent=new Intl.DateTimeFormat(state.language==="ko"?"ko-KR":"en-GB",{timeZone:state.timezone,month:"long",year:"numeric"}).format(new Date())}
 function renderStreak(){streakCount.textContent=getStreak()}
-function renderBadges(){
+function badgeValues(){
  const submissions=getSubmissions();
  const completed=submissions.filter(x=>x.status==="completed").length;
  const savedCount=safeParse(localStorage.getItem("langsnackSavedExplanations"),[]).length;
- const values={entries:state.entries.length,streak:getStreak(),saved:savedCount,completed};
- const next=badges.find(b=>values[b.type]<b.goal) || badges[badges.length-1];
+ const questions=submissions.filter(x=>(x.studentNote||"").trim()).length;
+ const characters=submissions.reduce((sum,x)=>sum+(x.studentPlain||"").replace(/\s/g,"").length,0);
+ return {entries:state.entries.length,submissions:submissions.length,streak:getStreak(),saved:savedCount,completed,questions,characters};
+}
+function renderBadges(){
+ const values=badgeValues();
+ const next=badges.find(b=>(values[b.type]||0)<b.goal) || badges[badges.length-1];
  const current=Math.min(values[next.type]||0,next.goal);
  const percent=Math.min(100,Math.round((current/next.goal)*100));
  badgeGrid.innerHTML=`<article class="next-badge-preview">
@@ -242,6 +268,10 @@ function renderBadges(){
    <span class="next-badge-copy"><small>${state.language==='ko'?'다음 배지':'Next badge'}</small><strong>${state.language==='ko'?next.titleKo:next.titleEn}</strong><span>${state.language==='ko'?next.descKo:next.descEn}</span></span>
    <div class="badge-progress"><div class="badge-progress-bar"><i style="width:${percent}%"></i></div><b>${current} / ${next.goal}</b></div>
  </article>`;
+ allBadgesGrid.innerHTML=badges.map((b,index)=>{
+   const value=values[b.type]||0, earned=value>=b.goal, pct=Math.min(100,Math.round(value/b.goal*100));
+   return `<article class="all-badge ${earned?'earned':''}"><span class="all-badge-icon">${earned?'✓':'✦'}</span><div><strong>${state.language==='ko'?b.titleKo:b.titleEn}</strong><p>${state.language==='ko'?b.descKo:b.descEn}</p><div class="badge-progress-bar"><i style="width:${pct}%"></i></div><small>${Math.min(value,b.goal)} / ${b.goal}</small></div></article>`;
+ }).join('');
 }
 function saveDailyPickState(value){localStorage.setItem(DAILY_PICK_KEY,JSON.stringify(value))}
 function dailyElement(type){return document.getElementById("daily"+type[0].toUpperCase()+type.slice(1))}
@@ -291,6 +321,8 @@ window.addEventListener("langsnack:timezone-change",event=>{state.timezone=event
 languageSelect.onchange=()=>{state.language=languageSelect.value;saveJournalState(state);applyLanguage()};
 saveDraftBtn.onclick=saveEntry;
 submitBtn.onclick=()=>{const text=journalText.value.trim();if(!text){showToast(tr("writeFirst"));return}const draft={entryId:crypto.randomUUID(),journal:text,level:levelSelect.value,date:dateKey(),language:state.language,category:activeCategory};sessionStorage.setItem(LS.reviewDraft,JSON.stringify(draft));location.href="submit.html"};
+viewAchievementsBtn.onclick=()=>{achievementModal.hidden=false;document.body.classList.add('modal-open')};
+document.querySelectorAll('[data-close-badges]').forEach(el=>el.onclick=()=>{achievementModal.hidden=true;document.body.classList.remove('modal-open')});
 languageSelect.value=state.language;levelSelect.value=state.level;journalText.value=state.lastDraft;updateCounts();applyLanguage();
 </script>
 </body>

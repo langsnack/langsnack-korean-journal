@@ -1,4 +1,18 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>New submission | Langsnack Notebook</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="shared.css"></head><body><main class="nb-shell"><header class="nb-header"><a class="nb-brand" href="index.html" style="text-decoration:none;color:inherit"><span class="nb-logo">ㄱ</span><span><strong>Langsnack Notebook</strong><span>Your Korean learning space</span></span></a><nav class="nb-nav"><a href="index.html" data-nav="home">Write</a><a href="history.html" data-nav="work">My work</a><a href="saved.html" data-nav="saved">Saved</a></nav><div class="nb-actions"><select id="languageSelect" aria-label="Language"><option value="en">EN</option><option value="ko">한국어</option></select><label class="header-timezone"><select id="timezoneSelect" aria-label="Time zone"></select></label></div></header><section class="nb-main"><div class="nb-page-head"><div><span class="nb-kicker">New submission</span><h1>Send your work to Nicole</h1><p>Add writing, photos, PDFs or audio in one simple place.</p></div></div><div class="nb-form-grid"><section class="nb-card nb-card-pad nb-submit-card"><div class="nb-two"><div class="nb-field"><label for="titleInput">Title</label><input class="nb-input" id="titleInput" placeholder="e.g. My weekend"></div><div class="nb-field"><label for="categoryInput">Category</label><select class="nb-input" id="categoryInput"><option>Journal</option><option>Essay</option><option>Story</option><option>TOPIK writing</option><option>Speaking</option><option>Other</option></select></div></div><div class="nb-field"><label>Your writing</label><div id="studentEditorMount"></div></div><div class="nb-field"><label>Attachments</label><input id="fileInput" type="file" multiple accept="image/*,.pdf,.doc,.docx,audio/*" hidden><div class="nb-dropzone" id="dropzone"><div style="font-size:30px">📎</div><strong>Drop files here or click to browse</strong><span>Images, PDF, Word and audio. Up to 10 files.</span></div><div class="nb-file-list" id="fileList"></div></div><div class="nb-field"><label for="questionInput">Question for Nicole <span class="muted">(optional)</span></label><textarea class="nb-textarea" id="questionInput" placeholder="Is there anything specific you want Nicole to explain?"></textarea></div><div class="actions" style="justify-content:flex-end"><a class="button button-secondary" href="history.html">Cancel</a><button class="button button-primary" id="submitButton">Submit work</button></div></section><aside class="nb-side-stack"><section class="nb-card nb-card-pad"><span class="nb-kicker">Before submitting</span><h2 style="margin:5px 0 14px">Quick check</h2><div class="steps"><div class="step"><div class="step-num">1</div><div><strong>Your work</strong><span>Writing or at least one attachment</span></div></div><div class="step"><div class="step-num">2</div><div><strong>Your question</strong><span>Tell Nicole what you need help with</span></div></div><div class="step"><div class="step-num">3</div><div><strong>Review</strong><span>You can track the status in My work</span></div></div></div></section></aside></div></section></main><div class="toast" id="toast"></div><script src="shared.js"></script><script src="timezone-picker.js"></script><script>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>New submission | Langsnack Notebook</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="shared.css"></head><body><main class="nb-shell"><header class="nb-header"><a class="nb-brand" href="index.html" style="text-decoration:none;color:inherit"><span class="nb-logo">ㄱ</span><span><strong>Langsnack Notebook</strong><span>Your Korean learning space</span></span></a><nav class="nb-nav"><a href="index.html" data-nav="home">Write</a><a href="history.html" data-nav="work">My work</a><a href="saved.html" data-nav="saved">Saved</a></nav><div class="nb-actions"><select id="languageSelect" aria-label="Language"><option value="en">EN</option><option value="ko">한국어</option></select><label class="header-timezone"><select id="timezoneSelect" aria-label="Time zone"></select></label></div></header><section class="nb-main"><div class="nb-page-head"><div><span class="nb-kicker">New submission</span><h1>Send your work to Nicole</h1><p>Add writing, photos, PDFs or audio in one simple place.</p></div></div><div class="nb-form-grid"><section class="nb-card nb-card-pad nb-submit-card"><div class="nb-two nb-submission-meta">
+<div class="nb-field"><label for="categoryInput">Category</label><select class="nb-input" id="categoryInput"><option>Journal</option><option>Sentences</option><option>Essay</option><option>Story</option><option>Other</option></select></div>
+<div class="nb-field" id="journalDateField"><label for="journalDateInput">Journal date</label><input class="nb-input" id="journalDateInput" type="date"></div>
+</div><div class="nb-field"><label>Your writing</label><div id="studentEditorMount"></div></div><div class="nb-field"><label>Attachments</label><input id="fileInput" type="file" multiple accept="image/*,.pdf,.doc,.docx,audio/*" hidden><div class="nb-dropzone" id="dropzone"><div style="font-size:30px">📎</div><strong>Drop files here or click to browse</strong><span>Images, PDF, Word and audio. Up to 10 files.</span></div><div class="nb-file-list" id="fileList"></div></div><div class="nb-field"><label for="questionInput">Question for Nicole <span class="muted">(optional)</span></label><textarea class="nb-textarea" id="questionInput" placeholder="Is there anything specific you want Nicole to explain?"></textarea></div><div class="actions" style="justify-content:flex-end"><a class="button button-secondary" href="history.html">Cancel</a><button class="button button-primary" id="submitButton">Submit work</button></div></section><aside class="nb-side-stack"><section class="nb-card nb-card-pad"><span class="nb-kicker">Before submitting</span><h2 style="margin:5px 0 14px">Quick check</h2><div class="steps"><div class="step"><div class="step-num">1</div><div><strong>Your work</strong><span>Writing or at least one attachment</span></div></div><div class="step"><div class="step-num">2</div><div><strong>Your question</strong><span>Tell Nicole what you need help with</span></div></div><div class="step"><div class="step-num">3</div><div><strong>Review</strong><span>You can track the status in My work</span></div></div></div></section></aside></div></section></main>
+<div class="submission-modal" id="submissionModal" hidden>
+  <div class="submission-modal-backdrop"></div>
+  <section class="submission-modal-card" role="dialog" aria-modal="true" aria-labelledby="submissionModalTitle">
+    <span class="submission-modal-mark">✓</span>
+    <p class="nb-kicker">Submission received</p>
+    <h2 id="submissionModalTitle">Your writing is waiting for review</h2>
+    <p>Nicole will usually complete your review within <strong>24–48 hours</strong>. Thank you for your patience.</p>
+    <button class="button button-primary" id="understandButton" type="button">I understand</button>
+  </section>
+</div>
+<div class="toast" id="toast"></div><script src="shared.js"></script><script src="timezone-picker.js"></script><script>
 const state=getState();
 const editId=new URLSearchParams(location.search).get('id');
 const existing=editId?getSubmissions().find(x=>(x.id||x._id)===editId):null;
@@ -6,13 +20,37 @@ const draft=safeParse(sessionStorage.getItem(LS.reviewDraft),null)||{journal:sta
 studentEditorMount.innerHTML=richEditorHTML('studentEditor','Write here, or submit attachments only.');
 const editor=initRichEditor(studentEditorMount);
 editor.innerHTML=existing?.studentHtml||escapeHTML(existing?.studentPlain||draft.journal||draft.plain||'');
+function todayInTimeZone(){
+  try{
+    const parts=new Intl.DateTimeFormat('en-CA',{timeZone:state.timeZone||state.timezone||'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+    const m=Object.fromEntries(parts.map(x=>[x.type,x.value]));
+    return `${m.year}-${m.month}-${m.day}`;
+  }catch{return new Date().toISOString().slice(0,10)}
+}
+function updateJournalDateVisibility(){
+  journalDateField.hidden=categoryInput.value!=='Journal';
+  if(!journalDateInput.value)journalDateInput.value=todayInTimeZone();
+}
+function generatedTitle(category,journalDate,plain){
+  if(category==='Journal'){
+    const d=journalDate||todayInTimeZone();
+    return state.language==='ko'?`${d.replaceAll('-','. ')} 일기`:`Journal · ${d}`;
+  }
+  const labels={Sentences:'Sentence practice',Essay:'Essay',Story:'Story',Other:'Writing'};
+  const first=(plain||'').split(/[.!?。！？
+]/)[0].trim();
+  return first?`${labels[category]||category} · ${first.slice(0,34)}${first.length>34?'…':''}`:(labels[category]||category);
+}
+journalDateInput.value=todayInTimeZone();
+categoryInput.addEventListener('change',updateJournalDateVisibility);
+updateJournalDateVisibility();
 if(existing){
   document.title='Edit work | Langsnack Notebook';
   document.querySelector('.nb-kicker').textContent='Edit submission';
   document.querySelector('.nb-page-head h1').textContent='Update your work';
   document.querySelector('.nb-page-head p').textContent='Make changes, then save your updated version.';
-  titleInput.value=existing.title||'';
   categoryInput.value=existing.category||'Journal';
+  journalDateInput.value=existing.journalDate||existing.submittedAt?.slice(0,10)||todayInTimeZone();
   questionInput.value=existing.studentNote||'';
   submitButton.textContent='Save changes';
 }
@@ -39,17 +77,21 @@ submitButton.onclick=()=>{
   if(existing){
     const idx=all.findIndex(x=>(x.id||x._id)===editId);
     if(idx>=0){
-      all[idx]={...all[idx],title:titleInput.value.trim()||categoryInput.value,category:categoryInput.value,studentHtml:html,studentPlain:plain,studentNote:questionInput.value.trim(),attachments:files.map(f=>({name:f.name,size:f.size,type:f.type})),studentUpdatedAt:now,status:all[idx].status==='completed'?'pending':all[idx].status};
+      all[idx]={...all[idx],title:generatedTitle(categoryInput.value,journalDateInput.value,plain),category:categoryInput.value,journalDate:categoryInput.value==='Journal'?journalDateInput.value:null,studentHtml:html,studentPlain:plain,studentNote:questionInput.value.trim(),attachments:files.map(f=>({name:f.name,size:f.size,type:f.type})),studentUpdatedAt:now,status:all[idx].status==='completed'?'pending':all[idx].status};
       saveSubmissions(all);toast('Your changes were saved.');
     }
   }else{
-    const item={id:makeId(),memberId:'demo-member',studentName:state.profile.name||'Student',studentEmail:state.profile.email||'',title:titleInput.value.trim()||categoryInput.value,category:categoryInput.value,studentHtml:html,studentPlain:plain,studentNote:questionInput.value.trim(),attachments:files.map(f=>({name:f.name,size:f.size,type:f.type})),teacherHtml:'',teacherNote:'',status:'pending',submittedAt:now,studentUpdatedAt:now,reviewStartedAt:null,completedAt:null};
+    const item={id:makeId(),memberId:'demo-member',studentName:state.profile.name||'Student',studentEmail:state.profile.email||'',title:generatedTitle(categoryInput.value,journalDateInput.value,plain),category:categoryInput.value,journalDate:categoryInput.value==='Journal'?journalDateInput.value:null,studentHtml:html,studentPlain:plain,studentNote:questionInput.value.trim(),attachments:files.map(f=>({name:f.name,size:f.size,type:f.type})),teacherHtml:'',teacherNote:'',status:'pending',submittedAt:now,studentUpdatedAt:now,reviewStartedAt:null,completedAt:null};
     all.unshift(item);saveSubmissions(all);
     if(questionInput.value.trim())addThreadMessage(item.id,{author:'student',name:state.profile.name||'Student',text:questionInput.value.trim()});
     window.parent?.postMessage({source:'langsnack-journal',type:'submissionCreated',payload:item},'*');
-    sessionStorage.removeItem(LS.reviewDraft);toast('Your work was submitted.');
+    sessionStorage.removeItem(LS.reviewDraft);
+    submissionModal.hidden=false;
+    document.body.classList.add('modal-open');
+    return;
   }
-  setTimeout(()=>location.href='history.html',450)
+  setTimeout(()=>location.href='history.html',350)
 };
+understandButton.onclick=()=>{location.href='history.html'};
 document.querySelector('[data-nav="work"]').classList.add('active');languageSelect.value=state.language;
 </script></body></html>
