@@ -103,14 +103,16 @@ localStorage.setItem("langsnackJournalStateV3", JSON.stringify({language:"en",pr
     function items(){ return getSubmissions() || []; }
     function safeDate(value){ const d=new Date(value); return Number.isNaN(d.getTime()) ? null : d; }
     function sameDay(a,b){ return a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate(); }
-    function relativeTime(value){ const d=safeDate(value); if(!d)return "—"; const sec=Math.max(0,(Date.now()-d.getTime())/1000); if(sec<60)return "just now"; if(sec<3600)return `${Math.floor(sec/60)}m ago`; if(sec<86400)return `${Math.floor(sec/3600)}h ago`; if(sec<604800)return `${Math.floor(sec/86400)}d ago`; return formatDate(value,state.language); }
+    function relativeTime(value){
+      return formatKoreanDate(value,{includeTime:true,includeWeekday:true});
+    }m ago`; if(sec<86400)return `${Math.floor(sec/3600)}h ago`; if(sec<604800)return `${Math.floor(sec/86400)}d ago`; return formatDate(value,state.language); }
     function wordCount(text){ return String(text||"").trim() ? String(text).trim().split(/\s+/).length : 0; }
 
     function renderHeader(){
       const now=new Date(); const hour=now.getHours();
       const phrase=state.language==="ko" ? (hour<12?"좋은 아침이에요, 니콜쌤":hour<18?"좋은 오후예요, 니콜쌤":"좋은 저녁이에요, 니콜쌤") : (hour<12?"Good morning, Nicole":hour<18?"Good afternoon, Nicole":"Good evening, Nicole");
       greeting.textContent=phrase;
-      todayLabel.textContent=now.toLocaleDateString(state.language==="ko"?"ko-KR":"en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+      todayLabel.textContent=new Intl.DateTimeFormat("ko-KR",{timeZone:state.timezone,weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(now);
       language.value=state.language;
     }
 

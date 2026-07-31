@@ -525,3 +525,32 @@ body.modal-open{overflow:hidden}
   .badge-peek-row{grid-template-columns:1fr}
   .nb-work-actions{flex-wrap:wrap}
 }
+
+
+/* =========================================================
+   V3.6 KOREAN-ONLY DATE DISPLAY
+   ========================================================= */
+.korean-date-preview{
+  display:block;
+  margin-top:7px;
+  color:#214f3d;
+  font-family:"Noto Sans KR","DM Sans",sans-serif;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:-.02em;
+}
+.main-journal-date .korean-date-preview{
+  grid-column:1/-1;
+}
+.journal-date{
+  display:block;
+  margin-bottom:4px;
+  color:#315d4c;
+  font-weight:800;
+}
+.submission-korean-date{
+  margin-top:5px;
+  color:#315d4c;
+  font-size:12px;
+  font-weight:800;
+}

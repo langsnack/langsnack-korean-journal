@@ -1,0 +1,20 @@
+LANGSNACK NOTEBOOK V3.6 — KOREAN DATE SYSTEM
+
+All visible dates now use Korean date order regardless of interface language.
+
+Examples:
+- 2026년 8월 1일 (토)
+- 2026년 8월 1일 (토) 오후 2:30
+- 2026년 8월
+
+Updated:
+- Main journal date
+- Submission journal date
+- Writing calendar
+- My Work dates
+- Submission detail dates
+- Saved explanation dates
+- Teacher dashboard dates
+- Recent work dates
+
+The HTML date picker remains available, with a Korean-formatted preview beneath it.

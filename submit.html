@@ -1,6 +1,10 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>New submission | Langsnack Notebook</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="shared.css"></head><body><main class="nb-shell"><header class="nb-header"><a class="nb-brand" href="/" style="text-decoration:none;color:inherit"><span class="nb-logo">ㄱ</span><span><strong>Langsnack Notebook</strong><span>Your Korean learning space</span></span></a><nav class="nb-nav"><a href="/" data-nav="home">Write</a><a href="history.html" data-nav="work">My work</a><a href="saved.html" data-nav="saved">Saved</a></nav><div class="nb-actions"><select id="languageSelect" aria-label="Language"><option value="en">EN</option><option value="ko">한국어</option></select><label class="header-timezone"><select id="timezoneSelect" aria-label="Time zone"></select></label></div></header><section class="nb-main"><div class="nb-page-head"><div><span class="nb-kicker">New submission</span><h1>Send your work to Nicole</h1><p>Add writing, photos, PDFs or audio in one simple place.</p></div></div><div class="nb-form-grid"><section class="nb-card nb-card-pad nb-submit-card"><div class="nb-two nb-submission-meta">
 <div class="nb-field"><label for="categoryInput">Category</label><select class="nb-input" id="categoryInput"><option>Journal</option><option>Sentences</option><option>Essay</option><option>Story</option><option>Other</option></select></div>
-<div class="nb-field" id="journalDateField"><label for="journalDateInput">Journal date</label><input class="nb-input" id="journalDateInput" type="date"></div>
+<div class="nb-field" id="journalDateField">
+  <label for="journalDateInput">Journal date</label>
+  <input class="nb-input" id="journalDateInput" type="date">
+  <strong class="korean-date-preview" id="journalDatePreview"></strong>
+</div>
 </div><div class="nb-field nb-writing-field"><label>Your writing</label><div id="studentEditorMount" class="nb-writing-editor-mount"></div></div><div class="nb-field"><label>Attachments</label><input id="fileInput" type="file" multiple accept="image/*,.pdf,.doc,.docx,audio/*" hidden><div class="nb-dropzone" id="dropzone"><div style="font-size:30px">📎</div><strong>Drop files here or click to browse</strong><span>Images, PDF, Word and audio. Up to 10 files.</span></div><div class="nb-file-list" id="fileList"></div></div><div class="nb-field"><label for="questionInput">Question for Nicole <span class="muted">(optional)</span></label><textarea class="nb-textarea" id="questionInput" placeholder="Is there anything specific you want Nicole to explain?"></textarea></div><div class="actions" style="justify-content:flex-end"><a class="button button-secondary" href="history.html">Cancel</a><button class="button button-primary" id="submitButton">Submit work</button></div></section><aside class="nb-side-stack"><section class="nb-card nb-card-pad"><span class="nb-kicker">Before submitting</span><h2 style="margin:5px 0 14px">Quick check</h2><div class="steps"><div class="step"><div class="step-num">1</div><div><strong>Your work</strong><span>Writing or at least one attachment</span></div></div><div class="step"><div class="step-num">2</div><div><strong>Your question</strong><span>Tell Nicole what you need help with</span></div></div><div class="step"><div class="step-num">3</div><div><strong>Review</strong><span>You can track the status in My work</span></div></div></div></section></aside></div></section></main>
 
 <div class="submission-modal" id="loginRequiredModal" hidden>
@@ -38,9 +42,14 @@ function todayInTimeZone(){
     return `${m.year}-${m.month}-${m.day}`;
   }catch{return new Date().toISOString().slice(0,10)}
 }
+function updateJournalDatePreview(){
+  journalDatePreview.textContent=formatKoreanDateOnly(journalDateInput.value||todayInTimeZone());
+}
+
 function updateJournalDateVisibility(){
   journalDateField.hidden=categoryInput.value!=='Journal';
   if(!journalDateInput.value)journalDateInput.value=draft.journalDate||draft.date||todayInTimeZone();
+  updateJournalDatePreview();
 }
 function generatedTitle(category,journalDate,plain){
   if(category==='Journal'){

@@ -88,16 +88,48 @@ function escapeHTML(value = "") {
   })[char]);
 }
 
-function formatDate(value, language = "en") {
+function formatKoreanDate(value, options = {}) {
   const state = getJournalState();
-  return new Intl.DateTimeFormat(language === "ko" ? "ko-KR" : "en-GB", {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const includeTime = Boolean(options.includeTime);
+  const includeWeekday = options.includeWeekday !== false;
+
+  const config = {
     timeZone: state.timezone,
     year: "numeric",
     month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit"
-  }).format(new Date(value));
+    day: "numeric"
+  };
+
+  if (includeWeekday) config.weekday = "short";
+  if (includeTime) {
+    config.hour = "numeric";
+    config.minute = "2-digit";
+    config.hour12 = true;
+  }
+
+  return new Intl.DateTimeFormat("ko-KR", config).format(date);
+}
+
+function formatKoreanDateOnly(value) {
+  if (!value) return "";
+  const normalized = /^\d{4}-\d{2}-\d{2}$/.test(String(value))
+    ? `${value}T12:00:00`
+    : value;
+
+  return formatKoreanDate(normalized, {
+    includeTime: false,
+    includeWeekday: true
+  });
+}
+
+function formatDate(value) {
+  return formatKoreanDate(value, {
+    includeTime: true,
+    includeWeekday: true
+  });
 }
 
 function showToast(message) {
@@ -186,8 +218,11 @@ function saveThreads(value){localStorage.setItem(LS.threads,JSON.stringify(value
 function threadFor(id){return getThreads()[id]||[]}
 function addThreadMessage(id,message){const all=getThreads();all[id]=all[id]||[];all[id].push({...message,id:makeId(),createdAt:new Date().toISOString()});saveThreads(all);return all[id]}
 function relativeDate(value){
-  const diff=Date.now()-new Date(value).getTime(), min=Math.floor(diff/60000), hr=Math.floor(min/60), day=Math.floor(hr/24);
-  if(min<1)return "just now"; if(min<60)return `${min}m ago`; if(hr<24)return `${hr}h ago`; if(day<7)return `${day}d ago`; return formatDate(value).split(',')[0];
+  return formatKoreanDate(value, {
+    includeTime: true,
+    includeWeekday: true
+  });
+}m ago`; if(hr<24)return `${hr}h ago`; if(day<7)return `${day}d ago`; return formatDate(value).split(',')[0];
 }
 
 
