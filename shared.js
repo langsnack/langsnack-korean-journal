@@ -164,3 +164,27 @@ function richEditorHTML(id, placeholder) {
     <div class="editor-content" contenteditable="true" data-placeholder="${escapeHTML(placeholder)}"></div>
   </div>`;
 }
+
+
+// Notebook V2 additions
+LS.bookmarks = "langsnackNotebookBookmarksV2";
+LS.threads = "langsnackNotebookThreadsV2";
+
+function getBookmarks() { return safeParse(localStorage.getItem(LS.bookmarks), []); }
+function saveBookmarks(items) { localStorage.setItem(LS.bookmarks, JSON.stringify(items)); }
+function toggleBookmark(item) {
+  const items=getBookmarks();
+  const key=item.key || `${item.submissionId}:${item.text}`;
+  const idx=items.findIndex(x=>x.key===key);
+  if(idx>=0){ items.splice(idx,1); saveBookmarks(items); return false; }
+  items.unshift({...item,key,savedAt:new Date().toISOString()}); saveBookmarks(items); return true;
+}
+function isBookmarked(key){return getBookmarks().some(x=>x.key===key)}
+function getThreads(){return safeParse(localStorage.getItem(LS.threads), {})}
+function saveThreads(value){localStorage.setItem(LS.threads,JSON.stringify(value))}
+function threadFor(id){return getThreads()[id]||[]}
+function addThreadMessage(id,message){const all=getThreads();all[id]=all[id]||[];all[id].push({...message,id:makeId(),createdAt:new Date().toISOString()});saveThreads(all);return all[id]}
+function relativeDate(value){
+  const diff=Date.now()-new Date(value).getTime(), min=Math.floor(diff/60000), hr=Math.floor(min/60), day=Math.floor(hr/24);
+  if(min<1)return "just now"; if(min<60)return `${min}m ago`; if(hr<24)return `${hr}h ago`; if(day<7)return `${day}d ago`; return formatDate(value).split(',')[0];
+}
