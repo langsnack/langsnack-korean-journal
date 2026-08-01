@@ -222,7 +222,6 @@ function relativeDate(value){
     includeTime: true,
     includeWeekday: true
   });
-}m ago`; if(hr<24)return `${hr}h ago`; if(day<7)return `${day}d ago`; return formatDate(value).split(',')[0];
 }
 
 
@@ -270,8 +269,6 @@ function isNotebookMember() {
   return getAuthSession().loggedIn;
 }
 
-const WIX_NOTEBOOK_URL = "https://www.langsnack.com/journal";
-
 function requestNotebookLogin() {
   const isEmbedded = window.parent && window.parent !== window;
 
@@ -283,9 +280,12 @@ function requestNotebookLogin() {
     return;
   }
 
-  // journal.langsnack.com is hosted separately from Wix.
-  // Open the private Wix Notebook page so Wix can handle login and membership.
-  window.location.href = WIX_NOTEBOOK_URL;
+  const state = getJournalState();
+  alert(
+    state.language === "ko"
+      ? "로그인 기능은 Wix 페이지를 연결한 뒤 사용할 수 있어요. 지금은 게스트로 글쓰기를 체험할 수 있어요."
+      : "Login will be available after the Wix page is connected. You can continue trying the writing tools as a guest for now."
+  );
 }
 
 function announceNotebookReady() {

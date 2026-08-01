@@ -1,190 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Langsnack Notebook</title>
-<meta name="description" content="Write in Korean, receive personal feedback, and keep every useful explanation in one place.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shared.css">
-</head>
-<body class="notebook-home">
-<header class="notebook-header">
-  <a class="notebook-logo" href="/" aria-label="Langsnack home">LANGSNACK</a>
-  <div class="notebook-header-tools">
-    <label class="compact-control">
-      <span id="languageLabel">Language</span>
-      <select id="languageSelect" aria-label="Language">
-        <option value="en">English</option>
-        <option value="ko">한국어</option>
-      </select>
-    </label>
-    <label class="compact-control compact-timezone">
-      <span id="timezoneLabel">Time zone</span>
-      <select id="timezoneSelect" aria-label="Choose your time zone"></select>
-    </label>
-    <button class="avatar-button" id="loginBtn" aria-label="Account">JN</button>
-  </div>
-</header>
 
-<section class="guest-banner" id="guestBanner" hidden>
-  <div>
-    <strong id="guestBannerTitle">You are using Guest Mode</strong>
-    <span id="guestBannerText">You can try writing, but drafts and submissions are not saved.</span>
-  </div>
-  <button type="button" class="button green-button" id="guestLoginButton">Log in / Sign up</button>
-</section>
-
-<div class="notebook-app">
-  <aside class="notebook-sidebar" aria-label="Notebook navigation">
-    <nav class="sidebar-nav">
-      <a class="sidebar-link active" href="/"><span class="nav-icon">⌂</span><span id="navDashboard">Dashboard</span></a>
-      <a class="sidebar-link" href="#writing"><span class="nav-icon">✎</span><span id="navWrite">Write</span></a>
-      <a class="sidebar-link" href="history.html"><span class="nav-icon">▣</span><span id="navWork">My work</span></a>
-      <a class="sidebar-link" href="saved.html"><span class="nav-icon">☆</span><span id="navSaved">Saved</span></a>
-      <a class="sidebar-link" href="#achievements"><span class="nav-icon">▥</span><span id="navAchievements">Achievements</span></a>
-      <a class="sidebar-link" href="#calendar"><span class="nav-icon">□</span><span id="navCalendar">Calendar</span></a>
-    </nav>
-    <div class="sidebar-help">
-      <strong id="helpTitle">Need help?</strong>
-      <span id="helpText">Visit the guide</span>
-      <span aria-hidden="true">›</span>
-    </div>
-  </aside>
-
-  <main class="notebook-main">
-    <section class="welcome-row">
-      <div>
-        <h1 id="welcomeHeading">Good evening, Jennifer!</h1>
-        <p id="welcomeSubtitle">Keep writing. Keep growing.</p>
-      </div>
-      <button class="streak-card" type="button" onclick="document.getElementById('calendar').scrollIntoView({behavior:'smooth'})">
-        <span class="streak-flame" aria-hidden="true">●</span>
-        <span class="streak-value" id="streakCount">0</span>
-        <span class="streak-copy"><strong id="streakUnit">day streak</strong><small id="streakStatus">Keep it going</small></span>
-        <span class="card-arrow">›</span>
-      </button>
-    </section>
-
-    <section class="quick-actions" aria-label="Quick actions">
-      <a class="quick-card" href="#writing">
-        <span class="quick-mark">✎</span>
-        <span><strong id="quickFeedbackTitle">Get your writing feedback</strong><small id="quickFeedbackSub">Write and send your work to Nicole.</small></span>
-        <span class="card-arrow">›</span>
-      </a>
-      <a class="quick-card" href="history.html">
-        <span class="quick-mark">▣</span>
-        <span><strong id="quickWorkTitle">Previous work</strong><small id="quickWorkSub">Review your submissions and feedback.</small></span>
-        <span class="card-arrow">›</span>
-      </a>
-      <a class="quick-card" href="saved.html">
-        <span class="quick-mark">☆</span>
-        <span><strong id="quickSavedTitle">Saved explanations</strong><small id="quickSavedSub">Keep useful feedback for later.</small></span>
-        <span class="card-arrow">›</span>
-      </a>
-    </section>
-
-    <div class="dashboard-grid">
-      <section class="dashboard-card writing-card" id="writing">
-        <div class="card-heading">
-          <div><p class="section-kicker" id="writingKicker">Writing workspace</p><h2 id="writingTitle">Start a new writing</h2></div>
-          <button class="text-button" id="clearAllBtn" type="button">Clear all</button>
-        </div>
-
-        <div class="category-tabs" role="tablist" aria-label="Writing type">
-          <button class="category-tab active" data-category="journal" type="button" id="catJournal">Journal</button>
-          <button class="category-tab" data-category="essay" type="button" id="catEssay">Essay</button>
-          <button class="category-tab" data-category="story" type="button" id="catStory">Story</button>
-          <button class="category-tab" data-category="random" type="button" id="catRandom">Random</button>
-        </div>
-
-        <div class="writing-controls">
-          <label class="level-control"><span id="levelLabel">Level</span><select id="levelSelect"><option value="starter">Starter</option><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></label>
-          <label class="main-journal-date" id="mainJournalDateField">
-      <span id="mainJournalDateLabel">Journal date</span>
-      <input id="mainJournalDateInput" type="date" aria-label="Journal date">
-      <strong class="korean-date-preview" id="mainJournalDatePreview"></strong>
-    </label>
-          <button class="recommend-button" data-generator="topic" type="button"><span>↻</span><span id="topicButtonText">Random topic</span></button>
-          <button class="recommend-button" data-generator="grammar" type="button"><span>Aa</span><span id="grammarButtonText">Random grammar</span></button>
-          <button class="recommend-button" data-generator="prompt" type="button"><span>“</span><span id="promptButtonText">Random prompt</span></button>
-          <button class="surprise-button" id="surpriseMeBtn" type="button"><span class="dice">✦</span><span id="surpriseButtonText">Surprise me</span></button>
-        </div>
-
-        <div class="recommendation-panel" id="generatorOutput" hidden>
-          <div><span class="recommendation-type" id="generatorLabel"></span><p id="generatorText"></p></div>
-          <div class="recommendation-actions"><button type="button" id="shuffleAgainBtn">Try another</button><button type="button" id="closeGenerator" aria-label="Close">×</button></div>
-        </div>
-
-        <div class="editor-toolbar" aria-label="Formatting toolbar">
-          <button type="button" data-editor-command="undo" title="Undo">↶</button>
-          <button type="button" data-editor-command="redo" title="Redo">↷</button>
-          <span class="toolbar-divider"></span>
-          <button type="button" data-wrap="**" title="Bold"><b>B</b></button>
-          <button type="button" data-wrap="_" title="Italic"><i>I</i></button>
-          <button type="button" data-wrap="__" title="Underline"><u>U</u></button>
-          <span class="toolbar-divider"></span>
-          <button type="button" data-prefix="# " title="Heading 1">H1</button>
-          <button type="button" data-prefix="## " title="Heading 2">H2</button>
-          <button type="button" data-prefix="• " title="Bullet list">• List</button>
-          <button type="button" data-prefix="1. " title="Numbered list">1. List</button>
-          <button type="button" data-prefix="> " title="Quote">❝</button>
-          <button type="button" data-insert="
-────────────
-" title="Divider">—</button>
-          <span class="toolbar-divider"></span>
-          <button type="button" id="clearFormatBtn" title="Clear formatting">Clear</button>
-        </div>
-        <div class="paper notebook-paper"><textarea id="journalText" spellcheck="false" placeholder="Write your Korean here..."></textarea></div>
-        <div class="editor-footer notebook-editor-footer">
-          <div class="word-count"><span id="charCount">0</span><span id="charactersLabel"> characters</span> · <span id="wordCount">0</span><span id="wordsLabel"> words</span></div>
-          <div class="action-group"><button class="button ghost-button" id="saveDraftBtn" type="button">Save draft</button><button class="button green-button" id="submitBtn" type="button">Get feedback</button></div>
-        </div>
-      </section>
-
-      <aside class="dashboard-stack">
-        <section class="dashboard-card achievements-card" id="achievements">
-          <div class="card-heading"><h2 id="achievementTitle">Next achievement</h2><button class="text-button" id="viewAchievementsBtn" type="button">View all</button></div>
-          <div class="badge-grid" id="badgeGrid"></div>
-        </section>
-        <section class="dashboard-card progress-card">
-          <div class="card-heading"><h2 id="progressTitle">Level & progress</h2><span id="xpLabel">380 / 600 XP</span></div>
-          <div class="level-line"><strong id="levelDisplay">Level 3</strong><div class="progress-track"><div class="progress-fill" style="width:63%"></div></div></div>
-        </section>
-        <section class="dashboard-card calendar-card calendar-widget" id="calendar">
-          <div class="card-heading"><h2 id="calendarTitle">Writing calendar</h2><span id="calendarMonthLabel"></span></div>
-          <div class="calendar-grid" id="calendarGrid"></div>
-          <div class="calendar-legend"><span><i class="legend-dot submitted"></i><span id="legendSubmitted">Written</span></span><span><i class="legend-dot today"></i><span id="legendToday">Today</span></span></div>
-        </section>
-      </aside>
-
-      <section class="dashboard-card recent-card">
-        <div class="card-heading"><h2 id="recentTitle">Recent work</h2><a class="text-button" href="history.html" id="viewAllWork">View all</a></div>
-        <div class="recent-list" id="entriesList"></div>
-      </section>
-
-      <section class="dashboard-card tip-card">
-        <div class="card-heading"><h2 id="tipTitle">Quick tip</h2></div>
-        <p id="tipText">Writing a little every day builds a stronger habit than writing a lot once in a while.</p>
-      </section>
-    </div>
-
-    <footer class="notebook-footer"><span>© 2026 Langsnack.</span><span><a href="#">Guide</a><a href="#">Support</a><a href="#">Privacy</a><a href="#">Terms</a></span></footer>
-  </main>
-</div>
-<div class="achievement-modal" id="achievementModal" hidden>
-  <div class="achievement-modal-backdrop" data-close-badges></div>
-  <section class="achievement-modal-card" role="dialog" aria-modal="true" aria-labelledby="allBadgesTitle">
-    <div class="achievement-modal-head"><div><p class="section-kicker">Your progress</p><h2 id="allBadgesTitle">Achievement badges</h2></div><button type="button" class="modal-close" data-close-badges aria-label="Close">×</button></div>
-    <div class="all-badges-grid" id="allBadgesGrid"></div>
-  </section>
-</div>
-<div class="toast" id="toast"></div>
-<script src="shared.js"></script>
-<script src="timezone-picker.js"></script>
-<script>
 const state=getJournalState();
 let activeGenerator="prompt";
 let activeCategory="journal";
@@ -238,19 +52,8 @@ function updateCounts(){charCount.textContent=journalText.value.replace(/\s/g,""
 function pick(type){const arr=content[levelSelect.value][type];return arr[Math.floor(Math.random()*arr.length)]}
 function showRecommendation(type){activeGenerator=type;generatorLabel.textContent=tr(type+"Label");generatorText.textContent=pick(type);generatorOutput.hidden=false}
 function saveEntry(){
- const text=journalText.value.trim();
- if(!text){showToast(tr("writeFirst"));return}
- if(!isNotebookMember()){
-   sessionStorage.setItem("langsnackGuestDraft",JSON.stringify({
-     text,
-     level:levelSelect.value,
-     category:activeCategory,
-     journalDate:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):null
-   }));
-   showToast(state.language==="ko"?"게스트 글은 이 탭을 닫기 전까지만 임시로 보관돼요.":"Your guest draft is saved only until this tab is closed.");
-   return;
- }
-if(!text){showToast(tr("writeFirst"));return}const existing=state.entries.findIndex(e=>e.date===dateKey()&&e.status==="draft");const entry={id:existing>=0?state.entries[existing].id:crypto.randomUUID(),date:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):dateKey(),journalDate:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):null,createdAt:new Date().toISOString(),text,level:levelSelect.value,status:"draft",category:activeCategory};if(existing>=0)state.entries[existing]=entry;else state.entries.unshift(entry);state.lastDraft=text;state.level=levelSelect.value;saveJournalState(state);renderAll();showToast(tr("draftSaved"))}
+ if(!isNotebookMember()){requestNotebookLogin();showToast(state.language==="ko"?"로그인하면 임시 저장을 사용할 수 있어요.":"Log in to save your draft.");return}
+ const text=journalText.value.trim();if(!text){showToast(tr("writeFirst"));return}const existing=state.entries.findIndex(e=>e.date===dateKey()&&e.status==="draft");const entry={id:existing>=0?state.entries[existing].id:crypto.randomUUID(),date:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):dateKey(),journalDate:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):null,createdAt:new Date().toISOString(),text,level:levelSelect.value,status:"draft",category:activeCategory};if(existing>=0)state.entries[existing]=entry;else state.entries.unshift(entry);state.lastDraft=text;state.level=levelSelect.value;saveJournalState(state);renderAll();showToast(tr("draftSaved"))}
 function renderEntries(){entriesList.innerHTML="";if(!state.entries.length){entriesList.innerHTML=`<div class="empty-state">${tr("noEntries")}</div>`;return}state.entries.slice(0,5).forEach(e=>{const item=document.createElement("button");item.className="recent-item";item.innerHTML=`<span class="recent-icon">✎</span><span class="recent-copy"><strong>${escapeHTML(e.text.slice(0,40))}${e.text.length>40?"…":""}</strong><small>${e.journalDate?escapeHTML(formatKoreanDateOnly(e.journalDate)):escapeHTML(e.category||e.level)}</small></span><span class="recent-status">${e.status==="draft"?(state.language==="ko"?"임시 저장":"Draft"):(state.language==="ko"?"작성 완료":"Written")}</span><span class="card-arrow">›</span>`;item.onclick=()=>{journalText.value=e.text;levelSelect.value=e.level;activeCategory=e.category||"journal";mainJournalDateInput.value=e.journalDate||e.date||dateKey();updateMainJournalDateVisibility();document.querySelectorAll('.category-tab').forEach(x=>x.classList.toggle('active',x.dataset.category===activeCategory));updateCounts();document.getElementById('writing').scrollIntoView({behavior:'smooth'})};entriesList.appendChild(item)})}
 function renderCalendar(){calendarGrid.innerHTML="";const labels=["월","화","수","목","금","토","일"];labels.forEach(d=>{const s=document.createElement("span");s.className="day-label";s.textContent=d;calendarGrid.appendChild(s)});const cur=getDateParts(),first=new Date(cur.year,cur.month-1,1),offset=(first.getDay()+6)%7,dim=new Date(cur.year,cur.month,0).getDate(),written=new Set(state.entries.map(e=>e.date));for(let i=0;i<offset;i++)calendarGrid.appendChild(document.createElement("span"));for(let d=1;d<=dim;d++){const s=document.createElement("span");s.className="calendar-day";s.textContent=d;const k=`${cur.year}-${String(cur.month).padStart(2,"0")}-${String(d).padStart(2,"0")}`;if(written.has(k))s.classList.add("written");if(d===cur.day)s.classList.add("today");if(d>cur.day)s.classList.add("future");calendarGrid.appendChild(s)}calendarMonthLabel.textContent=new Intl.DateTimeFormat("ko-KR",{timeZone:state.timezone,year:"numeric",month:"long"}).format(new Date())}
 function renderStreak(){streakCount.textContent=getStreak()}
@@ -389,28 +192,19 @@ window.addEventListener("langsnack:timezone-change",event=>{state.timezone=event
 languageSelect.onchange=()=>{state.language=languageSelect.value;saveJournalState(state);applyLanguage()};
 saveDraftBtn.onclick=saveEntry;
 submitBtn.onclick=()=>{
- const text=journalText.value.trim();
- if(!text){showToast(tr("writeFirst"));return}
- const draft={entryId:crypto.randomUUID(),journal:text,level:levelSelect.value,date:dateKey(),language:state.language,category:activeCategory,journalDate:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):null};sessionStorage.setItem(LS.reviewDraft,JSON.stringify(draft));location.href="submit.html"};
+ if(!isNotebookMember()){requestNotebookLogin();showToast(state.language==="ko"?"글을 제출하려면 먼저 로그인해 주세요.":"Please log in before submitting.");return}
+ const text=journalText.value.trim();if(!text){showToast(tr("writeFirst"));return}const draft={entryId:crypto.randomUUID(),journal:text,level:levelSelect.value,date:dateKey(),language:state.language,category:activeCategory,journalDate:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):null};sessionStorage.setItem(LS.reviewDraft,JSON.stringify(draft));location.href="submit.html"};
 viewAchievementsBtn.onclick=()=>{achievementModal.hidden=false;document.body.classList.add('modal-open')};
 document.querySelectorAll('[data-close-badges]').forEach(el=>el.onclick=()=>{achievementModal.hidden=true;document.body.classList.remove('modal-open')});
-function updateMainJournalDatePreview(){
-  mainJournalDatePreview.textContent=formatKoreanDateOnly(mainJournalDateInput.value||dateKey());
-}
 function updateMainJournalDateVisibility(){
   mainJournalDateField.hidden=activeCategory!=="journal";
   if(!mainJournalDateInput.value)mainJournalDateInput.value=state.journalDate||dateKey();
-  updateMainJournalDatePreview();
 }
 languageSelect.value=state.language;
 levelSelect.value=state.level;
-const guestDraft=safeParse(sessionStorage.getItem("langsnackGuestDraft"),null);
-journalText.value=isNotebookMember()?state.lastDraft:(guestDraft?.text||"");
+journalText.value=isNotebookMember()?state.lastDraft:"";
 mainJournalDateInput.value=state.journalDate||dateKey();
 updateMainJournalDateVisibility();
 updateCounts();
 applyLanguage();
 applyAuthUI();
-</script>
-</body>
-</html>

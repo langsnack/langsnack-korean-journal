@@ -1,94 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="robots" content="noindex,nofollow,noarchive">
-  <title>Teacher Dashboard | Langsnack</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="shared.css">
-</head>
-<body class="teacher-os-body">
-  <main class="teacher-os-shell">
-    <header class="teacher-os-header">
-      <div>
-        <p class="teacher-kicker" id="greeting">Good afternoon, Nicole</p>
-        <h1>Langsnack Teacher Dashboard</h1>
-        <p class="teacher-subtitle" id="todayLabel"></p>
-      </div>
-      <div class="teacher-header-tools">
-        <label class="header-control"><span>Language</span><select id="language"><option value="en">EN</option><option value="ko">한국어</option></select></label>
-        <label class="header-control header-timezone"><span>Time zone</span><select id="timezoneSelect"></select></label>
-        <span class="private-pill">Private workspace</span>
-      </div>
-    </header>
 
-    <section class="teacher-stat-grid" aria-label="Dashboard overview">
-      <article class="teacher-stat-card waiting"><span class="stat-icon">⌛</span><div><strong id="pendingCount">0</strong><span id="pendingLabel">Waiting</span></div><small id="oldestPending">No waiting submissions</small></article>
-      <article class="teacher-stat-card reviewing"><span class="stat-icon">✎</span><div><strong id="reviewCount">0</strong><span id="reviewLabel">In progress</span></div><small id="draftHint">Drafts in progress</small></article>
-      <article class="teacher-stat-card completed"><span class="stat-icon">✓</span><div><strong id="completeCount">0</strong><span id="completeLabel">Completed</span></div><small id="completedToday">0 returned today</small></article>
-      <article class="teacher-stat-card total"><span class="stat-icon">▤</span><div><strong id="totalCount">0</strong><span id="totalLabel">Total records</span></div><small id="studentCount">0 students</small></article>
-    </section>
-
-    <section class="teacher-widget-row">
-      <article class="teacher-widget activity-widget">
-        <div class="widget-head"><div><p class="widget-kicker">This week</p><h2>Submission activity</h2></div><span id="weeklyTotal" class="widget-value">0</span></div>
-        <div id="weeklyChart" class="weekly-chart"></div>
-      </article>
-      <article class="teacher-widget">
-        <div class="widget-head"><div><p class="widget-kicker">Workload</p><h2>Queue health</h2></div></div>
-        <div class="queue-health"><div class="health-ring" id="healthRing"><strong id="healthPercent">100%</strong></div><div><strong id="healthText">All caught up</strong><p id="healthSubtext">There are no submissions waiting.</p></div></div>
-      </article>
-      <article class="teacher-widget">
-        <div class="widget-head"><div><p class="widget-kicker">Students</p><h2>Most active</h2></div></div>
-        <div id="activeStudents" class="active-students"></div>
-      </article>
-    </section>
-
-    <section class="teacher-main-grid">
-      <aside class="teacher-queue-card">
-        <div class="queue-card-head">
-          <div><p class="widget-kicker">Review queue</p><h2>Submissions</h2></div>
-          <button class="icon-button" id="refreshButton" title="Refresh">↻</button>
-        </div>
-        <div class="teacher-filter-row">
-          <div class="search-box"><span>⌕</span><input id="search" placeholder="Search student or writing"></div>
-          <select id="statusFilter"><option value="all">All</option><option value="pending">Waiting</option><option value="reviewing">In progress</option><option value="completed">Completed</option></select>
-        </div>
-        <div class="queue-tabs" id="queueTabs">
-          <button data-filter="all" class="active">All</button>
-          <button data-filter="pending">Waiting</button>
-          <button data-filter="reviewing">Reviewing</button>
-          <button data-filter="completed">Completed</button>
-        </div>
-        <div class="teacher-queue" id="queue"></div>
-      </aside>
-
-      <section class="teacher-workspace-card" id="workspace">
-        <div class="teacher-empty-state">
-          <div class="empty-illustration">✎</div>
-          <h2>Select a submission</h2>
-          <p>Choose a student from the review queue to start correcting their journal.</p>
-        </div>
-      </section>
-    </section>
-  </main>
-
-  <div class="toast" id="toast"></div>
-  <script>
-localStorage.setItem("langsnackReviewSubmissionsV3", JSON.stringify([
- {id:"JR-240731-A1",memberId:"m1",studentName:"Jennifer",studentEmail:"jennifer@example.com",studentHtml:"<p>어제 친구하고 카페에 갔어요. 커피를 마시면서 한국어로 이야기를 했어요. 처음에는 조금 긴장했지만 점점 편해졌어요.</p>",studentPlain:"어제 친구하고 카페에 갔어요. 커피를 마시면서 한국어로 이야기를 했어요. 처음에는 조금 긴장했지만 점점 편해졌어요.",studentNote:"Please check whether my connectors sound natural.",teacherHtml:"",teacherNote:"",status:"pending",submittedAt:"2026-07-31T03:15:00Z",studentUpdatedAt:"2026-07-31T03:15:00Z"},
- {id:"JR-240730-B2",memberId:"m2",studentName:"Chelsea",studentEmail:"chelsea@example.com",studentHtml:"<p>한국에서 산 지 벌써 2년이 됐어요. 요즘은 예전보다 한국어로 말하는 게 자연스러워졌지만 아직 조사에서 실수를 많이 해요.</p>",studentPlain:"한국에서 산 지 벌써 2년이 됐어요. 요즘은 예전보다 한국어로 말하는 게 자연스러워졌지만 아직 조사에서 실수를 많이 해요.",studentNote:"",teacherHtml:"<p>한국에서 산 지 벌써 2년이 됐어요. 요즘은 예전보다 한국어로 말하는 것이 자연스러워졌지만 아직 조사에서 실수를 많이 해요.</p>",teacherNote:"좋아요. 이번에는 조사와 문장 연결을 중심으로 볼게요.",status:"reviewing",submittedAt:"2026-07-30T08:20:00Z",studentUpdatedAt:"2026-07-30T08:20:00Z",reviewStartedAt:"2026-07-31T01:30:00Z"},
- {id:"JR-240729-C3",memberId:"m3",studentName:"Aqilah",studentEmail:"aqilah@example.com",studentHtml:"<p>휴가를 간 김에 평소에 가 보고 싶었던 서점에도 들렀어요. 생각보다 사람이 많았지만 분위기가 좋아서 오래 머물렀어요.</p>",studentPlain:"휴가를 간 김에 평소에 가 보고 싶었던 서점에도 들렀어요. 생각보다 사람이 많았지만 분위기가 좋아서 오래 머물렀어요.",studentNote:"",teacherHtml:"<p>휴가를 간 김에 평소에 가 보고 싶었던 서점에도 들렀어요. 생각보다 사람이 많았지만 분위기가 좋아서 오래 머물렀어요.</p>",teacherNote:"아주 자연스러워요. ‘간 김에’ 사용도 정확해요.",status:"completed",submittedAt:"2026-07-29T04:10:00Z",studentUpdatedAt:"2026-07-29T04:10:00Z",completedAt:"2026-07-30T02:00:00Z"},
- {id:"JR-240728-D4",memberId:"m1",studentName:"Jennifer",studentEmail:"jennifer@example.com",studentHtml:"<p>주말에는 집에서 쉬려고 했는데 친구가 갑자기 연락해서 같이 저녁을 먹었어요.</p>",studentPlain:"주말에는 집에서 쉬려고 했는데 친구가 갑자기 연락해서 같이 저녁을 먹었어요.",studentNote:"",teacherHtml:"<p>주말에는 집에서 쉬려고 했는데 친구가 갑자기 연락해서 같이 저녁을 먹었어요.</p>",teacherNote:"문장 흐름이 아주 자연스러워요.",status:"completed",submittedAt:"2026-07-28T06:00:00Z",studentUpdatedAt:"2026-07-28T06:00:00Z",completedAt:"2026-07-28T10:00:00Z"}
-]));
-localStorage.setItem("langsnackJournalStateV3", JSON.stringify({language:"en",profile:{name:"Nicole",email:""}}));
-</script>
-<script src="shared.js"></script>
-  <script src="timezone-picker.js"></script>
-  <script>
     const state = getState();
     let selectedId = null;
     const snippets = {
@@ -105,7 +15,7 @@ localStorage.setItem("langsnackJournalStateV3", JSON.stringify({language:"en",pr
     function sameDay(a,b){ return a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate(); }
     function relativeTime(value){
       return formatKoreanDate(value,{includeTime:true,includeWeekday:true});
-    }
+    }m ago`; if(sec<86400)return `${Math.floor(sec/3600)}h ago`; if(sec<604800)return `${Math.floor(sec/86400)}d ago`; return formatDate(value,state.language); }
     function wordCount(text){ return String(text||"").trim() ? String(text).trim().split(/\s+/).length : 0; }
 
     function renderHeader(){
@@ -212,6 +122,4 @@ localStorage.setItem("langsnackJournalStateV3", JSON.stringify({language:"en",pr
     language.onchange=()=>{state.language=language.value;saveState(state);renderAll();};
     window.addEventListener("langsnack:timezone-change",event=>{const journalState=getJournalState();journalState.timezone=event.detail.timeZone;saveJournalState(journalState);renderAll();});
     renderAll();
-  </script>
-</body>
-</html>
+  
