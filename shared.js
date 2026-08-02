@@ -63,7 +63,19 @@ const STATUS = {
 };
 
 function safeParse(value, fallback) {
-  try { return JSON.parse(value); } catch { return fallback; }
+  if (value === null || value === undefined || value === "") {
+    return fallback;
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+
+    return parsed === null || parsed === undefined
+      ? fallback
+      : parsed;
+  } catch {
+    return fallback;
+  }
 }
 
 function detectTimeZone() {
@@ -72,7 +84,12 @@ function detectTimeZone() {
 }
 
 function getJournalState() {
-  const saved = safeParse(localStorage.getItem(LS.journalState), {});
+  const parsed = safeParse(localStorage.getItem(LS.journalState), {});
+  const saved =
+    parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? parsed
+      : {};
+
   return {
     entries: Array.isArray(saved.entries) ? saved.entries : [],
     lastDraft: saved.lastDraft || "",
