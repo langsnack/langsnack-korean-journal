@@ -1,0 +1,133 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Review | Langsnack Notebook</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="shared.css?v=final-master-2"></head><body><main class="nb-shell"><header class="nb-header"><a class="nb-brand" href="/" style="text-decoration:none;color:inherit"><span class="nb-logo">ㄱ</span><span><strong>Langsnack Notebook</strong><span>Your Korean learning space</span></span></a><nav class="nb-nav"><a href="/" data-nav="home">Write</a><a href="history.html" data-nav="work">My work</a><a href="saved.html" data-nav="saved">Saved</a></nav><div class="nb-actions"><select id="languageSelect" aria-label="Language"><option value="en">EN</option><option value="ko">한국어</option></select><label class="header-timezone"><select id="timezoneSelect" aria-label="Time zone"></select></label></div></header><section class="nb-main" id="content"></section></main><div class="toast" id="toast"></div><script src="shared.js?v=final-master-2"></script><script src="timezone-picker.js?v=final-master-2"></script><script>
+exposeNotebookElements();
+const state=getState(),id=new URLSearchParams(location.search).get('id');
+let item=getSubmissions().find(x=>(x.id||x._id)===id);
+
+function attachments(){
+  if(!item.attachments?.length)return '';
+  return `<div class="nb-card nb-card-pad review-attachments"><span class="nb-kicker">Attachments</span><div class="nb-file-list">${item.attachments.map(a=>`<div class="nb-file"><span>📎 <strong>${escapeHTML(a.name)}</strong></span><small class="muted">Preview available after Wix Media connection</small></div>`).join('')}</div></div>`;
+}
+
+function drawThread(){
+  const thread=threadFor(id);
+  threadList.innerHTML='';
+
+  if(!thread.length){
+    threadList.innerHTML=`<div class="thread-empty"><span class="thread-empty-icon">💬</span><div><strong>No messages yet</strong><p>Start a conversation about this correction. Your messages will stay attached to this writing.</p></div></div>`;
+    return;
+  }
+
+  thread.forEach(m=>{
+    const student=m.author==='student';
+    const el=document.createElement('div');
+    el.className=`chat-message ${student?'chat-student':'chat-teacher'}`;
+    el.innerHTML=`<span class="chat-avatar">${student?'You':'N'}</span><div class="chat-column"><div class="chat-meta"><strong>${student?'You':'Nicole'}</strong><span>${student?'Student':'Teacher'}</span></div><div class="chat-bubble">${escapeHTML(m.text)}</div><small class="chat-time">${relativeDate(m.createdAt)}</small></div>`;
+    threadList.appendChild(el);
+  });
+
+  threadList.scrollTop=threadList.scrollHeight;
+}
+
+function progressStep(label,detail,done,current){
+  return `<div class="review-step ${done?'done':''} ${current?'current':''}"><span class="review-step-dot">${done?'✓':''}</span><div><strong>${label}</strong><small>${detail}</small></div></div>`;
+}
+
+function render(){
+  if(!item){
+    content.innerHTML='<div class="nb-empty"><h1>Submission not found</h1><a href="history.html">Back to My work</a></div>';
+    return;
+  }
+
+  const teacher=item.teacherHtml||item.studentHtml||'';
+  const bookmarkKey=`${id}:teacher-note`;
+  const completed=item.status==='completed';
+  const reviewing=item.status==='reviewing';
+  const pending=item.status==='pending';
+  const wordCount=(item.studentPlain||'').split(/\s+/).filter(Boolean).length;
+
+  content.innerHTML=`
+    <div class="nb-page-head review-page-head">
+      <div>
+        <span class="nb-kicker">${escapeHTML(item.category||'Submission')}</span>
+        <h1>${escapeHTML(item.title||'Your writing')}</h1>
+        <p>${formatDate(item.submittedAt,state.language)} · <span class="${statusClass(item.status)}">${statusText(item.status,state.language)}</span></p>
+      </div>
+      <a class="button button-secondary" href="history.html">Back to My work</a>
+    </div>
+
+    <section class="nb-card nb-card-pad review-progress-card">
+      <div class="review-progress-head"><div><span class="nb-kicker">Progress</span><h2>Your review journey</h2></div></div>
+      <div class="review-progress-line">
+        ${progressStep('Submitted',formatDate(item.submittedAt,state.language),true,false)}
+        ${progressStep('Under review',reviewing||completed?'Nicole started reviewing your writing':'Waiting for Nicole',reviewing||completed,reviewing)}
+        ${progressStep('Feedback ready',completed?'Your correction is ready':'Not returned yet',completed,completed)}
+        ${progressStep('Revision','Optional next step',false,false)}
+      </div>
+    </section>
+
+    <div class="review-compare-grid">
+      <article class="nb-card review-pane">
+        <div class="review-pane-head">
+          <div><span class="nb-kicker">Original</span><h2>Your version</h2></div>
+          <span class="review-word-count">${wordCount} words</span>
+        </div>
+        <div class="review-writing">${item.studentHtml||escapeHTML(item.studentPlain||'No written text.')}</div>
+      </article>
+
+      <article class="nb-card review-pane review-correction-pane">
+        <div class="review-pane-head">
+          <div><span class="nb-kicker">Teacher review</span><h2>Nicole's correction</h2></div>
+          <button class="nb-bookmark ${isBookmarked(bookmarkKey)?'saved':''}" id="bookmarkButton">${isBookmarked(bookmarkKey)?'✓ Saved':'🔖 Bookmark'}</button>
+        </div>
+        <div class="review-writing">${completed?teacher:'Your correction will appear here after Nicole returns it.'}</div>
+        ${item.teacherNote?`<div class="teacher-note-card"><div class="teacher-note-avatar">N</div><div><strong>Nicole</strong><span>Teacher note</span><p>${escapeHTML(item.teacherNote)}</p></div></div>`:''}
+      </article>
+    </div>
+
+    ${attachments()}
+
+    <section class="nb-card nb-card-pad discussion-card">
+      <div class="discussion-head">
+        <div>
+          <span class="nb-kicker">Discussion thread</span>
+          <h2>Continue the conversation</h2>
+          <p>Ask follow-up questions about this correction. Every message stays attached to this writing, just like a chat thread.</p>
+        </div>
+        <span class="discussion-live-pill">Nicole ↔ You</span>
+      </div>
+      <div class="chat-thread" id="threadList"></div>
+      <div class="chat-compose">
+        <div class="chat-compose-avatar">You</div>
+        <div class="chat-compose-box">
+          <textarea id="messageInput" placeholder="Write a message to Nicole..."></textarea>
+          <div class="chat-compose-actions"><small>Ask anything that is still unclear.</small><button class="button button-primary" id="sendMessage">Send message</button></div>
+        </div>
+      </div>
+    </section>`;
+
+  bookmarkButton.onclick=()=>{
+    const saved=toggleBookmark({key:bookmarkKey,submissionId:id,title:item.title||'Teacher explanation',text:item.teacherNote||stripHTML(teacher),sourceDate:item.completedAt||item.submittedAt});
+    bookmarkButton.classList.toggle('saved',saved);
+    bookmarkButton.textContent=saved?'✓ Saved':'🔖 Bookmark';
+    toast(saved?'Explanation saved.':'Removed from saved.');
+  };
+
+  sendMessage.onclick=()=>{
+    const text=messageInput.value.trim();
+    if(!text)return;
+    addThreadMessage(id,{author:'student',name:state.profile.name||'Student',text});
+    messageInput.value='';
+    drawThread();
+  };
+
+  messageInput.addEventListener('keydown',event=>{
+    if((event.metaKey||event.ctrlKey)&&event.key==='Enter')sendMessage.click();
+  });
+
+  drawThread();
+}
+
+document.querySelector('[data-nav="work"]').classList.add('active');
+languageSelect.value=state.language;
+render();
+</script></body></html>
