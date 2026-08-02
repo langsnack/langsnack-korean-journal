@@ -411,14 +411,14 @@ const state = getState();
       if(action==="complete"){a[i].status="completed";a[i].completedAt=new Date().toISOString();window.parent?.postMessage({source:"langsnack-journal",type:"reviewCompleted",payload:a[i]},"*");}
       saveSubmissions(a);
       cmsRequest("teacherUpdateSubmission",{action,submission:a[i]}).catch(error=>console.warn(error.message));
-      toast(action==="start"?t.started:action==="save"?t.saved:action==="complete"?t.returned:t.reopened);
+      showToast(action==="start"?t.started:action==="save"?t.saved:action==="complete"?t.returned:t.reopened);
       renderAll();
     }
     function deleteRecord(){const t=T[state.language]; if(!confirm(state.language==="ko"?"이 기록을 정말 삭제할까요?":"Delete this submission permanently?"))return; const target=items().find(x=>(x._id||x.id)===selectedId);
       saveSubmissions(items().filter(x=>(x._id||x.id)!==selectedId));
       if(target)cmsRequest("teacherDeleteSubmission",{submissionId:target._id||target.id}).catch(error=>console.warn(error.message));
       selectedId=null;
-      toast(t.deleted);
+      showToast(t.deleted);
       renderAll();}
 
     function applyText(){const t=T[state.language]; search.placeholder=t.search; statusFilter.options[0].text=t.all; statusFilter.options[1].text=t.waiting; statusFilter.options[2].text=t.progress; statusFilter.options[3].text=t.complete; document.querySelector('[data-filter="all"]').textContent=t.all; document.querySelector('[data-filter="pending"]').textContent=t.waiting; document.querySelector('[data-filter="reviewing"]').textContent=t.progress; document.querySelector('[data-filter="completed"]').textContent=t.complete;}
@@ -623,7 +623,7 @@ const state = getState();
       teacherResetModal.hidden=true;
       selectedId=null;
       renderAll();
-      toast("Reset complete.");
+      showToast("Reset complete.");
     };
 
     function renderAll(){renderHeader();applyText();renderStats();renderWeekly();renderActiveStudents();renderQueue();renderWorkspace();}
