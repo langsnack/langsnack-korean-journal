@@ -29,6 +29,17 @@
   </div>
 </header>
 
+<section class="notebook-guest-notice" id="guestNotice">
+  <div class="guest-notice-copy">
+    <span class="guest-notice-dot" aria-hidden="true"></span>
+    <div>
+      <strong id="guestNoticeTitle">You’re writing as a guest</strong>
+      <span id="guestNoticeText">Your writing will not be saved after you leave this page.</span>
+    </div>
+  </div>
+  <button class="guest-notice-login" id="guestNoticeLogin" type="button">Log in / Sign up</button>
+</section>
+
 <div class="notebook-app">
   <aside class="notebook-sidebar" aria-label="Notebook navigation">
     <nav class="sidebar-nav">
@@ -240,6 +251,9 @@ function applyLanguage(){
  document.documentElement.lang=state.language;
  const map={languageLabel:"language",timezoneLabel:"timezone",navDashboard:"dashboard",navWrite:"write",navWork:"work",navSaved:"saved",navAchievements:"achievements",navCalendar:"calendar",helpTitle:"help",helpText:"guide",welcomeSubtitle:"subtitle",streakUnit:"dayStreak",streakStatus:"keepGoing",quickFeedbackTitle:"feedbackTitle",quickFeedbackSub:"feedbackSub",quickWorkTitle:"workTitle",quickWorkSub:"workSub",quickSavedTitle:"savedTitle",quickSavedSub:"savedSub",writingKicker:"workspace",writingTitle:"startWriting",clearAllBtn:"clearAll",catJournal:"journal",catEssay:"essay",catStory:"story",catRandom:"random",levelLabel:"level",mainJournalDateLabel:"journalDate",topicButtonText:"topic",grammarButtonText:"grammar",promptButtonText:"prompt",surpriseButtonText:"surprise",charactersLabel:"characters",wordsLabel:"words",saveDraftBtn:"save",submitBtn:"submit",achievementTitle:"badgeTitle",viewAchievementsBtn:"viewAll",progressTitle:"progress",calendarTitle:"calendarTitle",legendSubmitted:"written",legendToday:"today",recentTitle:"recent",viewAllWork:"viewAll",dailyTitle:"daily",dailyTopicLabel:"topicLabel",dailyGrammarLabel:"grammarLabel",dailyPromptLabel:"promptLabel",dailyTopicButton:"newPick",dailyGrammarButton:"newPick",dailyPromptButton:"newPick",tipTitle:"tip",tipText:"tipText"};
  Object.entries(map).forEach(([id,key])=>setText(id,key));
+ guestNoticeTitle.textContent=tr("guestTitle");
+ guestNoticeText.textContent=tr("guestText");
+ guestNoticeLogin.textContent=tr("guestLogin");
  welcomeHeading.textContent=displayName()?`${tr(greetingKey())}, ${displayName()}!`:`${tr(greetingKey())}!`;
  journalText.placeholder=tr("placeholder");
  renderAll();
@@ -329,7 +343,59 @@ function updateMainJournalDateVisibility(){
   mainJournalDateField.hidden=activeCategory!=="journal";
   if(!mainJournalDateInput.value)mainDatePicker.setValue(state.journalDate||dateKey());
 }
-const mainDatePicker=initKoreanDatePicker(mainJournalDateInput,{value:state.journalDate||dateKey()});loginBtn.onclick=()=>showToast(state.language==="ko"?"Wix 로그인을 연결하기 전에는 게스트 모드로 사용할 수 있어요.":"Guest mode is active until Wix login is connected.");
+const mainDatePicker=initKoreanDatePicker(mainJournalDateInput,{value:state.journalDate||dateKey()});
+
+let wixMember = null;
+
+function requestWixLogin(){
+  if(window.parent && window.parent !== window){
+    window.parent.postMessage({
+      source:"langsnack-journal",
+      type:"loginRequested"
+    },"*");
+  }else{
+    showToast(state.language==="ko"
+      ?"Wix의 Journal 페이지에서 로그인하거나 회원가입할 수 있어요."
+      :"Open the Notebook through Wix to log in or sign up.");
+  }
+}
+
+function applyMemberState(member){
+  wixMember = member?.loggedIn ? member : null;
+  const loggedIn = Boolean(wixMember);
+
+  guestNotice.hidden = loggedIn;
+  loginBtn.classList.toggle("is-member",loggedIn);
+
+  if(loggedIn){
+    const name=(wixMember.name||"Member").trim();
+    const initials=name.split(/\s+/).map(part=>part.charAt(0)).join("").slice(0,2).toUpperCase();
+    loginBtn.textContent=initials||"ME";
+    loginBtn.title=name;
+    state.profile={name,email:wixMember.email||""};
+    saveJournalState(state);
+    welcomeHeading.textContent=`${tr(greetingKey())}, ${name}!`;
+  }else{
+    loginBtn.textContent=state.language==="ko"?"게스트":"Guest";
+    loginBtn.title=state.language==="ko"?"로그인 / 회원가입":"Log in / Sign up";
+  }
+}
+
+window.addEventListener("message",event=>{
+  const message=event.data;
+  if(!message||message.source!=="langsnack-wix")return;
+  if(message.type==="memberState")applyMemberState(message.payload||{});
+});
+
+loginBtn.onclick=requestWixLogin;
+guestNoticeLogin.onclick=requestWixLogin;
+
+window.parent?.postMessage({
+  source:"langsnack-journal",
+  type:"appReady"
+},"*");
+
+applyMemberState(null);
 languageSelect.value=state.language;levelSelect.value=state.level;journalText.value=state.lastDraft;updateMainJournalDateVisibility();updateCounts();applyLanguage();
 </script>
 </body>
