@@ -509,7 +509,16 @@ window.addEventListener("message", event => {
 });
 
 document.getElementById("guestSaveLogin").onclick = requestWixMemberLogin;
-document.getElementById("loginBtn").onclick = requestWixMemberLogin;
+document.getElementById("loginBtn").onclick = () => {
+  if (notebookMemberState.loggedIn) {
+    window.parent?.postMessage({
+      source: "langsnack-journal",
+      type: "logoutRequested"
+    }, "*");
+  } else {
+    requestWixMemberLogin();
+  }
+};
 
 const mainDatePicker = initKoreanDatePicker(mainJournalDateInput, {
   value: state.journalDate || dateKey()
