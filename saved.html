@@ -20,6 +20,49 @@
 
   <div class="nb-saved-grid" id="savedGrid"></div>
 </section></main><script src="shared.js?v=null-state-fix-1"></script><script src="timezone-picker.js?v=final-working-1"></script><script>
+const LANG_TEXT_SAVED = {
+  en: {
+    pageTitle: "Saved explanations",
+    intro: "Keep useful feedback from Nicole and find it again whenever you need it.",
+    count: "saved notes",
+    search: "Search saved explanations",
+    savedFrom: "Saved from feedback",
+    saved: "Saved",
+    open: "Open writing",
+    emptyTitle: "Nothing saved yet",
+    emptyText: "Open a returned writing and bookmark a useful explanation from Nicole.",
+    goToWork: "Go to My Work",
+    noMatch: "No matching explanations",
+    tryAnother: "Try another keyword."
+  },
+  ko: {
+    pageTitle: "저장한 설명",
+    intro: "니콜쌤의 피드백 중 도움이 되는 설명을 저장해 두고 필요할 때 다시 확인할 수 있어요.",
+    count: "저장한 설명",
+    search: "저장한 설명 검색",
+    savedFrom: "피드백에서 저장",
+    saved: "저장일",
+    open: "글 확인하기",
+    emptyTitle: "아직 저장한 설명이 없어요",
+    emptyText: "첨삭이 완료된 글에서 도움이 되는 설명을 저장해 보세요.",
+    goToWork: "내 글로 가기",
+    noMatch: "검색 결과가 없어요",
+    tryAnother: "다른 검색어를 입력해 보세요."
+  }
+};
+
+function applySavedLanguage(){
+  const t=LANG_TEXT_SAVED[savedState.language]||LANG_TEXT_SAVED.en;
+  const title=document.querySelector(".saved-hero h1");
+  const intro=document.querySelector(".saved-hero p");
+  const countLabel=document.querySelector(".saved-summary span");
+  if(title)title.textContent=t.pageTitle;
+  if(intro)intro.textContent=t.intro;
+  if(countLabel)countLabel.textContent=t.count;
+  if(window.searchInput)searchInput.placeholder=t.search;
+}
+
+
 exposeNotebookElements();
 /* Explicit element bindings for Wix iframe compatibility */
 var languageSelect = document.getElementById("languageSelect");
@@ -100,4 +143,6 @@ searchInput.oninput = draw;
 document.querySelector('[data-nav="saved"]').classList.add('active');
 languageSelect.value = savedState.language;
 draw();
+
+applySavedLanguage();
 </script></body></html>

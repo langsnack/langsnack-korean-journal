@@ -1,4 +1,80 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Review | Langsnack Notebook</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="shared.css?v=final-working-1"></head><body><main class="nb-shell"><header class="nb-header"><a class="nb-brand" href="/" style="text-decoration:none;color:inherit"><span class="nb-logo">ㄱ</span><span><strong>Langsnack Notebook</strong><span>Your Korean learning space</span></span></a><nav class="nb-nav"><a href="/" data-nav="home">Write</a><a href="history.html" data-nav="work">My work</a><a href="saved.html" data-nav="saved">Saved</a></nav><div class="nb-actions"><select id="languageSelect" aria-label="Language"><option value="en">EN</option><option value="ko">한국어</option></select><label class="header-timezone"><select id="timezoneSelect" aria-label="Time zone"></select></label></div></header><section class="nb-main" id="content"></section></main><div class="toast" id="toast"></div><script src="shared.js?v=null-state-fix-1"></script><script src="timezone-picker.js?v=final-working-1"></script><script>
+const LANG_TEXT_SUBMISSION = {
+  en: {
+    back: "Back to My Work",
+    original: "Your writing",
+    correction: "Nicole’s correction",
+    teacherNote: "Nicole’s feedback",
+    bookmark: "Bookmark explanation",
+    bookmarked: "Saved",
+    discussion: "Questions & replies",
+    discussionIntro: "This is a private conversation about this writing. Your questions and Nicole’s replies will stay here.",
+    messagePlaceholder: "Ask Nicole about this correction...",
+    send: "Send",
+    noMessages: "No messages yet. Ask Nicole a question about this correction.",
+    submitted: "Submitted",
+    reviewing: "Reviewing",
+    ready: "Feedback ready",
+    revision: "Revision"
+  },
+  ko: {
+    back: "내 글로 돌아가기",
+    original: "내가 쓴 글",
+    correction: "니콜쌤의 첨삭",
+    teacherNote: "니콜쌤의 피드백",
+    bookmark: "설명 저장하기",
+    bookmarked: "저장됨",
+    discussion: "질문과 답변",
+    discussionIntro: "이 글의 첨삭에 대해 질문할 수 있어요. 질문과 니콜쌤의 답변은 이 글에 계속 저장돼요.",
+    messagePlaceholder: "이 첨삭에 대해 니콜쌤에게 질문해 보세요...",
+    send: "보내기",
+    noMessages: "아직 질문과 답변이 없어요. 궁금한 점을 니콜쌤에게 물어보세요.",
+    submitted: "제출",
+    reviewing: "첨삭 중",
+    ready: "첨삭 완료",
+    revision: "수정"
+  }
+};
+
+function applySubmissionLanguage(){
+  const t=LANG_TEXT_SUBMISSION[state.language]||LANG_TEXT_SUBMISSION.en;
+
+  const pairs=[
+    ['a[href="history.html"]',t.back],
+    ['[data-label="original"]',t.original],
+    ['[data-label="correction"]',t.correction]
+  ];
+  pairs.forEach(([selector,text])=>{
+    const el=document.querySelector(selector);
+    if(el)el.textContent=text;
+  });
+
+  const headings=[...document.querySelectorAll("h2,h3,strong")];
+  headings.forEach(el=>{
+    const value=el.textContent.trim();
+    if(["Your writing","Original"].includes(value))el.textContent=t.original;
+    if(["Nicole’s correction","Nicole's correction","Correction"].includes(value))el.textContent=t.correction;
+    if(["Nicole’s note","Nicole's note","Teacher note"].includes(value))el.textContent=t.teacherNote;
+    if(["Discussion","Discussion thread","Questions about this work","Questions & replies"].includes(value))el.textContent=t.discussion;
+  });
+
+  const intro=[...document.querySelectorAll("p")].find(el=>
+    /conversation|messages stay attached|questions and replies/i.test(el.textContent)
+  );
+  if(intro)intro.textContent=t.discussionIntro;
+
+  const message=document.querySelector("textarea, input[type='text']");
+  if(message && /message|question|Nicole/i.test(message.placeholder||"")){
+    message.placeholder=t.messagePlaceholder;
+  }
+
+  const send=[...document.querySelectorAll("button")].find(btn=>
+    ["Send","Send message"].includes(btn.textContent.trim())
+  );
+  if(send)send.textContent=t.send;
+}
+
+
 exposeNotebookElements();
 /* Explicit element bindings for Wix iframe compatibility */
 var languageSelect = document.getElementById("languageSelect");
@@ -135,4 +211,6 @@ function render(){
 document.querySelector('[data-nav="work"]').classList.add('active');
 languageSelect.value=state.language;
 render();
+
+applySubmissionLanguage();
 </script></body></html>

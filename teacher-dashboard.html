@@ -198,7 +198,7 @@
   </div>
 
   <div class="toast" id="toast"></div>
-<script src="shared.js?v=teacher-actions-fix-1"></script>
+<script src="shared.js?v=null-state-fix-1"></script>
   <script src="timezone-picker.js?v=final-working-1"></script>
   <script>
     exposeNotebookElements();
@@ -347,78 +347,34 @@ const state = getState();
             <article class="mini-widget action-widget"><p class="widget-kicker">Review actions</p><div id="teacherActions" class="teacher-actions"></div></article>
           </aside>
         </div>`;
-      const editorMount=document.getElementById("teacherEditorMount");
-      const wordCountLabel=document.getElementById("correctionWordCount");
-      const chips=document.getElementById("snippetChips");
-      const noteField=document.getElementById("teacherNote");
-      const actions=document.getElementById("teacherActions");
-
-      editorMount.innerHTML=richEditorHTML("teacherEditor","");
-      const ed=initRichEditor(editorMount);
-      ed.innerHTML=x.teacherHtml||x.studentHtml||"";
-      ed.addEventListener("input",()=>{
-        wordCountLabel.textContent=
-          `${wordCount(stripHTML(ed.innerHTML))} ${t.words.toLowerCase()}`;
-      });
-
-      chips.innerHTML=snippets[state.language]
-        .map(s=>`<button type="button">${escapeHTML(s)}</button>`)
-        .join("");
-
-      chips.querySelectorAll("button").forEach(btn=>{
-        btn.onclick=()=>{
-          noteField.value+=(noteField.value?"\n":"")+btn.textContent;
-          noteField.focus();
-        };
-      });
-
-      if(x.status==="pending"){
-        actions.innerHTML=
-          `<button class="button button-primary action-full" id="startBtn">${t.start}</button>`;
-      }else{
-        actions.innerHTML=
-          `${x.status==="completed"
-            ?`<button class="button button-secondary action-full" id="reopenBtn">${t.reopen}</button>`
-            :""}
-           <button class="button button-secondary action-full" id="saveBtn">${t.save}</button>
-           <button class="button button-success action-full" id="completeBtn">${t.return}</button>
-           <button class="text-danger" id="deleteBtn">${t.delete}</button>`;
-      }
-
-      const startButton=document.getElementById("startBtn");
-      const reopenButton=document.getElementById("reopenBtn");
-      const saveButton=document.getElementById("saveBtn");
-      const completeButton=document.getElementById("completeBtn");
-      const deleteButton=document.getElementById("deleteBtn");
-
-      if(startButton)startButton.onclick=()=>updateRecord("start",ed);
-      if(reopenButton)reopenButton.onclick=()=>updateRecord("reopen",ed);
-      if(saveButton)saveButton.onclick=()=>updateRecord("save",ed);
-      if(completeButton)completeButton.onclick=()=>updateRecord("complete",ed);
-      if(deleteButton)deleteButton.onclick=deleteRecord;
+      teacherEditorMount.innerHTML=richEditorHTML("teacherEditor",""); const ed=initRichEditor(teacherEditorMount); ed.innerHTML=x.teacherHtml||x.studentHtml||""; ed.addEventListener("input",()=>{correctionWordCount.textContent=`${wordCount(stripHTML(ed.innerHTML))} ${t.words.toLowerCase()}`;});
+      snippetChips.innerHTML=snippets[state.language].map(s=>`<button type="button">${escapeHTML(s)}</button>`).join(""); snippetChips.querySelectorAll("button").forEach(btn=>btn.onclick=()=>{teacherNote.value+=(teacherNote.value?"\n":"")+btn.textContent; teacherNote.focus();});
+      const acts=teacherActions;
+      if(x.status==="pending") acts.innerHTML=`<button class="button button-primary action-full" id="startBtn">${t.start}</button>`;
+      else acts.innerHTML=`${x.status==="completed"?`<button class="button button-secondary action-full" id="reopenBtn">${t.reopen}</button>`:""}<button class="button button-secondary action-full" id="saveBtn">${t.save}</button><button class="button button-success action-full" id="completeBtn">${t.return}</button><button class="text-danger" id="deleteBtn">${t.delete}</button>`;
+      if(document.getElementById("startBtn")) startBtn.onclick=()=>updateRecord("start",ed);
+      if(document.getElementById("reopenBtn")) reopenBtn.onclick=()=>updateRecord("reopen",ed);
+      if(document.getElementById("saveBtn")) saveBtn.onclick=()=>updateRecord("save",ed);
+      if(document.getElementById("completeBtn")) completeBtn.onclick=()=>updateRecord("complete",ed);
+      if(document.getElementById("deleteBtn")) deleteBtn.onclick=deleteRecord;
     }
 
     function updateRecord(action,ed){
       const t=T[state.language], a=items(), i=a.findIndex(x=>(x._id||x.id)===selectedId); if(i<0)return;
       if(action==="start"){a[i].status="reviewing";a[i].reviewStartedAt=new Date().toISOString();}
       if(action==="reopen"){a[i].status="reviewing";a[i].completedAt=null;}
-      if(action==="save"||action==="complete"){
-        const noteField=document.getElementById("teacherNote");
-        a[i].teacherHtml=ed.innerHTML;
-        a[i].teacherNote=(noteField?.value||"").trim();
-        a[i].teacherUpdatedAt=new Date().toISOString();
-      }
+      if(action==="save"||action==="complete"){a[i].teacherHtml=ed.innerHTML;a[i].teacherNote=teacherNote.value.trim();a[i].teacherUpdatedAt=new Date().toISOString();}
       if(action==="complete"){a[i].status="completed";a[i].completedAt=new Date().toISOString();window.parent?.postMessage({source:"langsnack-journal",type:"reviewCompleted",payload:a[i]},"*");}
       saveSubmissions(a);
       cmsRequest("teacherUpdateSubmission",{action,submission:a[i]}).catch(error=>console.warn(error.message));
-      showToast(action==="start"?t.started:action==="save"?t.saved:action==="complete"?t.returned:t.reopened);
+      toast(action==="start"?t.started:action==="save"?t.saved:action==="complete"?t.returned:t.reopened);
       renderAll();
     }
     function deleteRecord(){const t=T[state.language]; if(!confirm(state.language==="ko"?"이 기록을 정말 삭제할까요?":"Delete this submission permanently?"))return; const target=items().find(x=>(x._id||x.id)===selectedId);
       saveSubmissions(items().filter(x=>(x._id||x.id)!==selectedId));
       if(target)cmsRequest("teacherDeleteSubmission",{submissionId:target._id||target.id}).catch(error=>console.warn(error.message));
       selectedId=null;
-      showToast(t.deleted);
+      toast(t.deleted);
       renderAll();}
 
     function applyText(){const t=T[state.language]; search.placeholder=t.search; statusFilter.options[0].text=t.all; statusFilter.options[1].text=t.waiting; statusFilter.options[2].text=t.progress; statusFilter.options[3].text=t.complete; document.querySelector('[data-filter="all"]').textContent=t.all; document.querySelector('[data-filter="pending"]').textContent=t.waiting; document.querySelector('[data-filter="reviewing"]').textContent=t.progress; document.querySelector('[data-filter="completed"]').textContent=t.complete;}
@@ -623,7 +579,7 @@ const state = getState();
       teacherResetModal.hidden=true;
       selectedId=null;
       renderAll();
-      showToast("Reset complete.");
+      toast("Reset complete.");
     };
 
     function renderAll(){renderHeader();applyText();renderStats();renderWeekly();renderActiveStudents();renderQueue();renderWorkspace();}

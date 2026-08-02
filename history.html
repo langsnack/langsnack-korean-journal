@@ -3,6 +3,70 @@
 <section class="nb-card mini-achievement" id="miniAchievement"></section>
 </div>
 <section class="nb-card nb-card-pad"><div class="nb-work-list" id="workList"></div></section></section></main><script src="shared.js?v=null-state-fix-1"></script><script src="timezone-picker.js?v=final-working-1"></script><script>
+const LANG_TEXT_HISTORY = {
+  en: {
+    pageTitle: "My Work",
+    pageIntro: "Review your submissions, edit work that is still waiting, and open completed feedback.",
+    search: "Search your work",
+    all: "All",
+    waiting: "Waiting for review",
+    reviewing: "Review in progress",
+    completed: "Review complete",
+    reread: "Re-read",
+    edit: "Edit",
+    delete: "Delete",
+    emptyTitle: "No work yet",
+    emptyText: "Your submitted writing will appear here.",
+    nextAchievement: "Next achievement",
+    viewAllBadges: "View all badges",
+    submissions: "Submissions",
+    reviewed: "Reviewed",
+    questions: "Questions"
+  },
+  ko: {
+    pageTitle: "내 글",
+    pageIntro: "제출한 글을 다시 읽고, 첨삭 대기 중인 글은 수정하고, 완료된 피드백을 확인할 수 있어요.",
+    search: "내 글 검색",
+    all: "전체",
+    waiting: "첨삭 대기 중",
+    reviewing: "첨삭 중",
+    completed: "첨삭 완료",
+    reread: "다시 읽기",
+    edit: "수정하기",
+    delete: "삭제",
+    emptyTitle: "아직 제출한 글이 없어요",
+    emptyText: "글을 제출하면 이곳에서 확인할 수 있어요.",
+    nextAchievement: "다음 배지",
+    viewAllBadges: "배지 모두 보기",
+    submissions: "제출한 글",
+    reviewed: "첨삭 완료",
+    questions: "질문"
+  }
+};
+
+function applyHistoryLanguage(){
+  const t=LANG_TEXT_HISTORY[state.language]||LANG_TEXT_HISTORY.en;
+  const replacements=[
+    ["h1",t.pageTitle],
+    [".nb-page-head p",t.pageIntro]
+  ];
+  replacements.forEach(([selector,text])=>{
+    const el=document.querySelector(selector);
+    if(el)el.textContent=text;
+  });
+
+  if(window.searchInput)searchInput.placeholder=t.search;
+  if(window.statusInput){
+    [...statusInput.options].forEach(option=>{
+      if(option.value==="all")option.textContent=t.all;
+      if(option.value==="pending")option.textContent=t.waiting;
+      if(option.value==="reviewing")option.textContent=t.reviewing;
+      if(option.value==="completed")option.textContent=t.completed;
+    });
+  }
+}
+
+
 exposeNotebookElements();
 /* Explicit element bindings for Wix iframe compatibility */
 var languageSelect = document.getElementById("languageSelect");
@@ -31,4 +95,7 @@ function draw(){
  })
 }
 searchInput.oninput=draw;statusInput.onchange=draw;document.querySelector('[data-nav="work"]').classList.add('active');languageSelect.value=state.language;renderAchievement();draw();
+
+applyHistoryLanguage();
+window.addEventListener("langsnack:language-change",applyHistoryLanguage);
 </script></body></html>
