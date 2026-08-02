@@ -201,6 +201,7 @@
 <script src="shared.js"></script>
   <script src="timezone-picker.js"></script>
   <script>
+    exposeNotebookElements();
     const state = getState();
     let selectedId = null;
     const snippets = {
@@ -532,20 +533,37 @@
     function renderAll(){renderHeader();applyText();renderStats();renderWeekly();renderActiveStudents();renderQueue();renderWorkspace();}
     search.oninput=renderQueue; statusFilter.onchange=()=>{document.querySelectorAll("#queueTabs button").forEach(b=>b.classList.toggle("active",b.dataset.filter===statusFilter.value));renderQueue();};
     queueTabs.onclick=e=>{const b=e.target.closest("button");if(!b)return;statusFilter.value=b.dataset.filter;document.querySelectorAll("#queueTabs button").forEach(x=>x.classList.toggle("active",x===b));renderQueue();};
-    refreshButton.onclick=()=>{
-      cmsRequest("getTeacherWorkspace").then(payload=>{
-        if(Array.isArray(payload?.submissions))saveSubmissions(payload.submissions);
+    document.getElementById("refreshButton").onclick=()=>{
+      if(typeof cmsRequest!=="function"){
         renderAll();
-      }).catch(()=>renderAll());
+        return;
+      }
+
+      cmsRequest("getTeacherWorkspace")
+        .then(payload=>{
+          if(Array.isArray(payload?.submissions)){
+            saveSubmissions(payload.submissions);
+          }
+          renderAll();
+        })
+        .catch(()=>renderAll());
     };
     language.onchange=()=>{state.language=language.value;saveState(state);renderAll();};
     window.addEventListener("langsnack:timezone-change",event=>{const journalState=getJournalState();journalState.timezone=event.detail.timeZone;saveJournalState(journalState);renderAll();});
     renderAll();
-    if(window.parent&&window.parent!==window){
-      cmsRequest("getTeacherWorkspace").then(payload=>{
-        if(Array.isArray(payload?.submissions))saveSubmissions(payload.submissions);
-        renderAll();
-      }).catch(error=>console.warn("Teacher CMS load:",error.message));
+    if(
+      window.parent &&
+      window.parent!==window &&
+      typeof cmsRequest==="function"
+    ){
+      cmsRequest("getTeacherWorkspace")
+        .then(payload=>{
+          if(Array.isArray(payload?.submissions)){
+            saveSubmissions(payload.submissions);
+          }
+          renderAll();
+        })
+        .catch(error=>console.warn("Teacher CMS load:",error.message));
     }
   </script>
 </body>

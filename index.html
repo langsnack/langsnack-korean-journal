@@ -39,19 +39,6 @@
   </div>
   <button class="guest-save-login" id="guestSaveLogin" type="button">Log in / Sign up</button>
 </section>
-
-
-<section class="notebook-guest-notice" id="guestNotice">
-  <div class="guest-notice-copy">
-    <span class="guest-notice-dot" aria-hidden="true"></span>
-    <div>
-      <strong id="guestNoticeTitle">You’re writing as a guest</strong>
-      <span id="guestNoticeText">Your writing will not be saved after you leave this page.</span>
-    </div>
-  </div>
-  <button class="guest-notice-login" id="guestNoticeLogin" type="button">Log in / Sign up</button>
-</section>
-
 <div class="notebook-app">
   <aside class="notebook-sidebar" aria-label="Notebook navigation">
     <nav class="sidebar-nav">
@@ -196,6 +183,7 @@
 <script src="shared.js"></script>
 <script src="timezone-picker.js"></script>
 <script>
+exposeNotebookElements();
 const state=getJournalState();
 let activeGenerator="prompt";
 let activeCategory="journal";
@@ -383,7 +371,7 @@ function applyWixMemberState(payload={}){
   notebookMemberState.name=payload.name||"";
   notebookMemberState.email=payload.email||"";
 
-  guestSaveNotice.hidden=notebookMemberState.loggedIn;
+  document.getElementById("guestSaveNotice").hidden=notebookMemberState.loggedIn;
 
   if(notebookMemberState.loggedIn){
     const name=notebookMemberState.name||"Member";
@@ -423,8 +411,8 @@ window.addEventListener("message",event=>{
   }
 });
 
-guestSaveLogin.onclick=requestWixMemberLogin;
-loginBtn.onclick=requestWixMemberLogin;
+document.getElementById("guestSaveLogin").onclick=requestWixMemberLogin;
+document.getElementById("loginBtn").onclick=requestWixMemberLogin;
 
 window.parent?.postMessage({
   source:"langsnack-journal",
@@ -478,7 +466,14 @@ window.addEventListener("message",event=>{
 });
 
 
-languageSelect.value=state.language;levelSelect.value=state.level;journalText.value=state.lastDraft;updateMainJournalDateVisibility();updateCounts();applyLanguage();
+languageSelect.value=state.language;
+levelSelect.value=state.level;
+journalText.value=state.lastDraft;
+mainDatePicker.setValue(state.journalDate||dateKey());
+updateMainJournalDateVisibility();
+updateCounts();
+applyLanguage();
+renderAll();
 </script>
 </body>
 </html>

@@ -1,3 +1,28 @@
+
+/* =========================================================
+   RELIABLE ELEMENT LOOKUP
+   Older pages refer to elements by their IDs as variables.
+   Wix iframes and some browsers do not always create those globals.
+   ========================================================= */
+function exposeNotebookElements(root = document) {
+  root.querySelectorAll("[id]").forEach(element => {
+    const id = element.id;
+    if (!id) return;
+
+    try {
+      if (
+        typeof window[id] === "undefined" ||
+        window[id] === null ||
+        window[id] instanceof HTMLElement
+      ) {
+        window[id] = element;
+      }
+    } catch (error) {
+      // Ignore protected browser properties.
+    }
+  });
+}
+
 const LS = {
   journalState: "langsnackJournalStateV4",
   reviewDraft: "langsnackReviewDraftV4",

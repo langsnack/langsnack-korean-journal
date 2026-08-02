@@ -1335,3 +1335,15 @@ body.modal-open{overflow:hidden}
     padding:7px 9px;
   }
 }
+
+
+/* =========================================================
+   V6.1 RUNTIME FIX
+   ========================================================= */
+.notebook-guest-notice{
+  display:none!important;
+}
+.guest-save-notice{
+  background:#fff1f0;
+  border-bottom-color:#efcbc7;
+}
