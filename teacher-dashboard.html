@@ -15,13 +15,13 @@
     <header class="teacher-os-header">
       <div>
         <p class="teacher-kicker" id="greeting">Good afternoon, Nicole</p>
-        <h1>Langsnack Teacher Dashboard</h1>
+        <h1>Teacher Dashboard</h1>
         <p class="teacher-subtitle" id="todayLabel"></p>
       </div>
       <div class="teacher-header-tools">
         <label class="header-control"><span>Language</span><select id="language"><option value="en">EN</option><option value="ko">한국어</option></select></label>
         <label class="header-control header-timezone"><span>Time zone</span><select id="timezoneSelect"></select></label>
-        <span class="private-pill">Private workspace</span>
+        <span class="private-pill"><i></i> Private workspace</span>
       </div>
     </header>
 
@@ -50,7 +50,7 @@
     <section class="teacher-main-grid">
       <aside class="teacher-queue-card">
         <div class="queue-card-head">
-          <div><p class="widget-kicker">Review queue</p><h2>Submissions</h2></div>
+          <div><p class="widget-kicker">Review queue</p><h2>Student submissions</h2></div>
           <button class="icon-button" id="refreshButton" title="Refresh">↻</button>
         </div>
         <div class="teacher-filter-row">
@@ -70,22 +70,13 @@
         <div class="teacher-empty-state">
           <div class="empty-illustration">✎</div>
           <h2>Select a submission</h2>
-          <p>Choose a student from the review queue to start correcting their journal.</p>
+          <p>Choose a submission from the queue to review the original writing, prepare corrections, and return feedback.</p>
         </div>
       </section>
     </section>
   </main>
 
   <div class="toast" id="toast"></div>
-  <script>
-localStorage.setItem("langsnackReviewSubmissionsV3", JSON.stringify([
- {id:"JR-240731-A1",memberId:"m1",studentName:"Jennifer",studentEmail:"jennifer@example.com",studentHtml:"<p>어제 친구하고 카페에 갔어요. 커피를 마시면서 한국어로 이야기를 했어요. 처음에는 조금 긴장했지만 점점 편해졌어요.</p>",studentPlain:"어제 친구하고 카페에 갔어요. 커피를 마시면서 한국어로 이야기를 했어요. 처음에는 조금 긴장했지만 점점 편해졌어요.",studentNote:"Please check whether my connectors sound natural.",teacherHtml:"",teacherNote:"",status:"pending",submittedAt:"2026-07-31T03:15:00Z",studentUpdatedAt:"2026-07-31T03:15:00Z"},
- {id:"JR-240730-B2",memberId:"m2",studentName:"Chelsea",studentEmail:"chelsea@example.com",studentHtml:"<p>한국에서 산 지 벌써 2년이 됐어요. 요즘은 예전보다 한국어로 말하는 게 자연스러워졌지만 아직 조사에서 실수를 많이 해요.</p>",studentPlain:"한국에서 산 지 벌써 2년이 됐어요. 요즘은 예전보다 한국어로 말하는 게 자연스러워졌지만 아직 조사에서 실수를 많이 해요.",studentNote:"",teacherHtml:"<p>한국에서 산 지 벌써 2년이 됐어요. 요즘은 예전보다 한국어로 말하는 것이 자연스러워졌지만 아직 조사에서 실수를 많이 해요.</p>",teacherNote:"좋아요. 이번에는 조사와 문장 연결을 중심으로 볼게요.",status:"reviewing",submittedAt:"2026-07-30T08:20:00Z",studentUpdatedAt:"2026-07-30T08:20:00Z",reviewStartedAt:"2026-07-31T01:30:00Z"},
- {id:"JR-240729-C3",memberId:"m3",studentName:"Aqilah",studentEmail:"aqilah@example.com",studentHtml:"<p>휴가를 간 김에 평소에 가 보고 싶었던 서점에도 들렀어요. 생각보다 사람이 많았지만 분위기가 좋아서 오래 머물렀어요.</p>",studentPlain:"휴가를 간 김에 평소에 가 보고 싶었던 서점에도 들렀어요. 생각보다 사람이 많았지만 분위기가 좋아서 오래 머물렀어요.",studentNote:"",teacherHtml:"<p>휴가를 간 김에 평소에 가 보고 싶었던 서점에도 들렀어요. 생각보다 사람이 많았지만 분위기가 좋아서 오래 머물렀어요.</p>",teacherNote:"아주 자연스러워요. ‘간 김에’ 사용도 정확해요.",status:"completed",submittedAt:"2026-07-29T04:10:00Z",studentUpdatedAt:"2026-07-29T04:10:00Z",completedAt:"2026-07-30T02:00:00Z"},
- {id:"JR-240728-D4",memberId:"m1",studentName:"Jennifer",studentEmail:"jennifer@example.com",studentHtml:"<p>주말에는 집에서 쉬려고 했는데 친구가 갑자기 연락해서 같이 저녁을 먹었어요.</p>",studentPlain:"주말에는 집에서 쉬려고 했는데 친구가 갑자기 연락해서 같이 저녁을 먹었어요.",studentNote:"",teacherHtml:"<p>주말에는 집에서 쉬려고 했는데 친구가 갑자기 연락해서 같이 저녁을 먹었어요.</p>",teacherNote:"문장 흐름이 아주 자연스러워요.",status:"completed",submittedAt:"2026-07-28T06:00:00Z",studentUpdatedAt:"2026-07-28T06:00:00Z",completedAt:"2026-07-28T10:00:00Z"}
-]));
-localStorage.setItem("langsnackJournalStateV3", JSON.stringify({language:"en",profile:{name:"Nicole",email:""}}));
-</script>
 <script src="shared.js"></script>
   <script src="timezone-picker.js"></script>
   <script>
@@ -110,7 +101,7 @@ localStorage.setItem("langsnackJournalStateV3", JSON.stringify({language:"en",pr
       const now=new Date(); const hour=now.getHours();
       const phrase=state.language==="ko" ? (hour<12?"좋은 아침이에요, 니콜쌤":hour<18?"좋은 오후예요, 니콜쌤":"좋은 저녁이에요, 니콜쌤") : (hour<12?"Good morning, Nicole":hour<18?"Good afternoon, Nicole":"Good evening, Nicole");
       greeting.textContent=phrase;
-      todayLabel.textContent=now.toLocaleDateString(state.language==="ko"?"ko-KR":"en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+      todayLabel.textContent=new Intl.DateTimeFormat("ko-KR",{weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(now);
       language.value=state.language;
     }
 
@@ -177,7 +168,7 @@ localStorage.setItem("langsnackJournalStateV3", JSON.stringify({language:"en",pr
           <aside class="workspace-sidebar">
             <article class="mini-widget"><p class="widget-kicker">${t.details}</p><div class="detail-list"><div><span>${t.status}</span><strong>${statusText(x.status,state.language)}</strong></div><div><span>${t.submitted}</span><strong>${relativeTime(x.submittedAt)}</strong></div><div><span>${t.updated}</span><strong>${relativeTime(x.studentUpdatedAt||x.submittedAt)}</strong></div><div><span>${t.words}</span><strong>${words}</strong></div><div><span>${t.email}</span><strong class="truncate">${escapeHTML(x.studentEmail||"—")}</strong></div></div></article>
             <article class="mini-widget"><p class="widget-kicker">${t.studentNote}</p><div class="student-note-box">${escapeHTML(x.studentNote||t.noNote)}</div></article>
-            <article class="mini-widget action-widget"><p class="widget-kicker">Actions</p><div id="teacherActions" class="teacher-actions"></div></article>
+            <article class="mini-widget action-widget"><p class="widget-kicker">Review actions</p><div id="teacherActions" class="teacher-actions"></div></article>
           </aside>
         </div>`;
       teacherEditorMount.innerHTML=richEditorHTML("teacherEditor",""); const ed=initRichEditor(teacherEditorMount); ed.innerHTML=x.teacherHtml||x.studentHtml||""; ed.addEventListener("input",()=>{correctionWordCount.textContent=`${wordCount(stripHTML(ed.innerHTML))} ${t.words.toLowerCase()}`;});
