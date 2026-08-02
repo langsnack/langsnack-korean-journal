@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shared.css?v=final-master-2">
+<link rel="stylesheet" href="shared.css?v=final-working-1">
 </head>
 <body class="notebook-home">
 <header class="notebook-header">
@@ -181,10 +181,85 @@
   </section>
 </div>
 <div class="toast" id="toast"></div>
-<script src="shared.js?v=final-master-2"></script>
-<script src="timezone-picker.js?v=final-master-2"></script>
+<script src="shared.js?v=final-working-1"></script>
+<script src="timezone-picker.js?v=final-working-1"></script>
 <script>
 exposeNotebookElements();
+/* Explicit element bindings for Wix iframe compatibility */
+var languageLabel = document.getElementById("languageLabel");
+var languageSelect = document.getElementById("languageSelect");
+var timezoneLabel = document.getElementById("timezoneLabel");
+var timezoneSelect = document.getElementById("timezoneSelect");
+var loginBtn = document.getElementById("loginBtn");
+var navDashboard = document.getElementById("navDashboard");
+var navWrite = document.getElementById("navWrite");
+var navWork = document.getElementById("navWork");
+var navSaved = document.getElementById("navSaved");
+var navAchievements = document.getElementById("navAchievements");
+var navCalendar = document.getElementById("navCalendar");
+var helpTitle = document.getElementById("helpTitle");
+var helpText = document.getElementById("helpText");
+var welcomeHeading = document.getElementById("welcomeHeading");
+var welcomeSubtitle = document.getElementById("welcomeSubtitle");
+var streakCount = document.getElementById("streakCount");
+var streakUnit = document.getElementById("streakUnit");
+var streakStatus = document.getElementById("streakStatus");
+var quickFeedbackTitle = document.getElementById("quickFeedbackTitle");
+var quickFeedbackSub = document.getElementById("quickFeedbackSub");
+var quickWorkTitle = document.getElementById("quickWorkTitle");
+var quickWorkSub = document.getElementById("quickWorkSub");
+var quickSavedTitle = document.getElementById("quickSavedTitle");
+var quickSavedSub = document.getElementById("quickSavedSub");
+var writing = document.getElementById("writing");
+var writingKicker = document.getElementById("writingKicker");
+var writingTitle = document.getElementById("writingTitle");
+var clearAllBtn = document.getElementById("clearAllBtn");
+var catJournal = document.getElementById("catJournal");
+var catEssay = document.getElementById("catEssay");
+var catStory = document.getElementById("catStory");
+var catRandom = document.getElementById("catRandom");
+var levelLabel = document.getElementById("levelLabel");
+var levelSelect = document.getElementById("levelSelect");
+var mainJournalDateField = document.getElementById("mainJournalDateField");
+var mainJournalDateLabel = document.getElementById("mainJournalDateLabel");
+var mainJournalDateInput = document.getElementById("mainJournalDateInput");
+var topicButtonText = document.getElementById("topicButtonText");
+var grammarButtonText = document.getElementById("grammarButtonText");
+var promptButtonText = document.getElementById("promptButtonText");
+var surpriseMeBtn = document.getElementById("surpriseMeBtn");
+var surpriseButtonText = document.getElementById("surpriseButtonText");
+var generatorOutput = document.getElementById("generatorOutput");
+var generatorLabel = document.getElementById("generatorLabel");
+var generatorText = document.getElementById("generatorText");
+var shuffleAgainBtn = document.getElementById("shuffleAgainBtn");
+var closeGenerator = document.getElementById("closeGenerator");
+var clearFormatBtn = document.getElementById("clearFormatBtn");
+var journalText = document.getElementById("journalText");
+var charCount = document.getElementById("charCount");
+var charactersLabel = document.getElementById("charactersLabel");
+var wordCount = document.getElementById("wordCount");
+var wordsLabel = document.getElementById("wordsLabel");
+var saveDraftBtn = document.getElementById("saveDraftBtn");
+var submitBtn = document.getElementById("submitBtn");
+var achievements = document.getElementById("achievements");
+var achievementTitle = document.getElementById("achievementTitle");
+var viewAchievementsBtn = document.getElementById("viewAchievementsBtn");
+var badgeGrid = document.getElementById("badgeGrid");
+var progressTitle = document.getElementById("progressTitle");
+var calendar = document.getElementById("calendar");
+var calendarTitle = document.getElementById("calendarTitle");
+var calendarMonthLabel = document.getElementById("calendarMonthLabel");
+var calendarGrid = document.getElementById("calendarGrid");
+var legendSubmitted = document.getElementById("legendSubmitted");
+var legendToday = document.getElementById("legendToday");
+var recentTitle = document.getElementById("recentTitle");
+var viewAllWork = document.getElementById("viewAllWork");
+var entriesList = document.getElementById("entriesList");
+var tipTitle = document.getElementById("tipTitle");
+var tipText = document.getElementById("tipText");
+var achievementModal = document.getElementById("achievementModal");
+var allBadgesGrid = document.getElementById("allBadgesGrid");
+
 const state=getJournalState();
 let activeGenerator="prompt";
 let activeCategory="journal";

@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Saved explanations | Langsnack Notebook</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="shared.css?v=final-master-2"></head><body><main class="nb-shell"><header class="nb-header"><a class="nb-brand" href="/" style="text-decoration:none;color:inherit"><span class="nb-logo">ㄱ</span><span><strong>Langsnack Notebook</strong><span>Your Korean learning space</span></span></a><nav class="nb-nav"><a href="/" data-nav="home">Write</a><a href="history.html" data-nav="work">My work</a><a href="saved.html" data-nav="saved">Saved</a></nav><div class="nb-actions"><select id="languageSelect" aria-label="Language"><option value="en">EN</option><option value="ko">한국어</option></select><label class="header-timezone"><select id="timezoneSelect" aria-label="Time zone"></select></label></div></header><section class="nb-main saved-page">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Saved explanations | Langsnack Notebook</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="shared.css?v=final-working-1"></head><body><main class="nb-shell"><header class="nb-header"><a class="nb-brand" href="/" style="text-decoration:none;color:inherit"><span class="nb-logo">ㄱ</span><span><strong>Langsnack Notebook</strong><span>Your Korean learning space</span></span></a><nav class="nb-nav"><a href="/" data-nav="home">Write</a><a href="history.html" data-nav="work">My work</a><a href="saved.html" data-nav="saved">Saved</a></nav><div class="nb-actions"><select id="languageSelect" aria-label="Language"><option value="en">EN</option><option value="ko">한국어</option></select><label class="header-timezone"><select id="timezoneSelect" aria-label="Time zone"></select></label></div></header><section class="nb-main saved-page">
   <div class="saved-hero">
     <div>
       <span class="nb-kicker">Personal knowledge base</span>
@@ -19,8 +19,14 @@
   </div>
 
   <div class="nb-saved-grid" id="savedGrid"></div>
-</section></main><script src="shared.js?v=final-master-2"></script><script src="timezone-picker.js?v=final-master-2"></script><script>
+</section></main><script src="shared.js?v=final-working-1"></script><script src="timezone-picker.js?v=final-working-1"></script><script>
 exposeNotebookElements();
+/* Explicit element bindings for Wix iframe compatibility */
+var languageSelect = document.getElementById("languageSelect");
+var savedCount = document.getElementById("savedCount");
+var searchInput = document.getElementById("searchInput");
+var savedGrid = document.getElementById("savedGrid");
+
 const savedState = getState();
 
 function savedTitle(item){

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="shared.css?v=final-master-2">
+  <link rel="stylesheet" href="shared.css?v=final-working-1">
 </head>
 
 <body class="teacher-os-body">
@@ -198,10 +198,62 @@
   </div>
 
   <div class="toast" id="toast"></div>
-<script src="shared.js?v=final-master-2"></script>
-  <script src="timezone-picker.js?v=final-master-2"></script>
+<script src="shared.js?v=final-working-1"></script>
+  <script src="timezone-picker.js?v=final-working-1"></script>
   <script>
     exposeNotebookElements();
+/* Explicit element bindings for Wix iframe compatibility */
+var greeting = document.getElementById("greeting");
+var teacherPageTitle = document.getElementById("teacherPageTitle");
+var todayLabel = document.getElementById("todayLabel");
+var language = document.getElementById("language");
+var pendingCount = document.getElementById("pendingCount");
+var pendingLabel = document.getElementById("pendingLabel");
+var oldestPending = document.getElementById("oldestPending");
+var reviewCount = document.getElementById("reviewCount");
+var reviewLabel = document.getElementById("reviewLabel");
+var draftHint = document.getElementById("draftHint");
+var completeCount = document.getElementById("completeCount");
+var completeLabel = document.getElementById("completeLabel");
+var completedToday = document.getElementById("completedToday");
+var totalCount = document.getElementById("totalCount");
+var totalLabel = document.getElementById("totalLabel");
+var studentCount = document.getElementById("studentCount");
+var weeklyTotal = document.getElementById("weeklyTotal");
+var weeklyChart = document.getElementById("weeklyChart");
+var healthRing = document.getElementById("healthRing");
+var healthPercent = document.getElementById("healthPercent");
+var healthText = document.getElementById("healthText");
+var healthSubtext = document.getElementById("healthSubtext");
+var activeStudents = document.getElementById("activeStudents");
+var refreshButton = document.getElementById("refreshButton");
+var search = document.getElementById("search");
+var statusFilter = document.getElementById("statusFilter");
+var queueTabs = document.getElementById("queueTabs");
+var queue = document.getElementById("queue");
+var workspace = document.getElementById("workspace");
+var studentSearch = document.getElementById("studentSearch");
+var teacherStudentGrid = document.getElementById("teacherStudentGrid");
+var analyticsWeek = document.getElementById("analyticsWeek");
+var analyticsCompleted = document.getElementById("analyticsCompleted");
+var analyticsResponse = document.getElementById("analyticsResponse");
+var analyticsStudents = document.getElementById("analyticsStudents");
+var analyticsChart = document.getElementById("analyticsChart");
+var attentionList = document.getElementById("attentionList");
+var settingsLanguage = document.getElementById("settingsLanguage");
+var settingsTimezone = document.getElementById("settingsTimezone");
+var exportSubmissionsButton = document.getElementById("exportSubmissionsButton");
+var backupNotebookButton = document.getElementById("backupNotebookButton");
+var resetReviewsButton = document.getElementById("resetReviewsButton");
+var resetEverythingButton = document.getElementById("resetEverythingButton");
+var teacherResetModal = document.getElementById("teacherResetModal");
+var teacherResetTitle = document.getElementById("teacherResetTitle");
+var teacherResetText = document.getElementById("teacherResetText");
+var teacherResetInput = document.getElementById("teacherResetInput");
+var teacherResetCancel = document.getElementById("teacherResetCancel");
+var teacherResetConfirm = document.getElementById("teacherResetConfirm");
+var toast = document.getElementById("toast");
+
 const state = getState();
     let selectedId = null;
     const snippets = {

@@ -1,4 +1,36 @@
 
+/* FINAL WORKING: show initialization errors instead of failing silently */
+window.addEventListener("error", event => {
+  console.error("Langsnack runtime error:", event.error || event.message);
+
+  const existing = document.getElementById("langsnackRuntimeError");
+  if (existing) return;
+
+  const notice = document.createElement("div");
+  notice.id = "langsnackRuntimeError";
+  notice.style.cssText = [
+    "position:fixed",
+    "left:16px",
+    "right:16px",
+    "bottom:16px",
+    "z-index:99999",
+    "padding:12px 14px",
+    "border:1px solid #dba7a2",
+    "border-radius:12px",
+    "background:#fff1f0",
+    "color:#7f3f3a",
+    "font:600 12px/1.5 system-ui,sans-serif",
+    "box-shadow:0 12px 30px rgba(60,35,30,.16)"
+  ].join(";");
+
+  notice.textContent =
+    "The Notebook could not finish loading. Please refresh once. " +
+    (event.message || "");
+
+  document.body.appendChild(notice);
+});
+
+
 /* FINAL MASTER: RELIABLE ELEMENT LOOKUP */
 function exposeNotebookElements(root = document) {
   root.querySelectorAll("[id]").forEach(element => {
