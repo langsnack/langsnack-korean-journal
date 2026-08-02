@@ -1255,3 +1255,83 @@ body.modal-open{overflow:hidden}
   }
   .teacher-wide-search{width:100%}
 }
+
+
+/* =========================================================
+   V5 STABLE — GUEST LOGIN REMINDER
+   ========================================================= */
+.guest-save-notice{
+  min-height:46px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:22px;
+  padding:8px 20px;
+  border-bottom:1px solid #efcbc7;
+  background:#fff1f0;
+  color:#653f3c;
+}
+.guest-save-notice[hidden]{display:none!important}
+.guest-save-copy{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.guest-save-icon{
+  width:22px;
+  height:22px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#f5d4d1;
+  color:#9d4e48;
+  font-size:12px;
+  font-weight:900;
+}
+.guest-save-copy>div{
+  display:grid;
+  gap:1px;
+}
+.guest-save-copy strong{
+  font-size:11px;
+}
+.guest-save-copy span{
+  color:#8c625e;
+  font-size:10px;
+}
+.guest-save-login{
+  border:1px solid #dda9a4;
+  border-radius:999px;
+  padding:7px 12px;
+  background:#fffafa;
+  color:#8c403b;
+  font-size:10px;
+  font-weight:800;
+}
+.avatar-button{
+  min-width:48px;
+  width:auto;
+  height:34px;
+  padding:0 11px;
+  border-radius:999px;
+  font-size:10px;
+}
+.avatar-button.is-member{
+  width:34px;
+  min-width:34px;
+  padding:0;
+}
+@media(max-width:650px){
+  .guest-save-notice{
+    justify-content:space-between;
+    gap:10px;
+    padding:9px 11px;
+  }
+  .guest-save-copy{
+    align-items:flex-start;
+  }
+  .guest-save-login{
+    flex:0 0 auto;
+    padding:7px 9px;
+  }
+}

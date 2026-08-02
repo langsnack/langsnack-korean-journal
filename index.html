@@ -29,6 +29,18 @@
   </div>
 </header>
 
+<section class="guest-save-notice" id="guestSaveNotice">
+  <div class="guest-save-copy">
+    <span class="guest-save-icon" aria-hidden="true">!</span>
+    <div>
+      <strong id="guestSaveTitle">Guest mode</strong>
+      <span id="guestSaveText">Your writing will not be saved unless you log in or sign up.</span>
+    </div>
+  </div>
+  <button class="guest-save-login" id="guestSaveLogin" type="button">Log in / Sign up</button>
+</section>
+
+
 <section class="notebook-guest-notice" id="guestNotice">
   <div class="guest-notice-copy">
     <span class="guest-notice-dot" aria-hidden="true"></span>
@@ -343,6 +355,84 @@ function updateMainJournalDateVisibility(){
   mainJournalDateField.hidden=activeCategory!=="journal";
   if(!mainJournalDateInput.value)mainDatePicker.setValue(state.journalDate||dateKey());
 }
+
+const notebookMemberState = {
+  loggedIn: false,
+  memberId: "",
+  name: "",
+  email: ""
+};
+
+function requestWixMemberLogin(){
+  if(window.parent && window.parent !== window){
+    window.parent.postMessage({
+      source:"langsnack-journal",
+      type:"loginRequested"
+    },"*");
+    return;
+  }
+
+  showToast(state.language==="ko"
+    ?"Wix의 Journal 페이지에서 로그인하거나 회원가입할 수 있어요."
+    :"Open the Wix Journal page to log in or sign up.");
+}
+
+function applyWixMemberState(payload={}){
+  notebookMemberState.loggedIn=Boolean(payload.loggedIn);
+  notebookMemberState.memberId=payload.memberId||"";
+  notebookMemberState.name=payload.name||"";
+  notebookMemberState.email=payload.email||"";
+
+  guestSaveNotice.hidden=notebookMemberState.loggedIn;
+
+  if(notebookMemberState.loggedIn){
+    const name=notebookMemberState.name||"Member";
+    const initials=name.split(/\s+/).map(part=>part.charAt(0)).join("").slice(0,2).toUpperCase();
+    loginBtn.textContent=initials||"ME";
+    loginBtn.classList.add("is-member");
+    loginBtn.title=name;
+    state.profile={name,email:notebookMemberState.email};
+    saveJournalState(state);
+    welcomeHeading.textContent=`${tr(greetingKey())}, ${name}!`;
+  }else{
+    loginBtn.textContent=state.language==="ko"?"게스트":"Guest";
+    loginBtn.classList.remove("is-member");
+    loginBtn.title=state.language==="ko"?"로그인 / 회원가입":"Log in / Sign up";
+  }
+}
+
+window.addEventListener("message",event=>{
+  const message=event.data;
+  if(!message||message.source!=="langsnack-wix")return;
+
+  if(message.type==="memberState"){
+    applyWixMemberState(message.payload||{});
+  }
+
+  if(message.type==="cmsSync"){
+    if(Array.isArray(message.payload?.submissions)){
+      saveSubmissions(message.payload.submissions);
+    }
+    if(Array.isArray(message.payload?.bookmarks)){
+      saveBookmarks(message.payload.bookmarks);
+    }
+    if(message.payload?.threads && typeof message.payload.threads==="object"){
+      saveThreads(message.payload.threads);
+    }
+    window.dispatchEvent(new CustomEvent("langsnack:cms-sync"));
+  }
+});
+
+guestSaveLogin.onclick=requestWixMemberLogin;
+loginBtn.onclick=requestWixMemberLogin;
+
+window.parent?.postMessage({
+  source:"langsnack-journal",
+  type:"appReady"
+},"*");
+
+applyWixMemberState();
+
 const mainDatePicker=initKoreanDatePicker(mainJournalDateInput,{value:state.journalDate||dateKey()});
 
 let wixMember = null;
@@ -387,15 +477,7 @@ window.addEventListener("message",event=>{
   if(message.type==="memberState")applyMemberState(message.payload||{});
 });
 
-loginBtn.onclick=requestWixLogin;
-guestNoticeLogin.onclick=requestWixLogin;
 
-window.parent?.postMessage({
-  source:"langsnack-journal",
-  type:"appReady"
-},"*");
-
-applyMemberState(null);
 languageSelect.value=state.language;levelSelect.value=state.level;journalText.value=state.lastDraft;updateMainJournalDateVisibility();updateCounts();applyLanguage();
 </script>
 </body>

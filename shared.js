@@ -63,8 +63,33 @@ function saveBookmarks(items){localStorage.setItem(LS.bookmarks,JSON.stringify(i
 function getThreads(){return safeParse(localStorage.getItem(LS.threads),{})||{}}
 function saveThreads(value){localStorage.setItem(LS.threads,JSON.stringify(value||{}))}
 function threadFor(id){return getThreads()[id]||[]}
-function addThreadMessage(id,message){const all=getThreads();all[id]=all[id]||[];all[id].push({...message,id:makeId(),createdAt:new Date().toISOString()});saveThreads(all);return all[id]}
-function toggleBookmark(item){const items=getBookmarks();const key=item.key||`${item.submissionId}:${item.text}`;const i=items.findIndex(x=>x.key===key);if(i>=0){items.splice(i,1);saveBookmarks(items);return false}items.unshift({...item,key,savedAt:new Date().toISOString()});saveBookmarks(items);return true}
+function addThreadMessage(id,message){
+  const all=getThreads();
+  const savedMessage={...message,id:makeId(),createdAt:new Date().toISOString()};
+  all[id]=all[id]||[];
+  all[id].push(savedMessage);
+  saveThreads(all);
+  syncThreadToWix(id,savedMessage);
+  return all[id];
+}
+function toggleBookmark(item){
+  const items=getBookmarks();
+  const key=item.key||`${item.submissionId}:${item.text}`;
+  const i=items.findIndex(x=>x.key===key);
+
+  if(i>=0){
+    const removed=items.splice(i,1)[0];
+    saveBookmarks(items);
+    syncBookmarkToWix(removed,true);
+    return false;
+  }
+
+  const savedItem={...item,key,savedAt:new Date().toISOString()};
+  items.unshift(savedItem);
+  saveBookmarks(items);
+  syncBookmarkToWix(savedItem,false);
+  return true;
+}
 function isBookmarked(key){return getBookmarks().some(x=>x.key===key)}
 
 function statusText(status,language='en'){return STATUS[language]?.[status]||status}
@@ -133,3 +158,88 @@ function initRichEditor(root){
   return editor;
 }
 function richEditorHTML(id,placeholder){return `<div class="rich-editor" id="${escapeHTML(id)}"><div class="toolbar"><button class="tool-btn" data-cmd="bold"><b>B</b></button><button class="tool-btn" data-cmd="italic"><i>I</i></button><button class="tool-btn" data-cmd="underline"><u>U</u></button><button class="tool-btn" data-cmd="strikeThrough">S̶</button><select data-block><option value="p">Paragraph</option><option value="h2">Heading</option><option value="blockquote">Quote</option></select><button class="tool-btn" data-cmd="insertUnorderedList">• List</button><button class="tool-btn" data-cmd="insertOrderedList">1. List</button><label>A <input type="color" data-color value="#2f2a25"></label><label>▰ <input type="color" data-highlight value="#fff0a8"></label><button class="tool-btn" data-clear>Clear</button></div><div class="editor-content" contenteditable="true" spellcheck="true" data-placeholder="${escapeHTML(placeholder)}"></div></div>`}
+
+
+/* =========================================================
+   WIX CMS MESSAGE BRIDGE
+   Local browser storage stays available for Guest Mode.
+   Logged-in Wix members are synchronised through the parent page.
+   ========================================================= */
+const CMS_PENDING = new Map();
+let cmsRequestCounter = 0;
+
+function isInsideWix(){
+  return Boolean(window.parent && window.parent !== window);
+}
+
+function cmsRequest(action,payload={}){
+  if(!isInsideWix()){
+    return Promise.resolve({ok:false,guest:true});
+  }
+
+  const requestId=`CMS-${Date.now()}-${++cmsRequestCounter}`;
+
+  return new Promise((resolve,reject)=>{
+    const timeout=setTimeout(()=>{
+      CMS_PENDING.delete(requestId);
+      reject(new Error("Wix CMS request timed out."));
+    },15000);
+
+    CMS_PENDING.set(requestId,{resolve,reject,timeout});
+
+    window.parent.postMessage({
+      source:"langsnack-journal",
+      type:"cmsRequest",
+      requestId,
+      action,
+      payload
+    },"*");
+  });
+}
+
+window.addEventListener("message",event=>{
+  const message=event.data;
+  if(!message||message.source!=="langsnack-wix")return;
+
+  if(message.type==="cmsResponse"&&message.requestId){
+    const pending=CMS_PENDING.get(message.requestId);
+    if(!pending)return;
+
+    clearTimeout(pending.timeout);
+    CMS_PENDING.delete(message.requestId);
+
+    if(message.ok)pending.resolve(message.payload);
+    else pending.reject(new Error(message.error||"Wix CMS request failed."));
+  }
+});
+
+function syncSubmissionToWix(item,action="createSubmission"){
+  return cmsRequest(action,{submission:item}).catch(error=>{
+    console.warn("Wix CMS sync skipped:",error.message);
+    return null;
+  });
+}
+
+function syncThreadToWix(submissionId,message){
+  return cmsRequest("addThreadMessage",{submissionId,message}).catch(error=>{
+    console.warn("Thread sync skipped:",error.message);
+    return null;
+  });
+}
+
+function syncBookmarkToWix(item,remove=false){
+  return cmsRequest(remove?"removeBookmark":"saveBookmark",{bookmark:item}).catch(error=>{
+    console.warn("Bookmark sync skipped:",error.message);
+    return null;
+  });
+}
+
+function requestCmsRefresh(){
+  return cmsRequest("getMemberWorkspace").then(payload=>{
+    if(Array.isArray(payload?.submissions))saveSubmissions(payload.submissions);
+    if(Array.isArray(payload?.bookmarks))saveBookmarks(payload.bookmarks);
+    if(payload?.threads&&typeof payload.threads==="object")saveThreads(payload.threads);
+    window.dispatchEvent(new CustomEvent("langsnack:cms-sync"));
+    return payload;
+  }).catch(()=>null);
+}

@@ -215,7 +215,9 @@
     function items(){ return getSubmissions() || []; }
     function safeDate(value){ const d=new Date(value); return Number.isNaN(d.getTime()) ? null : d; }
     function sameDay(a,b){ return a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate(); }
-    function relativeTime(value){ const d=safeDate(value); if(!d)return "—"; const sec=Math.max(0,(Date.now()-d.getTime())/1000); if(sec<60)return "just now"; if(sec<3600)return `${Math.floor(sec/60)}m ago`; if(sec<86400)return `${Math.floor(sec/3600)}h ago`; if(sec<604800)return `${Math.floor(sec/86400)}d ago`; return formatDate(value,state.language); }
+    function relativeTime(value){
+      return formatDate(value);
+    }
     function wordCount(text){ return String(text||"").trim() ? String(text).trim().split(/\s+/).length : 0; }
 
     function renderHeader(){
@@ -310,9 +312,17 @@
       if(action==="reopen"){a[i].status="reviewing";a[i].completedAt=null;}
       if(action==="save"||action==="complete"){a[i].teacherHtml=ed.innerHTML;a[i].teacherNote=teacherNote.value.trim();a[i].teacherUpdatedAt=new Date().toISOString();}
       if(action==="complete"){a[i].status="completed";a[i].completedAt=new Date().toISOString();window.parent?.postMessage({source:"langsnack-journal",type:"reviewCompleted",payload:a[i]},"*");}
-      saveSubmissions(a); toast(action==="start"?t.started:action==="save"?t.saved:action==="complete"?t.returned:t.reopened); renderAll();
+      saveSubmissions(a);
+      cmsRequest("teacherUpdateSubmission",{action,submission:a[i]}).catch(error=>console.warn(error.message));
+      toast(action==="start"?t.started:action==="save"?t.saved:action==="complete"?t.returned:t.reopened);
+      renderAll();
     }
-    function deleteRecord(){const t=T[state.language]; if(!confirm(state.language==="ko"?"이 기록을 정말 삭제할까요?":"Delete this submission permanently?"))return; saveSubmissions(items().filter(x=>(x._id||x.id)!==selectedId)); selectedId=null; toast(t.deleted); renderAll();}
+    function deleteRecord(){const t=T[state.language]; if(!confirm(state.language==="ko"?"이 기록을 정말 삭제할까요?":"Delete this submission permanently?"))return; const target=items().find(x=>(x._id||x.id)===selectedId);
+      saveSubmissions(items().filter(x=>(x._id||x.id)!==selectedId));
+      if(target)cmsRequest("teacherDeleteSubmission",{submissionId:target._id||target.id}).catch(error=>console.warn(error.message));
+      selectedId=null;
+      toast(t.deleted);
+      renderAll();}
 
     function applyText(){const t=T[state.language]; search.placeholder=t.search; statusFilter.options[0].text=t.all; statusFilter.options[1].text=t.waiting; statusFilter.options[2].text=t.progress; statusFilter.options[3].text=t.complete; document.querySelector('[data-filter="all"]').textContent=t.all; document.querySelector('[data-filter="pending"]').textContent=t.waiting; document.querySelector('[data-filter="reviewing"]').textContent=t.progress; document.querySelector('[data-filter="completed"]').textContent=t.complete;}
 
@@ -522,10 +532,21 @@
     function renderAll(){renderHeader();applyText();renderStats();renderWeekly();renderActiveStudents();renderQueue();renderWorkspace();}
     search.oninput=renderQueue; statusFilter.onchange=()=>{document.querySelectorAll("#queueTabs button").forEach(b=>b.classList.toggle("active",b.dataset.filter===statusFilter.value));renderQueue();};
     queueTabs.onclick=e=>{const b=e.target.closest("button");if(!b)return;statusFilter.value=b.dataset.filter;document.querySelectorAll("#queueTabs button").forEach(x=>x.classList.toggle("active",x===b));renderQueue();};
-    refreshButton.onclick=()=>renderAll();
+    refreshButton.onclick=()=>{
+      cmsRequest("getTeacherWorkspace").then(payload=>{
+        if(Array.isArray(payload?.submissions))saveSubmissions(payload.submissions);
+        renderAll();
+      }).catch(()=>renderAll());
+    };
     language.onchange=()=>{state.language=language.value;saveState(state);renderAll();};
     window.addEventListener("langsnack:timezone-change",event=>{const journalState=getJournalState();journalState.timezone=event.detail.timeZone;saveJournalState(journalState);renderAll();});
     renderAll();
+    if(window.parent&&window.parent!==window){
+      cmsRequest("getTeacherWorkspace").then(payload=>{
+        if(Array.isArray(payload?.submissions))saveSubmissions(payload.submissions);
+        renderAll();
+      }).catch(error=>console.warn("Teacher CMS load:",error.message));
+    }
   </script>
 </body>
 </html>
