@@ -1364,3 +1364,380 @@ body.modal-open{overflow:hidden}
   .guest-save-copy{align-items:flex-start}
   .guest-save-login{flex:0 0 auto;padding:7px 9px}
 }
+
+/* =========================================================
+   MOBILE IMPROVEMENTS
+   Add new mobile changes only below this line
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+  html,
+  body {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Header */
+  .notebook-header {
+    position: sticky;
+    top: 0;
+    min-height: 58px;
+    padding: 9px 12px;
+    align-items: center;
+  }
+
+  .notebook-logo {
+    font-size: 14px;
+  }
+
+  .notebook-header-tools {
+    flex-wrap: nowrap;
+    gap: 5px;
+  }
+
+  .compact-control {
+    min-width: 0;
+  }
+
+  .compact-control select {
+    max-width: 90px;
+    font-size: 11px;
+  }
+
+  .compact-timezone {
+    display: none;
+  }
+
+  .avatar-button {
+    width: 34px;
+    min-width: 34px;
+    height: 34px;
+    padding: 0;
+  }
+
+  /* Guest reminder */
+  .guest-save-notice {
+    align-items: flex-start;
+    gap: 9px;
+    padding: 10px 12px;
+  }
+
+  .guest-save-copy {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .guest-save-copy span {
+    display: block;
+    line-height: 1.4;
+  }
+
+  .guest-save-login {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding: 7px 9px;
+  }
+
+  /* Sidebar becomes horizontally scrollable */
+  .notebook-sidebar {
+    padding: 7px 10px;
+    overflow: hidden;
+  }
+
+  .sidebar-nav {
+    display: flex;
+    gap: 5px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  .sidebar-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sidebar-link {
+    flex: 0 0 auto;
+    padding: 9px 11px;
+    font-size: 11px;
+  }
+
+  /* Main content */
+  .notebook-main {
+    padding: 16px 10px 30px;
+  }
+
+  .welcome-row {
+    gap: 10px;
+  }
+
+  .welcome-row h1 {
+    font-size: 28px;
+  }
+
+  .welcome-row p {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* Quick links */
+  .quick-actions {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .quick-card {
+    padding: 12px;
+    border-radius: 15px;
+  }
+
+  /* Writing card */
+  .writing-card {
+    padding: 13px;
+    border-radius: 17px;
+  }
+
+  .category-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 3px;
+    scrollbar-width: none;
+  }
+
+  .category-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-tab {
+    flex: 0 0 auto;
+    min-height: 40px;
+  }
+
+  .writing-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .level-control,
+  .recommend-button,
+  .surprise-button {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  .surprise-button {
+    grid-column: 1 / -1;
+  }
+
+  /* Toolbar */
+  .editor-toolbar,
+  .rich-editor .toolbar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 7px;
+    scrollbar-width: none;
+  }
+
+  .editor-toolbar::-webkit-scrollbar,
+  .rich-editor .toolbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .editor-toolbar button,
+  .tool-btn {
+    flex: 0 0 auto;
+    min-width: 38px;
+    height: 38px;
+  }
+
+  /* Writing area */
+  .notebook-paper,
+  .notebook-paper textarea {
+    min-height: 58vh;
+  }
+
+  .notebook-paper textarea {
+    padding: 17px 14px;
+    font-size: 16px;
+    line-height: 32px;
+  }
+
+  .nb-writing-editor-mount,
+  .nb-writing-editor-mount .rich-editor {
+    min-height: 55vh;
+  }
+
+  .nb-writing-editor-mount .editor-content,
+  .rich-editor [contenteditable="true"] {
+    min-height: 48vh;
+    padding: 17px 14px;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  /* Save and feedback buttons */
+  .notebook-editor-footer {
+    display: grid;
+    gap: 9px;
+  }
+
+  .notebook-editor-footer .action-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  .notebook-editor-footer .button {
+    width: 100%;
+    min-height: 46px;
+  }
+
+  /* Dashboard cards */
+  .dashboard-grid,
+  .dashboard-stack,
+  .daily-grid,
+  .badge-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-card,
+  .achievements-card,
+  .progress-card,
+  .calendar-card {
+    border-radius: 16px;
+  }
+
+  .calendar-widget {
+    max-width: none;
+  }
+
+  /* Other pages */
+  .nb-header {
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    padding: 11px 12px;
+  }
+
+  .nb-nav {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    overflow-x: auto;
+    border-radius: 14px;
+  }
+
+  .nb-nav a {
+    flex: 0 0 auto;
+    padding: 8px 11px;
+    font-size: 10px;
+  }
+
+  .nb-main {
+    width: calc(100% - 18px);
+    padding: 22px 0 38px;
+  }
+
+  .nb-page-head h1,
+  .saved-hero h1 {
+    font-size: 34px;
+  }
+
+  .nb-form-grid,
+  .nb-two,
+  .my-work-summary,
+  .review-compare-grid,
+  .nb-saved-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nb-submit-card,
+  .nb-card-pad {
+    padding: 14px;
+  }
+
+  /* My Work */
+  .nb-work-card-wrap {
+    grid-template-columns: 1fr;
+  }
+
+  .nb-work-actions {
+    width: 100%;
+    padding-left: 0;
+  }
+
+  .nb-work-actions .button {
+    flex: 1;
+    min-height: 42px;
+  }
+
+  /* Review page */
+  .review-pane-head {
+    padding: 14px;
+  }
+
+  .review-writing {
+    min-height: 180px;
+    padding: 16px 14px;
+    font-size: 16px;
+  }
+
+  /* Thread */
+  .discussion-card {
+    padding: 14px;
+  }
+
+  .chat-thread {
+    padding: 16px 0;
+  }
+
+  .chat-message {
+    max-width: 92%;
+  }
+
+  .chat-bubble {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .chat-compose-box textarea {
+    min-height: 94px;
+    font-size: 16px;
+  }
+
+  .chat-compose-actions .button {
+    min-height: 44px;
+  }
+
+  /* Saved explanations */
+  .saved-note-card {
+    border-radius: 17px;
+  }
+
+  .saved-note-body {
+    padding: 16px;
+  }
+
+  .saved-note-body blockquote {
+    font-size: 16px;
+  }
+
+  /* General mobile touch targets */
+  button,
+  .button,
+  .nav-link,
+  .sidebar-link {
+    touch-action: manipulation;
+  }
+
+  input,
+  textarea,
+  select,
+  [contenteditable="true"] {
+    font-size: 16px;
+  }
+}
