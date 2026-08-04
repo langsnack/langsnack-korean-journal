@@ -79,7 +79,6 @@ exposeNotebookElements();
 /* Explicit element bindings for Wix iframe compatibility */
 var languageSelect = document.getElementById("languageSelect");
 var content = document.getElementById("content");
-var toast = document.getElementById("toast");
 
 const state=getState(),id=new URLSearchParams(location.search).get('id');
 let item=getSubmissions().find(x=>(x.id||x._id)===id);
