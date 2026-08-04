@@ -161,7 +161,7 @@ dropzone.onclick=()=>fileInput.click();fileInput.onchange=()=>addFiles(fileInput
 ['dragenter','dragover'].forEach(e=>dropzone.addEventListener(e,x=>{x.preventDefault();dropzone.classList.add('drag')}));
 ['dragleave','drop'].forEach(e=>dropzone.addEventListener(e,x=>{x.preventDefault();dropzone.classList.remove('drag')}));
 dropzone.addEventListener('drop',e=>addFiles(e.dataTransfer.files));
-submitButton.onclick=()=>{
+submitButton.onclick=async()=>{
   try{
   const html=editor.innerHTML.trim(),plain=stripHTML(html);
   if(!plain&&!files.length)return toast('Add writing or at least one file.');
@@ -171,24 +171,46 @@ submitButton.onclick=()=>{
     const idx=all.findIndex(x=>(x.id||x._id)===editId);
     if(idx>=0){
       all[idx]={...all[idx],title:generatedTitle(categoryInput.value,journalDateInput.value,plain),category:categoryInput.value,journalDate:categoryInput.value==='Journal'?journalDateInput.value:null,studentHtml:html,studentPlain:plain,studentNote:questionInput.value.trim(),attachments:files.map(f=>({name:f.name,size:f.size,type:f.type})),studentUpdatedAt:now,status:all[idx].status==='completed'?'pending':all[idx].status};
-      saveSubmissions(all);
-      syncSubmissionToWix(all[idx],"updateSubmission");
-      toast("Your changes were saved.");
+    
+    const result = await syncSubmissionToWix(
+      all[idx],
+      "updateSubmission"
+      );
+
+    if (!result?._id) {
+      throw new Error(
+        "The changes could not be saved to Wix CMS."
+      );
+}
+
+    all[idx] = {
+      ...all[idx],
+      ...result
+};
+
+    saveSubmissions(all);
+    toast("Your changes were saved.");
+      
     }
   }else{
     const item={id:makeId(),memberId:'',studentName:state.profile.name||'Student',studentEmail:state.profile.email||'',title:generatedTitle(categoryInput.value,journalDateInput.value,plain),category:categoryInput.value,journalDate:categoryInput.value==='Journal'?journalDateInput.value:null,studentHtml:html,studentPlain:plain,studentNote:questionInput.value.trim(),attachments:files.map(f=>({name:f.name,size:f.size,type:f.type})),teacherHtml:'',teacherNote:'',status:'pending',submittedAt:now,studentUpdatedAt:now,reviewStartedAt:null,completedAt:null};
-    all.unshift(item);
-    saveSubmissions(all);
-    syncSubmissionToWix(item,"createSubmission").then(result=>{
-      if(result?._id){
-        const current=getSubmissions();
-        const idx=current.findIndex(entry=>entry.id===item.id);
-        if(idx>=0){
-          current[idx]={...current[idx],_id:result._id,memberId:result.memberId||current[idx].memberId};
-          saveSubmissions(current);
-        }
-      }
-    });
+const result = await syncSubmissionToWix(
+  item,
+  "createSubmission"
+);
+
+if (!result?._id) {
+  throw new Error(
+    "The writing could not be saved to Wix CMS. Please make sure you are logged in and try again."
+  );
+}
+
+item._id = result._id;
+item.memberId = result.memberId || "";
+
+all.unshift(item);
+saveSubmissions(all);
+    
     if(questionInput.value.trim())addThreadMessage(item.id,{author:'student',name:state.profile.name||'Student',text:questionInput.value.trim()});
     window.parent?.postMessage({source:'langsnack-journal',type:'submissionCreated',payload:item},'*');
     sessionStorage.removeItem(LS.reviewDraft);
