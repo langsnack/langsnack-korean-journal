@@ -1854,3 +1854,95 @@ html[data-writing-font="gowunBatang"] {
     min-width: 0;
   }
 }
+
+/* =========================================================
+   REVIEW PAGE — SAVE AS PDF
+   ========================================================= */
+
+@media print {
+  @page {
+    size: A4;
+    margin: 16mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Hide website controls */
+  .nb-header,
+  .nb-nav,
+  .nb-actions,
+  .print-hide,
+  .review-progress-card,
+  .discussion-card,
+  .review-attachments,
+  .toast {
+    display: none !important;
+  }
+
+  .nb-shell,
+  .nb-main {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  .review-page-head {
+    display: block !important;
+    margin-bottom: 18px !important;
+  }
+
+  .review-page-head h1 {
+    font-size: 24px !important;
+  }
+
+  /* Original and correction print vertically */
+  .review-compare-grid {
+    display: block !important;
+  }
+
+  .review-pane {
+    display: block !important;
+    margin-bottom: 18px !important;
+    border: 1px solid #bbb !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .review-pane-head {
+    padding: 12px 14px !important;
+    background: #f4f4f4 !important;
+  }
+
+  .review-writing {
+    min-height: 0 !important;
+    padding: 15px !important;
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 12pt !important;
+    line-height: 1.7 !important;
+    overflow: visible !important;
+  }
+
+  .teacher-note-card {
+    margin: 12px !important;
+    border: 1px solid #bbb !important;
+    background: #fff !important;
+    break-inside: avoid;
+  }
+
+  .nb-bookmark {
+    display: none !important;
+  }
+}
