@@ -139,6 +139,18 @@ function render(){
       <select id="reviewFontSelect"></select>
     </label>
 
+<button
+  class="button button-secondary print-hide"
+  id="downloadPdfBtn"
+  type="button"
+>
+  Download PDF
+</button>
+
+<a class="button button-secondary print-hide" href="history.html">
+  Back to My Work
+</a>
+
     <a class="button button-secondary" href="history.html">
       Back to My Work
     </a>
@@ -199,6 +211,15 @@ function render(){
    initWritingFontSelect(
     document.getElementById("reviewFontSelect")
   );
+
+  const downloadPdfBtn =
+  document.getElementById("downloadPdfBtn");
+
+if (downloadPdfBtn) {
+  downloadPdfBtn.onclick = () => {
+    window.print();
+  };
+}
 
   bookmarkButton.onclick=()=>{
     const saved=toggleBookmark({key:bookmarkKey,submissionId:id,title:item.title||'Teacher explanation',text:item.teacherNote||stripHTML(teacher),sourceDate:item.completedAt||item.submittedAt});
