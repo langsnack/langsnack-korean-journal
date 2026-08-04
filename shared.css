@@ -1945,4 +1945,9 @@ html[data-writing-font="gowunBatang"] {
   .nb-bookmark {
     display: none !important;
   }
+.review-page-head h1{
+    font-size:48px !important;
+    line-height:1.05 !important;
 }
+}
+
