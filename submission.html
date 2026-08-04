@@ -133,7 +133,18 @@ function render(){
         <h1>${escapeHTML(item.title||'Your writing')}</h1>
         <p>${formatDate(item.submittedAt,state.language)} · <span class="${statusClass(item.status)}">${statusText(item.status,state.language)}</span></p>
       </div>
-      <a class="button button-secondary" href="history.html">Back to My work</a>
+    <div style="display:flex;align-items:center;gap:10px;">
+
+    <label class="writing-font-control">
+      <span>Font</span>
+      <select id="reviewFontSelect"></select>
+    </label>
+
+    <a class="button button-secondary" href="history.html">
+      Back to My Work
+    </a>
+
+</div>      
     </div>
 
     <section class="nb-card nb-card-pad review-progress-card">
@@ -185,6 +196,10 @@ function render(){
         </div>
       </div>
     </section>`;
+
+   initWritingFontSelect(
+    document.getElementById("reviewFontSelect")
+  );
 
   bookmarkButton.onclick=()=>{
     const saved=toggleBookmark({key:bookmarkKey,submissionId:id,title:item.title||'Teacher explanation',text:item.teacherNote||stripHTML(teacher),sourceDate:item.completedAt||item.submittedAt});
