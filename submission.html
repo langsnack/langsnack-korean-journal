@@ -144,8 +144,7 @@ function render(){
   id="downloadPdfBtn"
   type="button"
 >
-  Download PDF
-</button>
+  ${t.downloadPdf}</button>
 
 <a class="button button-secondary print-hide" href="history.html">
   Back to My Work
@@ -167,7 +166,7 @@ function render(){
     <div class="review-compare-grid">
       <article class="nb-card review-pane">
         <div class="review-pane-head">
-          <div><span class="nb-kicker">Original</span><h2>Your version</h2></div>
+          <div><span class="nb-kicker">Original</span><h2>${t.original}</h2></div>
           <span class="review-word-count">${wordCount} words</span>
         </div>
         <div class="review-writing">${item.studentHtml||escapeHTML(item.studentPlain||'No written text.')}</div>
