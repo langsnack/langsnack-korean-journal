@@ -306,3 +306,116 @@ function requestCmsRefresh(){
     return payload;
   }).catch(()=>null);
 }
+
+/* =========================================================
+   STUDENT WRITING FONT OPTIONS
+   Only affects writing, correction and discussion messages
+   ========================================================= */
+
+:root {
+  --student-writing-font:
+    "Noto Sans KR",
+    "DM Sans",
+    sans-serif;
+}
+
+/* Default */
+html[data-writing-font="default"] {
+  --student-writing-font:
+    "Noto Sans KR",
+    "DM Sans",
+    sans-serif;
+}
+
+/* Modern Sans */
+html[data-writing-font="notoSans"] {
+  --student-writing-font:
+    "Noto Sans KR",
+    sans-serif;
+}
+
+/* Clean Gothic */
+html[data-writing-font="nanumGothic"] {
+  --student-writing-font:
+    "Nanum Gothic",
+    "Noto Sans KR",
+    sans-serif;
+}
+
+/* Classic Myeongjo */
+html[data-writing-font="nanumMyeongjo"] {
+  --student-writing-font:
+    "Nanum Myeongjo",
+    "Noto Serif KR",
+    serif;
+}
+
+/* Soft Rounded */
+html[data-writing-font="gowunDodum"] {
+  --student-writing-font:
+    "Gowun Dodum",
+    "Noto Sans KR",
+    sans-serif;
+}
+
+/* Elegant Serif */
+html[data-writing-font="gowunBatang"] {
+  --student-writing-font:
+    "Gowun Batang",
+    "Nanum Myeongjo",
+    serif;
+}
+
+/* Main writing page */
+.notebook-paper textarea,
+.nb-writing-editor-mount .editor-content,
+.rich-editor [contenteditable="true"] {
+  font-family: var(--student-writing-font);
+}
+
+/* Reviewed-submission page */
+.review-writing {
+  font-family: var(--student-writing-font);
+}
+
+/* Discussion thread */
+.chat-bubble,
+.chat-compose-box textarea {
+  font-family: var(--student-writing-font);
+}
+
+/* Font selector */
+.writing-font-control {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 7px 10px;
+  border: 1px solid #ded2c5;
+  border-radius: 11px;
+  background: #fff;
+  color: #81776e;
+  font-size: 10px;
+}
+
+.writing-font-control select {
+  min-width: 120px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #2f2a25;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+@media (max-width: 650px) {
+  .writing-font-control {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .writing-font-control select {
+    flex: 1;
+    min-width: 0;
+  }
+}
