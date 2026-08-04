@@ -106,6 +106,7 @@
         <div class="writing-controls">
           <label class="level-control"><span id="levelLabel">Level</span><select id="levelSelect"><option value="starter">Starter</option><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></label>
           <label class="main-journal-date" id="mainJournalDateField"><span id="mainJournalDateLabel">Journal date</span><input id="mainJournalDateInput" type="date" aria-label="Journal date"></label>
+          <label class="writing-font-control"><span>Font</span><selectid="writingFontSelect"aria-label="Writing font"></select></label>
           <button class="recommend-button" data-generator="topic" type="button"><span>↻</span><span id="topicButtonText">Random topic</span></button>
           <button class="recommend-button" data-generator="grammar" type="button"><span>Aa</span><span id="grammarButtonText">Random grammar</span></button>
           <button class="recommend-button" data-generator="prompt" type="button"><span>“</span><span id="promptButtonText">Random prompt</span></button>
@@ -527,6 +528,9 @@ const mainDatePicker = initKoreanDatePicker(mainJournalDateInput, {
 languageSelect.value = state.language;
 levelSelect.value = state.level;
 journalText.value = state.lastDraft || "";
+
+initWritingFontSelect(document.getElementById("writingFontSelect"));
+
 mainDatePicker.setValue(state.journalDate || dateKey());
 updateMainJournalDateVisibility();
 updateCounts();
