@@ -416,6 +416,18 @@ saveSubmissions(all);
 understandButton.onclick=()=>{location.href='history.html'};
 document.querySelector('[data-nav="work"]').classList.add('active');languageSelect.value=state.language;
 
+const goToSpeakingPractice =
+  document.getElementById("goToSpeakingPractice");
+
+if (goToSpeakingPractice) {
+  goToSpeakingPractice.onclick = () => {
+    window.parent?.postMessage({
+      source: "langsnack-journal",
+      type: "scrollToVoiceRecorder"
+    }, "*");
+  };
+}
+  
 applySubmitLanguage();
 
 window.parent?.postMessage({
