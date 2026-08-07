@@ -207,6 +207,29 @@ let recordingDuration = 0;
  * We will remove this when we connect audio upload to Wix.
  */
 let files = [];
+let selectedVoiceRecording = null;
+
+  window.addEventListener("message", event => {
+  const message = event.data;
+
+  if (
+    !message ||
+    message.source !== "langsnack-wix"
+  ) {
+    return;
+  }
+
+  if (message.type === "voiceRecordingSelected") {
+    selectedVoiceRecording = message.payload || null;
+
+    console.log(
+      "Voice recording received by submit page:",
+      selectedVoiceRecording
+    );
+
+    toast("Speaking recording attached.");
+  }
+});
 
 function formatRecordingTime(seconds) {
   const minutes = Math.floor(seconds / 60);
