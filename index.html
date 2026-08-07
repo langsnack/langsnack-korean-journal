@@ -593,6 +593,11 @@ renderAll();
 
 window.parent?.postMessage({
   source: "langsnack-journal",
+  type: "hideVoiceRecorder"
+}, "*");
+  
+  window.parent?.postMessage({
+  source: "langsnack-journal",
   type: "appReady"
 }, "*");
 </script>
