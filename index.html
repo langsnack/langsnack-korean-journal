@@ -262,8 +262,13 @@ var achievementModal = document.getElementById("achievementModal");
 var allBadgesGrid = document.getElementById("allBadgesGrid");
 
 const state=getJournalState();
-let activeGenerator="prompt";
-let activeCategory="journal";
+let activeGenerator = "prompt";
+let activeCategory = "journal";
+
+let selectedRecommendation = {
+  type: "",
+  text: ""
+};
 
 const translations={
  en:{language:"Language",timezone:"Time zone",dashboard:"Dashboard",write:"Write",work:"My work",saved:"Saved",achievements:"Achievements",calendar:"Calendar",help:"Need help?",guide:"Visit the guide",greetingMorning:"Good morning",greetingAfternoon:"Good afternoon",greetingEvening:"Good evening",subtitle:"Keep writing. Keep growing.",dayStreak:"day streak",keepGoing:"Keep it going",feedbackTitle:"Get your writing feedback",feedbackSub:"Write and send your work to Nicole.",workTitle:"Previous work",workSub:"Review your submissions and feedback.",savedTitle:"Saved explanations",savedSub:"Keep useful feedback for later.",workspace:"Writing workspace",startWriting:"Start a new writing",clearAll:"Clear all",journal:"Journal",essay:"Essay",story:"Story",random:"Random",level:"Level",topic:"Random topic",grammar:"Random grammar",prompt:"Random prompt",surprise:"Surprise me",another:"Try another",placeholder:"Write your Korean here...",characters:" characters",words:" words",save:"Save draft",submit:"Get feedback",badgeTitle:"Next achievement",viewAll:"View all",progress:"Level & progress",calendarTitle:"Writing calendar",written:"Written",today:"Today",recent:"Recent work",daily:"Today’s random picks",newPick:"Reveal",usedToday:"Used today",revealPick:"Click to reveal",tip:"Quick tip",tipText:"Writing a little every day builds a stronger habit than writing a lot once in a while.",draftSaved:"Draft saved.",writeFirst:"Write something before saving.",cleared:"Writing cleared.",noEntries:"No writing yet. Start your first one today.",topicLabel:"Topic",grammarLabel:"Grammar",promptLabel:"Prompt",journalDate:"Journal date"},
@@ -342,8 +347,21 @@ function applyLanguage(){
 }
 function updateCounts(){charCount.textContent=journalText.value.replace(/\s/g,"").length;wordCount.textContent=journalText.value.trim()?journalText.value.trim().split(/\s+/).length:0}
 function pick(type){const arr=content[levelSelect.value][type];return arr[Math.floor(Math.random()*arr.length)]}
-function showRecommendation(type){activeGenerator=type;generatorLabel.textContent=tr(type+"Label");generatorText.textContent=pick(type);generatorOutput.hidden=false}
-function saveEntry(){const text=journalText.value.trim();if(!text){showToast(tr("writeFirst"));return}const existing=state.entries.findIndex(e=>e.date===dateKey()&&e.status==="draft");const entry={id:existing>=0?state.entries[existing].id:crypto.randomUUID(),date:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):dateKey(),journalDate:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):null,createdAt:new Date().toISOString(),text,level:levelSelect.value,status:"draft",category:activeCategory};if(existing>=0)state.entries[existing]=entry;else state.entries.unshift(entry);state.lastDraft=text;state.level=levelSelect.value;saveJournalState(state);renderAll();showToast(tr("draftSaved"))}
+function showRecommendation(type) {
+  activeGenerator = type;
+
+  const value = pick(type);
+
+  selectedRecommendation = {
+    type,
+    text: value
+  };
+
+  generatorLabel.textContent = tr(type + "Label");
+  generatorText.textContent = value;
+
+  generatorOutput.hidden = false;
+}function saveEntry(){const text=journalText.value.trim();if(!text){showToast(tr("writeFirst"));return}const existing=state.entries.findIndex(e=>e.date===dateKey()&&e.status==="draft");const entry={id:existing>=0?state.entries[existing].id:crypto.randomUUID(),date:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):dateKey(),journalDate:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):null,createdAt:new Date().toISOString(),text,level:levelSelect.value,status:"draft",category:activeCategory};if(existing>=0)state.entries[existing]=entry;else state.entries.unshift(entry);state.lastDraft=text;state.level=levelSelect.value;saveJournalState(state);renderAll();showToast(tr("draftSaved"))}
 function renderEntries(){entriesList.innerHTML="";if(!state.entries.length){entriesList.innerHTML=`<div class="empty-state">${tr("noEntries")}</div>`;return}state.entries.slice(0,5).forEach(e=>{const item=document.createElement("button");item.className="recent-item";item.innerHTML=`<span class="recent-icon">✎</span><span class="recent-copy"><strong>${escapeHTML(e.text.slice(0,40))}${e.text.length>40?"…":""}</strong><small>${e.journalDate?escapeHTML(formatKoreanDateOnly(e.journalDate)):escapeHTML(e.category||e.level)}</small></span><span class="recent-status">${e.status==="draft"?(state.language==="ko"?"임시 저장":"Draft"):(state.language==="ko"?"작성 완료":"Written")}</span><span class="card-arrow">›</span>`;item.onclick=()=>{journalText.value=e.text;levelSelect.value=e.level;activeCategory=e.category||"journal";mainJournalDateInput.value=e.journalDate||e.date||dateKey();updateMainJournalDateVisibility();document.querySelectorAll('.category-tab').forEach(x=>x.classList.toggle('active',x.dataset.category===activeCategory));updateCounts();document.getElementById('writing').scrollIntoView({behavior:'smooth'})};entriesList.appendChild(item)})}
 function renderCalendar(){calendarGrid.innerHTML="";const labels=["월","화","수","목","금","토","일"];labels.forEach(d=>{const s=document.createElement("span");s.className="day-label";s.textContent=d;calendarGrid.appendChild(s)});const cur=getDateParts(),first=new Date(cur.year,cur.month-1,1),offset=(first.getDay()+6)%7,dim=new Date(cur.year,cur.month,0).getDate(),written=new Set([...state.entries.map(e=>e.date),...getSubmissions().map(x=>x.journalDate||String(x.submittedAt||"").slice(0,10)).filter(Boolean)]);for(let i=0;i<offset;i++)calendarGrid.appendChild(document.createElement("span"));for(let d=1;d<=dim;d++){const s=document.createElement("span");s.className="calendar-day";s.textContent=d;const k=`${cur.year}-${String(cur.month).padStart(2,"0")}-${String(d).padStart(2,"0")}`;if(written.has(k))s.classList.add("written");if(d===cur.day)s.classList.add("today");if(d>cur.day)s.classList.add("future");calendarGrid.appendChild(s)}calendarMonthLabel.textContent=new Intl.DateTimeFormat("ko-KR",{timeZone:state.timezone,year:"numeric",month:"long"}).format(new Date())}
 function renderStreak(){streakCount.textContent=getStreak()}
@@ -395,6 +413,12 @@ function showSurprise(){
  generatorText.innerHTML=`<span class="shuffle-copy">${state.language==="ko"?"추천을 고르는 중...":"Mixing your ideas..."}</span>`;
  setTimeout(()=>{
    const topic=pick("topic"),grammar=pick("grammar"),prompt=pick("prompt");
+   selectedRecommendation = {
+  type: "surprise",
+  topic,
+  grammar,
+  prompt
+};
    generatorText.innerHTML=`<span class="surprise-result"><small>TOPIC</small><b>${escapeHTML(topic)}</b></span><span class="surprise-result"><small>GRAMMAR</small><b>${escapeHTML(grammar)}</b></span><span class="surprise-result full"><small>PROMPT</small><b>${escapeHTML(prompt)}</b></span>`;
    activeGenerator="surprise"; button.classList.remove("is-shuffling"); button.disabled=false;
  },850);
@@ -418,7 +442,20 @@ timezoneSelect.onchange=()=>{state.timezone=timezoneSelect.value;saveJournalStat
 window.addEventListener("langsnack:timezone-change",event=>{state.timezone=event.detail.timeZone;saveJournalState(state);applyLanguage()});
 languageSelect.onchange=()=>{state.language=languageSelect.value;saveJournalState(state);applyLanguage()};
 saveDraftBtn.onclick=saveEntry;
-submitBtn.onclick=()=>{const text=journalText.value.trim();if(!text){showToast(tr("writeFirst"));return}const draft={entryId:crypto.randomUUID(),journal:text,level:levelSelect.value,date:dateKey(),language:state.language,category:activeCategory,journalDate:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):null};sessionStorage.setItem(LS.reviewDraft,JSON.stringify(draft));location.href="submit.html"};
+submitBtn.onclick=()=>{const text=journalText.value.trim();if(!text){showToast(tr("writeFirst"));return}const draft = {
+  entryId: crypto.randomUUID(),
+  journal: text,
+  level: levelSelect.value,
+  date: dateKey(),
+  language: state.language,
+  category: activeCategory,
+  journalDate:
+    activeCategory === "journal"
+      ? (mainJournalDateInput.value || dateKey())
+      : null,
+
+  recommendation: selectedRecommendation
+};
 viewAchievementsBtn.onclick=()=>{achievementModal.hidden=false;document.body.classList.add('modal-open')};
 document.querySelectorAll('[data-close-badges]').forEach(el=>el.onclick=()=>{achievementModal.hidden=true;document.body.classList.remove('modal-open')});
 function updateMainJournalDateVisibility(){
