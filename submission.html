@@ -240,7 +240,17 @@ if (downloadPdfBtn) {
 
 document.querySelector('[data-nav="work"]').classList.add('active');
 languageSelect.value=state.language;
-render();
 
-applySubmissionLanguage();
+async function loadSubmissionPage() {
+  await requestCmsRefresh();
+
+  item = getSubmissions().find(
+    x => (x.id || x._id) === id
+  );
+
+  render();
+  applySubmissionLanguage();
+}
+
+loadSubmissionPage();
 </script></body></html>
