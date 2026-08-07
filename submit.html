@@ -169,8 +169,6 @@ var questionInput = document.getElementById("questionInput");
 var submitButton = document.getElementById("submitButton");
 var submissionModal = document.getElementById("submissionModal");
 var understandButton = document.getElementById("understandButton");
-var toast = document.getElementById("toast");
-
 const state=getState();
 const editId=new URLSearchParams(location.search).get('id');
 const existing=editId?getSubmissions().find(x=>(x.id||x._id)===editId):null;
