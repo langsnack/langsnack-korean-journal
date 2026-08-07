@@ -113,6 +113,10 @@ function progressStep(label,detail,done,current){
 }
 
 function render(){
+  const t =
+    LANG_TEXT_SUBMISSION[state.language] ||
+    LANG_TEXT_SUBMISSION.en;
+
   if(!item){
     content.innerHTML='<div class="nb-empty"><h1>Submission not found</h1><a href="history.html">Back to My work</a></div>';
     return;
