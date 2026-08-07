@@ -344,7 +344,24 @@ submitButton.onclick=async()=>{
   if(existing){
     const idx=all.findIndex(x=>(x.id||x._id)===editId);
     if(idx>=0){
-      all[idx]={...all[idx],title:generatedTitle(categoryInput.value,journalDateInput.value,plain),category:categoryInput.value,journalDate:categoryInput.value==='Journal'?journalDateInput.value:null,studentHtml:html,studentPlain:plain,studentNote:questionInput.value.trim(),attachments:files.map(f=>({name:f.name,size:f.size,type:f.type})),studentUpdatedAt:now,status:all[idx].status==='completed'?'pending':all[idx].status};
+      all[idx]={...all[idx],title:generatedTitle(categoryInput.value,journalDateInput.value,plain),category:categoryInput.value,journalDate:categoryInput.value==='Journal'?journalDateInput.value:null,studentHtml:html,studentPlain:plain,studentNote:questionInput.value.trim(),attachments: [
+  ...files.map(f => ({
+    name: f.name,
+    size: f.size,
+    type: f.type,
+    url: f.url || ""
+  })),
+
+  ...(selectedVoiceRecording
+    ? [{
+        name: "Speaking Practice",
+        type: "audio",
+        duration: selectedVoiceRecording.duration || 0,
+        mimeType: selectedVoiceRecording.mimeType || "",
+        recording: selectedVoiceRecording.recording || {}
+      }]
+    : [])
+],studentUpdatedAt:now,status:all[idx].status==='completed'?'pending':all[idx].status};
     
     const result = await syncSubmissionToWix(
       all[idx],
@@ -367,7 +384,24 @@ submitButton.onclick=async()=>{
       
     }
   }else{
-    const item={id:makeId(),memberId:'',studentName:state.profile.name||'Student',studentEmail:state.profile.email||'',title:generatedTitle(categoryInput.value,journalDateInput.value,plain),category:categoryInput.value,journalDate:categoryInput.value==='Journal'?journalDateInput.value:null,studentHtml:html,studentPlain:plain,studentNote:questionInput.value.trim(),attachments:files.map(f=>({name:f.name,size:f.size,type:f.type})),teacherHtml:'',teacherNote:'',status:'pending',submittedAt:now,studentUpdatedAt:now,reviewStartedAt:null,completedAt:null};
+    const item={id:makeId(),memberId:'',studentName:state.profile.name||'Student',studentEmail:state.profile.email||'',title:generatedTitle(categoryInput.value,journalDateInput.value,plain),category:categoryInput.value,journalDate:categoryInput.value==='Journal'?journalDateInput.value:null,studentHtml:html,studentPlain:plain,studentNote:questionInput.value.trim(),attachments: [
+  ...files.map(f => ({
+    name: f.name,
+    size: f.size,
+    type: f.type,
+    url: f.url || ""
+  })),
+
+  ...(selectedVoiceRecording
+    ? [{
+        name: "Speaking Practice",
+        type: "audio",
+        duration: selectedVoiceRecording.duration || 0,
+        mimeType: selectedVoiceRecording.mimeType || "",
+        recording: selectedVoiceRecording.recording || {}
+      }]
+    : [])
+],teacherHtml:'',teacherNote:'',status:'pending',submittedAt:now,studentUpdatedAt:now,reviewStartedAt:null,completedAt:null};
 const result = await syncSubmissionToWix(
   item,
   "createSubmission"
