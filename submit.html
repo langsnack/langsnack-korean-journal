@@ -434,4 +434,10 @@ understandButton.onclick=()=>{location.href='history.html'};
 document.querySelector('[data-nav="work"]').classList.add('active');languageSelect.value=state.language;
 
 applySubmitLanguage();
+
+window.parent?.postMessage({
+  source: "langsnack-journal",
+  type: "showVoiceRecorder"
+}, "*");
+
 </script></body></html>
