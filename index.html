@@ -442,19 +442,35 @@ timezoneSelect.onchange=()=>{state.timezone=timezoneSelect.value;saveJournalStat
 window.addEventListener("langsnack:timezone-change",event=>{state.timezone=event.detail.timeZone;saveJournalState(state);applyLanguage()});
 languageSelect.onchange=()=>{state.language=languageSelect.value;saveJournalState(state);applyLanguage()};
 saveDraftBtn.onclick=saveEntry;
-submitBtn.onclick=()=>{const text=journalText.value.trim();if(!text){showToast(tr("writeFirst"));return}const draft = {
-  entryId: crypto.randomUUID(),
-  journal: text,
-  level: levelSelect.value,
-  date: dateKey(),
-  language: state.language,
-  category: activeCategory,
-  journalDate:
-    activeCategory === "journal"
-      ? (mainJournalDateInput.value || dateKey())
-      : null,
+submitBtn.onclick = () => {
+  const text = journalText.value.trim();
 
-  recommendation: selectedRecommendation
+  if (!text) {
+    showToast(tr("writeFirst"));
+    return;
+  }
+
+  const draft = {
+    entryId: crypto.randomUUID(),
+    journal: text,
+    level: levelSelect.value,
+    date: dateKey(),
+    language: state.language,
+    category: activeCategory,
+    journalDate:
+      activeCategory === "journal"
+        ? (mainJournalDateInput.value || dateKey())
+        : null,
+
+    recommendation: selectedRecommendation
+  };
+
+  sessionStorage.setItem(
+    LS.reviewDraft,
+    JSON.stringify(draft)
+  );
+
+  location.href = "submit.html";
 };
 viewAchievementsBtn.onclick=()=>{achievementModal.hidden=false;document.body.classList.add('modal-open')};
 document.querySelectorAll('[data-close-badges]').forEach(el=>el.onclick=()=>{achievementModal.hidden=true;document.body.classList.remove('modal-open')});
