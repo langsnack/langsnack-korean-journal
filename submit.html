@@ -312,47 +312,6 @@ function stopRecording() {
   }
 }
 
-recordButton.onclick = async () => {
-  if (
-    mediaRecorder &&
-    mediaRecorder.state === "recording"
-  ) {
-    stopRecording();
-  } else {
-    await startRecording();
-  }
-};
-
-recordAgainButton.onclick = async () => {
-  if (recordingUrl) {
-    URL.revokeObjectURL(recordingUrl);
-  }
-
-  recordingBlob = null;
-  recordingUrl = "";
-  recordingDuration = 0;
-  recordingPlayer.removeAttribute("src");
-  voicePreview.hidden = true;
-
-  await startRecording();
-};
-
-deleteRecordingButton.onclick = () => {
-  if (recordingUrl) {
-    URL.revokeObjectURL(recordingUrl);
-  }
-
-  recordingBlob = null;
-  recordingUrl = "";
-  recordingDuration = 0;
-
-  recordingPlayer.removeAttribute("src");
-  voicePreview.hidden = true;
-
-  showReadyState();
-};
-
-showReadyState();
 submitButton.onclick=async()=>{
   try{
   const html=editor.innerHTML.trim(),plain=stripHTML(html);
