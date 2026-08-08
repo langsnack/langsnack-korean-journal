@@ -620,17 +620,46 @@ const state = getState();
     search.oninput=renderQueue; statusFilter.onchange=()=>{document.querySelectorAll("#queueTabs button").forEach(b=>b.classList.toggle("active",b.dataset.filter===statusFilter.value));renderQueue();};
     queueTabs.onclick=e=>{const b=e.target.closest("button");if(!b)return;statusFilter.value=b.dataset.filter;document.querySelectorAll("#queueTabs button").forEach(x=>x.classList.toggle("active",x===b));renderQueue();};
     refreshButton.onclick=()=>{
-      if(typeof cmsRequest!=="function"){
-        renderAll();
-        return;
+  if(typeof cmsRequest!=="function"){
+    renderAll();
+    return;
+  }
+
+  cmsRequest("getTeacherWorkspace")
+    .then(payload=>{
+      console.log("Teacher workspace:", payload);
+
+      if(Array.isArray(payload?.submissions)){
+        saveSubmissions(payload.submissions);
       }
-      cmsRequest("getTeacherWorkspace")
-        .then(payload=>{
-          if(Array.isArray(payload?.submissions))saveSubmissions(payload.submissions);
-          renderAll();
-        })
-        .catch(()=>renderAll());
-    };
+
+      if(Array.isArray(payload?.threads)){
+        const threadMap = {};
+
+        payload.threads.forEach(message=>{
+          const key =
+            message.submissionClientId ||
+            message.submissionId;
+
+          if(!key) return;
+
+          if(!threadMap[key]){
+            threadMap[key] = [];
+          }
+
+          threadMap[key].push(message);
+        });
+
+        saveThreads(threadMap);
+      }
+
+      renderAll();
+    })
+    .catch(error=>{
+      console.warn("Teacher refresh failed:", error);
+      renderAll();
+    });
+};
     language.onchange=()=>{state.language=language.value;saveState(state);renderAll();};
     window.addEventListener("langsnack:timezone-change",event=>{const journalState=getJournalState();journalState.timezone=event.detail.timeZone;saveJournalState(journalState);renderAll();});
     renderAll();
