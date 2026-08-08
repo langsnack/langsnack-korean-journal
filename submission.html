@@ -80,9 +80,21 @@ exposeNotebookElements();
 var languageSelect = document.getElementById("languageSelect");
 var content = document.getElementById("content");
 
-const state=getState(),id=new URLSearchParams(location.search).get('id');
-let item=getSubmissions().find(x=>(x.id||x._id)===id);
+const state = getState();
+const id = new URLSearchParams(location.search).get("id");
 
+console.log("URL id:", id);
+
+console.log("Submissions:", getSubmissions());
+
+let item = getSubmissions().find(x =>
+  x.clientId === id ||
+  x.id === id ||
+  x._id === id
+);
+
+console.log("Matched item:", item);
+  
 function attachments(){
   if(!item.attachments?.length)return '';
   return `<div class="nb-card nb-card-pad review-attachments"><span class="nb-kicker">Attachments</span><div class="nb-file-list">${item.attachments.map(a=>`<div class="nb-file"><span>📎 <strong>${escapeHTML(a.name)}</strong></span><small class="muted">Preview available after Wix Media connection</small></div>`).join('')}</div></div>`;
