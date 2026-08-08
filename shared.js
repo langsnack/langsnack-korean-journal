@@ -125,8 +125,40 @@ function getBookmarks(){return safeParse(localStorage.getItem(LS.bookmarks),[])|
 function saveBookmarks(items){localStorage.setItem(LS.bookmarks,JSON.stringify(items||[]))}
 function getThreads(){return safeParse(localStorage.getItem(LS.threads),{})||{}}
 function saveThreads(value){localStorage.setItem(LS.threads,JSON.stringify(value||{}))}
-function threadFor(id){return getThreads()[id]||[]}
-function addThreadMessage(id,message){
+function threadFor(id){
+  const threads = getThreads();
+
+  // Direct match first
+  if(Array.isArray(threads[id])){
+    return threads[id];
+  }
+
+  // Find the submission so we can match both
+  // the Wix _id and our clientId.
+  const submission = getSubmissions().find(item =>
+    item._id === id ||
+    item.id === id ||
+    item.clientId === id
+  );
+
+  if(!submission){
+    return [];
+  }
+
+  const possibleKeys = [
+    submission.clientId,
+    submission.id,
+    submission._id
+  ].filter(Boolean);
+
+  for(const key of possibleKeys){
+    if(Array.isArray(threads[key])){
+      return threads[key];
+    }
+  }
+
+  return [];
+}function addThreadMessage(id,message){
   const all=getThreads();
   const savedMessage={...message,id:makeId(),createdAt:new Date().toISOString()};
   all[id]=all[id]||[];
