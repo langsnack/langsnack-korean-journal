@@ -469,7 +469,19 @@ submitBtn.onclick = () => {
     LS.reviewDraft,
     JSON.stringify(draft)
   );
+// Clear current draft
+state.lastDraft = "";
+state.journalDate = "";
+saveJournalState(state);
 
+journalText.value = "";
+mainJournalDateInput.value = "";
+selectedRecommendation = {
+  type: "",
+  text: ""
+};
+
+updateCounts();
   location.href = "submit.html";
 };
 viewAchievementsBtn.onclick=()=>{achievementModal.hidden=false;document.body.classList.add('modal-open')};
