@@ -418,6 +418,74 @@ const state = getState();
       if(document.getElementById("saveBtn")) saveBtn.onclick=()=>updateRecord("save",ed);
       if(document.getElementById("completeBtn")) completeBtn.onclick=()=>updateRecord("complete",ed);
       if(document.getElementById("deleteBtn")) deleteBtn.onclick=deleteRecord;
+      
+      // NEW TEACHER REPLY CODE HERE
+
+      const teacherReplyInput =
+  document.getElementById("teacherReplyInput");
+
+const teacherReplyButton =
+  document.getElementById("teacherReplyButton");
+
+if (teacherReplyButton && teacherReplyInput) {
+  teacherReplyButton.onclick = async () => {
+    const text = teacherReplyInput.value.trim();
+
+    if (!text) return;
+
+    teacherReplyButton.disabled = true;
+    teacherReplyButton.textContent = "Sending...";
+
+    try {
+      await cmsRequest("teacherAddThreadMessage", {
+        submissionId: x._id || x.id,
+        submissionClientId: x.clientId || "",
+        text: text
+      });
+
+      teacherReplyInput.value = "";
+
+      const payload = await cmsRequest(
+        "getTeacherWorkspace"
+      );
+
+      if (Array.isArray(payload?.submissions)) {
+        saveSubmissions(payload.submissions);
+      }
+
+      if (Array.isArray(payload?.threads)) {
+        const threadMap = {};
+
+        payload.threads.forEach(message => {
+          const key =
+            message.submissionClientId ||
+            message.submissionId;
+
+          if (!key) return;
+
+          if (!threadMap[key]) {
+            threadMap[key] = [];
+          }
+
+          threadMap[key].push(message);
+        });
+
+        saveThreads(threadMap);
+      }
+
+      renderWorkspace();
+
+    } catch (error) {
+      console.error(
+        "Teacher reply failed:",
+        error
+      );
+
+      teacherReplyButton.disabled = false;
+      teacherReplyButton.textContent = "Send reply";
+    }
+  };
+}
     }
 
     function updateRecord(action,ed){
