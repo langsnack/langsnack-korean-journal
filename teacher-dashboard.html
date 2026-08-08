@@ -608,8 +608,25 @@ const state = getState();
       if(Array.isArray(payload?.submissions))
         saveSubmissions(payload.submissions);
 
-      if(Array.isArray(payload?.threads))
-        saveThreads(payload.threads);
+      if(Array.isArray(payload?.threads)){
+  const threadMap = {};
+
+  payload.threads.forEach(message => {
+    const key =
+      message.submissionClientId ||
+      message.submissionId;
+
+    if(!key) return;
+
+    if(!threadMap[key]){
+      threadMap[key] = [];
+    }
+
+    threadMap[key].push(message);
+  });
+
+  saveThreads(threadMap);
+}
 
       renderAll();
     })
