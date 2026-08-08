@@ -249,7 +249,16 @@ if (downloadPdfBtn) {
   sendMessage.onclick=()=>{
     const text=messageInput.value.trim();
     if(!text)return;
-    addThreadMessage(id,{author:'student',name:state.profile.name||'Student',text});
+    const threadKey =
+  item?.clientId ||
+  item?._id ||
+  id;
+
+addThreadMessage(threadKey,{
+  author:'student',
+  name:state.profile.name||'Student',
+  text
+});
     messageInput.value='';
     drawThread();
   };
