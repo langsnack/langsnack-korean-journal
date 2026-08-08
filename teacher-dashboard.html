@@ -810,18 +810,7 @@ setInterval(async () => {
   if (teacherAutoRefreshBusy) return;
 
   // Don't rebuild the workspace while Nicole is typing/editing
-  const active = document.activeElement;
-
-  const teacherIsEditing =
-    active &&
-    (
-      active.tagName === "TEXTAREA" ||
-      active.tagName === "INPUT" ||
-      active.isContentEditable
-    );
-
-  if (teacherIsEditing) return;
-
+  
   teacherAutoRefreshBusy = true;
 
   try {
