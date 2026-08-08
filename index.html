@@ -115,7 +115,25 @@
 
         <div class="recommendation-panel" id="generatorOutput" hidden>
           <div><span class="recommendation-type" id="generatorLabel"></span><p id="generatorText"></p></div>
-          <div class="recommendation-actions"><button type="button" id="shuffleAgainBtn">Try another</button><button type="button" id="closeGenerator" aria-label="Close">×</button></div>
+          <div class="recommendation-actions">
+  <button type="button" id="shuffleAgainBtn">Try another</button>
+
+  <button
+    type="button"
+    id="resetStarterBtn"
+    hidden
+  >
+    Remove starter
+  </button>
+
+  <button
+    type="button"
+    id="closeGenerator"
+    aria-label="Close"
+  >
+    ×
+  </button>
+</div>
         </div>
 
         <div class="editor-toolbar" aria-label="Formatting toolbar">
@@ -233,6 +251,7 @@ var generatorOutput = document.getElementById("generatorOutput");
 var generatorLabel = document.getElementById("generatorLabel");
 var generatorText = document.getElementById("generatorText");
 var shuffleAgainBtn = document.getElementById("shuffleAgainBtn");
+var resetStarterBtn = document.getElementById("resetStarterBtn");
 var closeGenerator = document.getElementById("closeGenerator");
 var clearFormatBtn = document.getElementById("clearFormatBtn");
 var journalText = document.getElementById("journalText");
@@ -269,6 +288,7 @@ let selectedRecommendation = {
   type: "",
   text: ""
 };
+let insertedStarterBlock = "";
 
 const translations={
  en:{language:"Language",timezone:"Time zone",dashboard:"Dashboard",write:"Write",work:"My work",saved:"Saved",achievements:"Achievements",calendar:"Calendar",help:"Need help?",guide:"Visit the guide",greetingMorning:"Good morning",greetingAfternoon:"Good afternoon",greetingEvening:"Good evening",subtitle:"Keep writing. Keep growing.",dayStreak:"day streak",keepGoing:"Keep it going",feedbackTitle:"Get your writing feedback",feedbackSub:"Write and send your work to Nicole.",workTitle:"Previous work",workSub:"Review your submissions and feedback.",savedTitle:"Saved explanations",savedSub:"Keep useful feedback for later.",workspace:"Writing workspace",startWriting:"Start a new writing",clearAll:"Clear all",journal:"Journal",essay:"Essay",story:"Story",random:"Random",level:"Level",topic:"Random topic",grammar:"Random grammar",prompt:"Random prompt",surprise:"Surprise me",another:"Try another",placeholder:"Write your Korean here...",characters:" characters",words:" words",save:"Save draft",submit:"Get feedback",badgeTitle:"Next achievement",viewAll:"View all",progress:"Level & progress",calendarTitle:"Writing calendar",written:"Written",today:"Today",recent:"Recent work",daily:"Today’s random picks",newPick:"Reveal",usedToday:"Used today",revealPick:"Click to reveal",tip:"Quick tip",tipText:"Writing a little every day builds a stronger habit than writing a lot once in a while.",draftSaved:"Draft saved.",writeFirst:"Write something before saving.",cleared:"Writing cleared.",noEntries:"No writing yet. Start your first one today.",topicLabel:"Topic",grammarLabel:"Grammar",promptLabel:"Prompt",journalDate:"Journal date"},
@@ -397,6 +417,99 @@ function applyLanguage(){
  renderAll();
 }
 function updateCounts(){charCount.textContent=journalText.value.replace(/\s/g,"").length;wordCount.textContent=journalText.value.trim()?journalText.value.trim().split(/\s+/).length:0}
+function starterBlockFor(recommendation) {
+  if (!recommendation?.type) return "";
+
+  if (recommendation.type === "surprise") {
+    return [
+      `Topic: ${recommendation.topic}`,
+      `Grammar: ${recommendation.grammar}`,
+      `Prompt: ${recommendation.prompt}`,
+      "",
+      ""
+    ].join("\n");
+  }
+
+  const labels = {
+    topic: "Topic",
+    grammar: "Grammar",
+    prompt: "Prompt"
+  };
+
+  return [
+    `${labels[recommendation.type] || "Starter"}: ${recommendation.text}`,
+    "",
+    ""
+  ].join("\n");
+}
+
+function insertRecommendationStarter() {
+  const newBlock =
+    starterBlockFor(selectedRecommendation);
+
+  if (!newBlock) return;
+
+  let writing = journalText.value;
+
+  // If there was already a generated starter,
+  // replace it instead of stacking another one.
+  if (
+    insertedStarterBlock &&
+    writing.startsWith(insertedStarterBlock)
+  ) {
+    writing = writing.slice(
+      insertedStarterBlock.length
+    );
+  }
+
+  insertedStarterBlock = newBlock;
+
+  journalText.value =
+    insertedStarterBlock + writing;
+
+  resetStarterBtn.hidden = false;
+
+  journalText.dispatchEvent(
+    new Event("input")
+  );
+
+  journalText.focus();
+
+  journalText.setSelectionRange(
+    insertedStarterBlock.length,
+    insertedStarterBlock.length
+  );
+}
+
+function removeRecommendationStarter() {
+  if (!insertedStarterBlock) return;
+
+  if (
+    journalText.value.startsWith(
+      insertedStarterBlock
+    )
+  ) {
+    journalText.value =
+      journalText.value.slice(
+        insertedStarterBlock.length
+      );
+  }
+
+  insertedStarterBlock = "";
+
+  selectedRecommendation = {
+    type: "",
+    text: ""
+  };
+
+  resetStarterBtn.hidden = true;
+
+  journalText.dispatchEvent(
+    new Event("input")
+  );
+
+  journalText.focus();
+}
 function pick(type){const arr=content[levelSelect.value][type];return arr[Math.floor(Math.random()*arr.length)]}
 function showRecommendation(type) {
   activeGenerator = type;
@@ -408,11 +521,16 @@ function showRecommendation(type) {
     text: value
   };
 
-  generatorLabel.textContent = tr(type + "Label");
+  generatorLabel.textContent =
+    tr(type + "Label");
+
   generatorText.textContent = value;
 
   generatorOutput.hidden = false;
-}function saveEntry(){const text=journalText.value.trim();if(!text){showToast(tr("writeFirst"));return}const existing=state.entries.findIndex(e=>e.date===dateKey()&&e.status==="draft");const entry={id:existing>=0?state.entries[existing].id:crypto.randomUUID(),date:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):dateKey(),journalDate:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):null,createdAt:new Date().toISOString(),text,level:levelSelect.value,status:"draft",category:activeCategory};if(existing>=0)state.entries[existing]=entry;else state.entries.unshift(entry);state.lastDraft=text;state.level=levelSelect.value;saveJournalState(state);renderAll();showToast(tr("draftSaved"))}
+
+  insertRecommendationStarter();
+}
+function saveEntry(){const text=journalText.value.trim();if(!text){showToast(tr("writeFirst"));return}const existing=state.entries.findIndex(e=>e.date===dateKey()&&e.status==="draft");const entry={id:existing>=0?state.entries[existing].id:crypto.randomUUID(),date:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):dateKey(),journalDate:activeCategory==="journal"?(mainJournalDateInput.value||dateKey()):null,createdAt:new Date().toISOString(),text,level:levelSelect.value,status:"draft",category:activeCategory};if(existing>=0)state.entries[existing]=entry;else state.entries.unshift(entry);state.lastDraft=text;state.level=levelSelect.value;saveJournalState(state);renderAll();showToast(tr("draftSaved"))}
 function renderEntries(){entriesList.innerHTML="";if(!state.entries.length){entriesList.innerHTML=`<div class="empty-state">${tr("noEntries")}</div>`;return}state.entries.slice(0,5).forEach(e=>{const item=document.createElement("button");item.className="recent-item";item.innerHTML=`<span class="recent-icon">✎</span><span class="recent-copy"><strong>${escapeHTML(e.text.slice(0,40))}${e.text.length>40?"…":""}</strong><small>${e.journalDate?escapeHTML(formatKoreanDateOnly(e.journalDate)):escapeHTML(e.category||e.level)}</small></span><span class="recent-status">${e.status==="draft"?(state.language==="ko"?"임시 저장":"Draft"):(state.language==="ko"?"작성 완료":"Written")}</span><span class="card-arrow">›</span>`;item.onclick=()=>{journalText.value=e.text;levelSelect.value=e.level;activeCategory=e.category||"journal";mainJournalDateInput.value=e.journalDate||e.date||dateKey();updateMainJournalDateVisibility();document.querySelectorAll('.category-tab').forEach(x=>x.classList.toggle('active',x.dataset.category===activeCategory));updateCounts();document.getElementById('writing').scrollIntoView({behavior:'smooth'})};entriesList.appendChild(item)})}
 function renderCalendar(){calendarGrid.innerHTML="";const labels=["월","화","수","목","금","토","일"];labels.forEach(d=>{const s=document.createElement("span");s.className="day-label";s.textContent=d;calendarGrid.appendChild(s)});const cur=getDateParts(),first=new Date(cur.year,cur.month-1,1),offset=(first.getDay()+6)%7,dim=new Date(cur.year,cur.month,0).getDate(),written=new Set([...state.entries.map(e=>e.date),...getSubmissions().map(x=>x.journalDate||String(x.submittedAt||"").slice(0,10)).filter(Boolean)]);for(let i=0;i<offset;i++)calendarGrid.appendChild(document.createElement("span"));for(let d=1;d<=dim;d++){const s=document.createElement("span");s.className="calendar-day";s.textContent=d;const k=`${cur.year}-${String(cur.month).padStart(2,"0")}-${String(d).padStart(2,"0")}`;if(written.has(k))s.classList.add("written");if(d===cur.day)s.classList.add("today");if(d>cur.day)s.classList.add("future");calendarGrid.appendChild(s)}calendarMonthLabel.textContent=new Intl.DateTimeFormat("ko-KR",{timeZone:state.timezone,year:"numeric",month:"long"}).format(new Date())}
 function renderStreak(){streakCount.textContent=getStreak()}
@@ -470,6 +588,8 @@ function showSurprise(){
   grammar,
   prompt
 };
+   insertRecommendationStarter();
+   
    generatorText.innerHTML=`<span class="surprise-result"><small>TOPIC</small><b>${escapeHTML(topic)}</b></span><span class="surprise-result"><small>GRAMMAR</small><b>${escapeHTML(grammar)}</b></span><span class="surprise-result full"><small>PROMPT</small><b>${escapeHTML(prompt)}</b></span>`;
    activeGenerator="surprise"; button.classList.remove("is-shuffling"); button.disabled=false;
  },850);
@@ -478,14 +598,51 @@ function renderAll(){renderEntries();renderCalendar();renderStreak();renderBadge
 
 document.querySelectorAll("[data-generator]").forEach(btn=>btn.onclick=()=>showRecommendation(btn.dataset.generator));
 surpriseMeBtn.onclick=showSurprise;
-shuffleAgainBtn.onclick=()=>activeGenerator==="surprise"?showSurprise():showRecommendation(activeGenerator);closeGenerator.onclick=()=>generatorOutput.hidden=true;
+shuffleAgainBtn.onclick = () =>
+  activeGenerator === "surprise"
+    ? showSurprise()
+    : showRecommendation(activeGenerator);
+
+resetStarterBtn.onclick =
+  removeRecommendationStarter;
+
+closeGenerator.onclick = () =>
+  generatorOutput.hidden = true;
 document.querySelectorAll(".category-tab").forEach(btn=>btn.onclick=()=>{activeCategory=btn.dataset.category;document.querySelectorAll(".category-tab").forEach(x=>x.classList.toggle("active",x===btn));updateMainJournalDateVisibility()});
 document.querySelectorAll("[data-editor-command]").forEach(btn=>btn.onclick=()=>{journalText.focus();document.execCommand(btn.dataset.editorCommand)});
 document.querySelectorAll("[data-wrap]").forEach(btn=>btn.onclick=()=>{const start=journalText.selectionStart,end=journalText.selectionEnd,wrap=btn.dataset.wrap,value=journalText.value;journalText.value=value.slice(0,start)+wrap+value.slice(start,end)+wrap+value.slice(end);journalText.focus();journalText.setSelectionRange(start+wrap.length,end+wrap.length);journalText.dispatchEvent(new Event("input"))});
 document.querySelectorAll("[data-prefix]").forEach(btn=>btn.onclick=()=>{const start=journalText.selectionStart,end=journalText.selectionEnd,value=journalText.value,prefix=btn.dataset.prefix;const lineStart=value.lastIndexOf("\n",start-1)+1;const selected=value.slice(lineStart,end);const changed=selected.split("\n").map(line=>prefix+line).join("\n");journalText.value=value.slice(0,lineStart)+changed+value.slice(end);journalText.focus();journalText.setSelectionRange(lineStart+prefix.length,lineStart+changed.length);journalText.dispatchEvent(new Event("input"))});
 document.querySelectorAll("[data-insert]").forEach(btn=>btn.onclick=()=>{const start=journalText.selectionStart,value=journalText.value,insert=btn.dataset.insert;journalText.value=value.slice(0,start)+insert+value.slice(start);journalText.focus();journalText.setSelectionRange(start+insert.length,start+insert.length);journalText.dispatchEvent(new Event("input"))});
 clearFormatBtn.onclick=()=>{journalText.value=journalText.value.replace(/\*\*|__|_/g,"");journalText.dispatchEvent(new Event("input"))};
-clearAllBtn.onclick=()=>{if(!journalText.value||confirm(state.language==="ko"?"작성 중인 글을 모두 지울까요?":"Clear the current writing?")){journalText.value="";state.lastDraft="";saveJournalState(state);updateCounts();showToast(tr("cleared"))}};
+clearAllBtn.onclick = () => {
+  if (
+    !journalText.value ||
+    confirm(
+      state.language === "ko"
+        ? "작성 중인 글을 모두 지울까요?"
+        : "Clear the current writing?"
+    )
+  ) {
+    journalText.value = "";
+
+    state.lastDraft = "";
+    saveJournalState(state);
+
+    insertedStarterBlock = "";
+
+    selectedRecommendation = {
+      type: "",
+      text: ""
+    };
+
+    resetStarterBtn.hidden = true;
+    generatorOutput.hidden = true;
+
+    updateCounts();
+
+    showToast(tr("cleared"));
+  }
+};
 journalText.oninput=()=>{state.lastDraft=journalText.value;saveJournalState(state);updateCounts()};
 levelSelect.onchange=()=>{state.level=levelSelect.value;saveJournalState(state)};
 mainJournalDateInput.onchange=()=>{state.journalDate=mainJournalDateInput.value;saveJournalState(state);renderCalendar()};
