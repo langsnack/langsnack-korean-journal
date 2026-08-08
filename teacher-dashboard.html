@@ -326,6 +326,8 @@ const state = getState();
 
     function renderWorkspace(){
       const t=T[state.language], x=items().find(v=>(v._id||v.id)===selectedId);
+      const thread =
+  (getThreads()[x?.clientId || x?._id] || []);
       if(!x){workspace.innerHTML=`<div class="teacher-empty-state"><div class="empty-illustration">✎</div><h2>${t.select}</h2><p>${state.language==="ko"?"왼쪽 목록에서 학생의 글을 선택해 주세요.":"Choose a student from the review queue to begin."}</p></div>`;return;}
       const words=wordCount(x.studentPlain), initial=escapeHTML((x.studentName||"S").charAt(0).toUpperCase());
       workspace.innerHTML=`
