@@ -249,8 +249,11 @@ async function loadSubmissionPage() {
   await requestCmsRefresh();
 
   item = getSubmissions().find(
-    x => (x.id || x._id) === id
-  );
+  x =>
+    x.clientId === id ||
+    x.id === id ||
+    x._id === id
+);
 
   render();
   applySubmissionLanguage();
