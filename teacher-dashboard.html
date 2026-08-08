@@ -449,10 +449,6 @@ if (teacherReplyButton && teacherReplyInput) {
         "getTeacherWorkspace"
       );
 
-      if (Array.isArray(payload?.submissions)) {
-        saveSubmissions(payload.submissions);
-      }
-
       if (Array.isArray(payload?.threads)) {
         const threadMap = {};
 
