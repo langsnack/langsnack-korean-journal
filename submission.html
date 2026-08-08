@@ -104,8 +104,12 @@ function attachments(){
 }
 
 function drawThread(){
-  const thread=threadFor(id);
-  threadList.innerHTML='';
+const threadKey =
+  item?.clientId ||
+  item?._id ||
+  id;
+
+const thread = threadFor(threadKey);  threadList.innerHTML='';
 
   if(!thread.length){
     threadList.innerHTML=`<div class="thread-empty"><span class="thread-empty-icon">💬</span><div><strong>No messages yet</strong><p>Start a conversation about this correction. Your messages will stay attached to this writing.</p></div></div>`;
