@@ -325,7 +325,58 @@ function tr(key){return translations[state.language][key]}
 function setText(id,key){const el=document.getElementById(id);if(el)el.textContent=tr(key)}
 function getDateParts(date=new Date()){const parts=new Intl.DateTimeFormat("en-CA",{timeZone:state.timezone,year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(date);const map=Object.fromEntries(parts.map(x=>[x.type,x.value]));return {year:+map.year,month:+map.month,day:+map.day}}
 function dateKey(date=new Date()){const p=getDateParts(date);return `${p.year}-${String(p.month).padStart(2,"0")}-${String(p.day).padStart(2,"0")}`}
-function getStreak(){const days=[...new Set(state.entries.map(e=>e.date))].sort();let streak=0;let cursor=new Date(dateKey()+"T12:00:00");if(!days.includes(dateKey()))cursor.setDate(cursor.getDate()-1);while(days.includes(cursor.toISOString().slice(0,10))){streak++;cursor.setDate(cursor.getDate()-1)}return streak}
+function getStreak(){
+
+  const writtenDays = new Set();
+
+  // Local drafts / saved entries
+  state.entries.forEach(entry => {
+    const day =
+      entry.journalDate ||
+      entry.date;
+
+    if(day){
+      writtenDays.add(String(day).slice(0,10));
+    }
+  });
+
+  // Submitted journals from Wix
+  getSubmissions().forEach(submission => {
+    const day =
+      submission.journalDate ||
+      String(submission.submittedAt || "").slice(0,10);
+
+    if(day){
+      writtenDays.add(String(day).slice(0,10));
+    }
+  });
+
+  const days = [...writtenDays].sort();
+
+  let streak = 0;
+
+  const today = dateKey();
+
+  let cursor =
+    new Date(today + "T12:00:00");
+
+  // If nothing was written today,
+  // continue checking from yesterday.
+  if(!writtenDays.has(today)){
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  while(
+    writtenDays.has(
+      cursor.toISOString().slice(0,10)
+    )
+  ){
+    streak++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  return streak;
+}
 function greetingKey(){const hour=Number(new Intl.DateTimeFormat("en-GB",{timeZone:state.timezone,hour:"2-digit",hour12:false}).format(new Date()));return hour<12?"greetingMorning":hour<18?"greetingAfternoon":"greetingEvening"}
 function displayName(){return state.profile?.name?.trim()||""}
 
