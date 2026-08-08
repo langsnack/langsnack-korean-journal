@@ -301,6 +301,8 @@ function requestCmsRefresh(){
   return cmsRequest("getMemberWorkspace")
     .then(payload => {
 
+      console.log("STUDENT WORKSPACE FROM WIX:", payload);
+
       if(Array.isArray(payload?.submissions)){
         saveSubmissions(payload.submissions);
       }
