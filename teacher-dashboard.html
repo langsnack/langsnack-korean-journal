@@ -798,6 +798,10 @@ let teacherAutoRefreshBusy = false;
 
 setInterval(async () => {
 
+  console.log(
+  "TEACHER AUTO REFRESH TICK:",
+  new Date().toLocaleTimeString()
+);
   if (
     !window.parent ||
     window.parent === window ||
