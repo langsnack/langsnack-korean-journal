@@ -848,13 +848,80 @@ setInterval(async () => {
       });
 
       saveThreads(threadMap);
-    }
+}
 
-    renderAll();
+/* Refresh only the visible discussion thread */
+const selected = items().find(
+  x => (x._id || x.id) === selectedId
+);
 
-    console.log(
-      "Teacher dashboard background refreshed."
+if (selected) {
+  const key =
+    selected.clientId ||
+    selected._id ||
+    selected.id;
+
+  const thread =
+    getThreads()[key] || [];
+
+  const threadList =
+    document.getElementById(
+      "teacherThreadList"
     );
+
+  if (threadList) {
+    threadList.innerHTML =
+      thread.length
+        ? thread.map(message => `
+            <div style="
+              padding:10px 11px;
+              border:1px solid #e4d9cf;
+              border-radius:12px;
+              background:${
+                message.author === "teacher"
+                  ? "#eef5f1"
+                  : "#fff"
+              };
+            ">
+              <strong style="font-size:11px;">
+                ${
+                  message.author === "teacher"
+                    ? "Nicole"
+                    : escapeHTML(
+                        message.name ||
+                        selected.studentName ||
+                        "Student"
+                      )
+                }
+              </strong>
+
+              <p style="
+                margin:4px 0 0;
+                font-size:11px;
+                line-height:1.5;
+                color:#5f574f;
+              ">
+                ${escapeHTML(
+                  message.text || ""
+                )}
+              </p>
+
+              <small style="color:#8b8178;">
+                ${relativeTime(
+                  message.createdAt
+                )}
+              </small>
+            </div>
+          `).join("")
+        : `<div class="widget-empty">
+            No discussion yet.
+          </div>`;
+  }
+}
+
+console.log(
+  "Teacher discussion background refreshed."
+);
 
   } catch (error) {
 
