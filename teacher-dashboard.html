@@ -375,9 +375,37 @@ const state = getState();
           `).join("")
         : `<div class="widget-empty">No discussion yet.</div>`
     }
+    </div>
+
+  <div style="margin-top:12px;">
+    <textarea
+      id="teacherReplyInput"
+      placeholder="Reply to student..."
+      style="
+        width:100%;
+        min-height:80px;
+        resize:vertical;
+        box-sizing:border-box;
+        border:1px solid #e4d9cf;
+        border-radius:12px;
+        padding:10px 11px;
+        font:inherit;
+        background:#fff;
+      "
+    ></textarea>
+
+    <button
+      id="teacherReplyButton"
+      class="button button-primary action-full"
+      type="button"
+      style="margin-top:8px;"
+    >
+      Send reply
+    </button>
   </div>
 </article>
-            <article class="mini-widget action-widget"><p class="widget-kicker">Review actions</p><div id="teacherActions" class="teacher-actions"></div></article>
+
+<article class="mini-widget action-widget"><p class="widget-kicker">Review actions</p><div id="teacherActions" class="teacher-actions"></div></article>
           </aside>
         </div>`;
       teacherEditorMount.innerHTML=richEditorHTML("teacherEditor",""); const ed=initRichEditor(teacherEditorMount); ed.innerHTML=x.teacherHtml||x.studentHtml||""; ed.addEventListener("input",()=>{correctionWordCount.textContent=`${wordCount(stripHTML(ed.innerHTML))} ${t.words.toLowerCase()}`;});
