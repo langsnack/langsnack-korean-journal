@@ -288,4 +288,16 @@ async function loadSubmissionPage() {
 }
 
 loadSubmissionPage();
+  setInterval(async () => {
+  await requestCmsRefresh();
+
+  item = getSubmissions().find(
+    x =>
+      x.clientId === id ||
+      x.id === id ||
+      x._id === id
+  );
+
+  drawThread();
+}, 10000);
 </script></body></html>
