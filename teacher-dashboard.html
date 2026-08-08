@@ -602,10 +602,15 @@ const state = getState();
     renderAll();
     if(window.parent&&window.parent!==window&&typeof cmsRequest==="function"){
       cmsRequest("getTeacherWorkspace")
-        .then(payload=>{
-          if(Array.isArray(payload?.submissions))saveSubmissions(payload.submissions);
-          renderAll();
-        })
+    .then(payload=>{
+      if(Array.isArray(payload?.submissions))
+        saveSubmissions(payload.submissions);
+
+      if(Array.isArray(payload?.threads))
+        saveThreads(payload.threads);
+
+      renderAll();
+    })
         .catch(error=>console.warn("Teacher CMS load:",error.message));
     }
   </script>
