@@ -298,13 +298,64 @@ function syncBookmarkToWix(item,remove=false){
 }
 
 function requestCmsRefresh(){
-  return cmsRequest("getMemberWorkspace").then(payload=>{
-    if(Array.isArray(payload?.submissions))saveSubmissions(payload.submissions);
-    if(Array.isArray(payload?.bookmarks))saveBookmarks(payload.bookmarks);
-    if(payload?.threads&&typeof payload.threads==="object")saveThreads(payload.threads);
-    window.dispatchEvent(new CustomEvent("langsnack:cms-sync"));
-    return payload;
-  }).catch(()=>null);
+  return cmsRequest("getMemberWorkspace")
+    .then(payload => {
+
+      if(Array.isArray(payload?.submissions)){
+        saveSubmissions(payload.submissions);
+      }
+
+      if(Array.isArray(payload?.bookmarks)){
+        saveBookmarks(payload.bookmarks);
+      }
+
+      /* ---------------------------------------------
+         THREADS
+         Wix may return either:
+         1. an array of CMS thread records, or
+         2. an already-grouped thread object.
+         --------------------------------------------- */
+
+      if(Array.isArray(payload?.threads)){
+        const threadMap = {};
+
+        payload.threads.forEach(message => {
+          const key =
+            message.submissionClientId ||
+            message.submissionId;
+
+          if(!key) return;
+
+          if(!threadMap[key]){
+            threadMap[key] = [];
+          }
+
+          threadMap[key].push(message);
+        });
+
+        saveThreads(threadMap);
+
+      } else if(
+        payload?.threads &&
+        typeof payload.threads === "object"
+      ){
+        saveThreads(payload.threads);
+      }
+
+      window.dispatchEvent(
+        new CustomEvent("langsnack:cms-sync")
+      );
+
+      return payload;
+    })
+    .catch(error => {
+      console.warn(
+        "Member workspace refresh failed:",
+        error?.message || error
+      );
+
+      return null;
+    });
 }
 
 /* =========================================================
