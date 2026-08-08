@@ -346,6 +346,38 @@ const state = getState();
           <aside class="workspace-sidebar">
             <article class="mini-widget"><p class="widget-kicker">${t.details}</p><div class="detail-list"><div><span>${t.status}</span><strong>${statusText(x.status,state.language)}</strong></div><div><span>${t.submitted}</span><strong>${relativeTime(x.submittedAt)}</strong></div><div><span>${t.updated}</span><strong>${relativeTime(x.studentUpdatedAt||x.submittedAt)}</strong></div><div><span>${t.words}</span><strong>${words}</strong></div><div><span>${t.email}</span><strong class="truncate">${escapeHTML(x.studentEmail||"—")}</strong></div></div></article>
             <article class="mini-widget"><p class="widget-kicker">${t.studentNote}</p><div class="student-note-box">${escapeHTML(x.studentNote||t.noNote)}</div></article>
+            <article class="mini-widget">
+  <p class="widget-kicker">Discussion</p>
+  <div id="teacherThreadList" class="attention-list">
+    ${
+      thread.length
+        ? thread.map(message => `
+            <div style="
+              padding:10px 11px;
+              border:1px solid #e4d9cf;
+              border-radius:12px;
+              background:${message.author==="teacher" ? "#eef5f1" : "#fff"};
+            ">
+              <strong style="font-size:11px;">
+                ${message.author==="teacher" ? "Nicole" : escapeHTML(message.name || x.studentName || "Student")}
+              </strong>
+              <p style="
+                margin:4px 0 0;
+                font-size:11px;
+                line-height:1.5;
+                color:#5f574f;
+              ">
+                ${escapeHTML(message.text || "")}
+              </p>
+              <small style="color:#8b8178;">
+                ${relativeTime(message.createdAt)}
+              </small>
+            </div>
+          `).join("")
+        : `<div class="widget-empty">No discussion yet.</div>`
+    }
+  </div>
+</article>
             <article class="mini-widget action-widget"><p class="widget-kicker">Review actions</p><div id="teacherActions" class="teacher-actions"></div></article>
           </aside>
         </div>`;
